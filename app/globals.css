@@ -1,26 +1,98 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* SparFuchs Brand Colors - Original Streamlit Palette */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --sparfuchs-primary: #28A745;     /* Original Grün - Buttons, Links, Akzente */
+  --sparfuchs-secondary: #FF6600;   /* Original Orange - Dunkle Flächen, Header */
+  --sparfuchs-accent: #E0E0E0;      /* Helles Grau - Helle Flächen, Cards */
+  --sparfuchs-background: #E8E0D0;  /* Original Beige/Creme Background */
+  --sparfuchs-surface: #FFFFFF;     /* Weiß Surface für Cards */
+  --sparfuchs-text: #2A2A2A;        /* Original Dunkelgrau für Text */
+  --sparfuchs-text-light: #666666;  /* Mittelgrau für sekundären Text */
+  --sparfuchs-text-on-dark: #FFFFFF; /* Weiß auf dunklem Grund */
+  --sparfuchs-border: #E0E0E0;      /* Helles Grau für Borders */
+  --sparfuchs-success: #28A745;     /* Original Grün für Erfolg */
+  --sparfuchs-warning: #FFC107;     /* Gelb für Warnings */
+  --sparfuchs-error: #DC3545;       /* Rot für Fehler */
+  
+  /* Market Colors - Einheitliches Grün */
+  --color-market-aldi: #28A745;
+  --color-market-lidl: #28A745;
+  --color-market-rewe: #28A745;
+  --color-market-edeka: #28A745;
+  --color-market-penny: #28A745;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--sparfuchs-background);
+  color: var(--sparfuchs-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Streamlit-inspired styling */
+.streamlit-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.streamlit-sidebar {
+  background: var(--sparfuchs-surface);
+  border-right: 1px solid var(--sparfuchs-border);
+  min-height: 100vh;
+}
+
+.streamlit-main {
+  background: var(--sparfuchs-surface);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .streamlit-container {
+    padding: 0.5rem;
+  }
+  
+  .streamlit-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--sparfuchs-border);
+    min-height: auto;
+  }
+  
+  .streamlit-main {
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .streamlit-container {
+    padding: 0.25rem;
+  }
+  
+  .streamlit-main {
+    border-radius: 0.25rem;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--sparfuchs-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sparfuchs-text-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sparfuchs-secondary);
 }

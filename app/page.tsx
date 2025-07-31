@@ -1,103 +1,250 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { MarketToggles } from './components/UI/MarketToggles';
+import { WelcomeMessages } from './components/UI/WelcomeMessages';
+import { CentralInput } from './components/UI/CentralInput';
+import { ChatMessage } from './components/Chat/ChatMessage';
+import { ChatInput } from './components/Chat/ChatInput';
+import { Header } from './components/Layout/Header';
+import { Footer } from './components/Layout/Footer';
+
+interface Message {
+  id: string;
+  content: string;
+  role: 'user' | 'assistant';
+  timestamp: Date;
+}
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  // Simplified state management without complex hooks
+  const [selectedMarkets, setSelectedMarkets] = useState(['Aldi', 'Lidl', 'Rewe', 'Edeka', 'Penny']);
+  const [chatStarted, setChatStarted] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const handleUpdateMarkets = (newMarkets: string[]) => {
+    setSelectedMarkets(newMarkets);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleStartChat = async (message: string) => {
+    setChatStarted(true);
+    await handleSendMessage(message);
+  };
+
+  const handleSendMessage = async (message: string) => {
+    if (!message.trim() || isLoading) return;
+
+    // Add user message
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      content: message.trim(),
+      role: 'user',
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      // Call chat API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message.trim(),
+          selectedMarkets: selectedMarkets,
+          useSemanticSearch: true
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Process streaming response
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body');
+      }
+
+      const assistantMessage: Message = {
+        id: `assistant-${Date.now()}`,
+        content: '',
+        role: 'assistant',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+
+      // Read streaming data
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.content) {
+                setMessages(prev => 
+                  prev.map(msg => 
+                    msg.id === assistantMessage.id 
+                      ? { ...msg, content: msg.content + data.content }
+                      : msg
+                  )
+                );
+              }
+              if (data.done) {
+                setIsLoading(false);
+                return;
+              }
+            } catch (e) {
+              // Ignore JSON parse errors for incomplete chunks
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        content: 'Entschuldigung, es gab einen Fehler bei der Verarbeitung Ihrer Anfrage. Bitte versuchen Sie es erneut.',
+        role: 'assistant',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetChat = () => {
+    setChatStarted(false);
+    setMessages([]);
+  };
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--sparfuchs-background)' }}>
+        <div className="text-center">
+          <div 
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            style={{ borderColor: 'var(--sparfuchs-primary)' }}
+            role="status">
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+          </div>
+          <p className="mt-4 text-lg">SparFuchs lädt...</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--sparfuchs-background)' }}>
+      <Header />
+      
+      {chatStarted ? (
+        <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+          {/* Removed Chat Header */}
+
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.length === 0 ? (
+              <div className="text-center py-8" style={{ color: 'var(--sparfuchs-text-light)' }}>
+                Stellen Sie eine Frage über Supermarkt-Angebote...
+              </div>
+            ) : (
+              messages.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))
+            )}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="flex items-center space-x-2 p-3 rounded-lg" style={{ background: 'var(--sparfuchs-border)' }}>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+                  <span style={{ color: 'var(--sparfuchs-text)' }}>Suchen nach Angeboten...</span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Area */}
+          <div 
+            className="border-t p-4"
+            style={{ 
+              borderColor: 'var(--sparfuchs-border)',
+              background: 'var(--sparfuchs-background)'
+            }}
+          >
+            <ChatInput
+              onSendMessage={handleSendMessage}
+              disabled={isLoading}
+              placeholder="Fragen Sie nach Angeboten, Preisen oder Rezepten..."
+            />
+            {/* Reset Button below input */}
+            <div className="mt-3 text-center">
+              <button
+                onClick={handleResetChat}
+                className="px-4 py-2 text-sm rounded-md border"
+                style={{
+                  borderColor: 'var(--sparfuchs-border)',
+                  color: 'var(--sparfuchs-text)',
+                  backgroundColor: 'var(--sparfuchs-surface)'
+                }}
+              >
+                Chat zurücksetzen
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="max-w-2xl w-full px-6">
+            {/* Market Toggles - above input */}
+            <div className="mb-6">
+              <MarketToggles 
+                selectedMarkets={selectedMarkets}
+                onMarketChange={handleUpdateMarkets}
+              />
+            </div>
+            
+            {/* Central Input */}
+            <div className="mb-6">
+              <CentralInput 
+                onSendMessage={handleStartChat}
+              />
+            </div>
+            
+            {/* Welcome Messages - below input */}
+            <div>
+              <WelcomeMessages onSuggestionClick={handleStartChat} />
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <Footer />
     </div>
   );
 }
