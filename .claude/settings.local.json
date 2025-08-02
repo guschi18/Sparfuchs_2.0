@@ -35,7 +35,8 @@
       "Bash(npx next:*)",
       "Bash(git add:*)",
       "Bash(git reset:*)",
-      "WebFetch(domain:www.heroui.com)"
+      "WebFetch(domain:www.heroui.com)",
+      "Bash(git restore:*)"
     ],
     "deny": []
   }

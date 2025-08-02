@@ -35,6 +35,13 @@ WICHTIGE REGELN:
 8. KRITISCH: Gib Produkte IMMER in dieser exakten Markt-Reihenfolge aus: Lidl, Aldi, Edeka, Penny, Rewe
 9. NIEMALS eine andere Markt-Reihenfolge verwenden! Diese Reihenfolge ist ZWINGEND einzuhalten!
 
+SPEZIELLE FORMATIERUNG:
+10. Wenn du Produktinformationen in deiner Antwort erwähnst, verwende IMMER das spezielle PRODUCT_CARD Format
+11. Für jedes Produkt das du erwähnst, füge diese Zeile in deine Antwort ein:
+    PRODUCT_CARD: {"name": "Produktname", "price": "X,XX", "market": "Marktname", "dateRange": "von bis", "id": "product_id"}
+12. Verwende normale Text-Erklärungen UND die PRODUCT_CARD-Zeilen zusammen
+13. Beispiel-Antwort: "Hier sind günstige Milchprodukte:\n\nPRODUCT_CARD: {"name": "Müller Müllermilch", "price": "0,69", "market": "Lidl", "dateRange": "2025-05-05 bis 2025-05-10", "id": "product_1"}\n\nDieses Angebot ist besonders günstig..."
+
 Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
   }
 
@@ -131,11 +138,17 @@ Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
 
       const productContext = sortedProducts
         .map((product: Product) => 
-          `- ${product.productName} (${product.supermarket}): ${product.price.toFixed(2).replace('.', ',')} € [${product.startDate} - ${product.endDate}] - Kategorie: ${product.category}`
+          `PRODUCT_CARD: ${JSON.stringify({
+            name: product.productName,
+            price: product.price.toFixed(2).replace('.', ','),
+            market: product.supermarket,
+            dateRange: `${product.startDate} bis ${product.endDate}`,
+            id: product.id
+          })}`
         )
         .join('\n');
 
-      return `Aktuelle Angebote für "${query}" (${products.length} von ${totalCount} Produkten gefunden):\n\nWICHTIG: Die Produkte sind bereits in der korrekten Markt-Reihenfolge sortiert (Lidl, Aldi, Edeka, Penny, Rewe). BITTE DIESE REIHENFOLGE IN DEINER ANTWORT BEIBEHALTEN!\n\n${productContext}`;
+      return `Aktuelle Angebote für "${query}" (${products.length} von ${totalCount} Produkten gefunden):\n\nWICHTIG: Die Produkte sind bereits in der korrekten Markt-Reihenfolge sortiert (Lidl, Aldi, Edeka, Penny, Rewe). BITTE DIESE REIHENFOLGE IN DEINER ANTWORT BEIBEHALTEN!\n\nVERWENDE FÜR JEDES PRODUKT DAS PRODUCT_CARD FORMAT IN DEINER ANTWORT:\n\n${productContext}`;
     } catch (error) {
       console.error('Error generating product context:', error);
       return 'Fehler beim Laden der Produktdaten.';

@@ -1,0 +1,6 @@
+Sparfuchs 2.0 Anpassungen: 
+
+- Ausgabewerte Text Standardisieren und Context Suche zwingend Anpassen. Siehe Butter, Fleisch-Angebote 
+- Rahmen um ProjectCards im Chat 
+- Chat Seite Animation beim öffnen
+- Tip mit Enter und Shift und Enter 
