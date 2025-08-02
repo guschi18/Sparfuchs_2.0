@@ -11,7 +11,7 @@ export interface ContextConfig {
 
 export class ContextGenerator {
   private static readonly DEFAULT_CONFIG: ContextConfig = {
-    selectedMarkets: ['Aldi', 'Lidl', 'Rewe', 'Edeka', 'Penny'],
+    selectedMarkets: ['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe'],
     maxProducts: 50,
   };
 
@@ -32,6 +32,8 @@ WICHTIGE REGELN:
 5. Falls ein Produkt nicht verfügbar ist, biete Alternativen an
 6. Formatiere Preise als "X,XX €"
 7. Erwähne bei Produkten immer den Markt und Zeitraum
+8. KRITISCH: Gib Produkte IMMER in dieser exakten Markt-Reihenfolge aus: Lidl, Aldi, Edeka, Penny, Rewe
+9. NIEMALS eine andere Markt-Reihenfolge verwenden! Diese Reihenfolge ist ZWINGEND einzuhalten!
 
 Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
   }
@@ -115,13 +117,25 @@ Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
         return 'Keine passenden Produkte in den aktuellen Angeboten gefunden.';
       }
 
-      const productContext = products
+      // Sort products by market order (as defined in selectedMarkets)
+      const sortedProducts = products.sort((a, b) => {
+        const indexA = config.selectedMarkets.indexOf(a.supermarket);
+        const indexB = config.selectedMarkets.indexOf(b.supermarket);
+        
+        // If market not found in selectedMarkets, put it at the end
+        const finalIndexA = indexA === -1 ? 999 : indexA;
+        const finalIndexB = indexB === -1 ? 999 : indexB;
+        
+        return finalIndexA - finalIndexB;
+      });
+
+      const productContext = sortedProducts
         .map((product: Product) => 
           `- ${product.productName} (${product.supermarket}): ${product.price.toFixed(2).replace('.', ',')} € [${product.startDate} - ${product.endDate}] - Kategorie: ${product.category}`
         )
         .join('\n');
 
-      return `Aktuelle Angebote für "${query}" (${products.length} von ${totalCount} Produkten gefunden):\n\n${productContext}`;
+      return `Aktuelle Angebote für "${query}" (${products.length} von ${totalCount} Produkten gefunden):\n\nWICHTIG: Die Produkte sind bereits in der korrekten Markt-Reihenfolge sortiert (Lidl, Aldi, Edeka, Penny, Rewe). BITTE DIESE REIHENFOLGE IN DEINER ANTWORT BEIBEHALTEN!\n\n${productContext}`;
     } catch (error) {
       console.error('Error generating product context:', error);
       return 'Fehler beim Laden der Produktdaten.';

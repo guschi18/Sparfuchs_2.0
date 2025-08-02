@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     const config: ContextConfig = {
-      selectedMarkets: selectedMarkets || ['Aldi', 'Lidl', 'Rewe', 'Edeka', 'Penny'],
+      selectedMarkets: selectedMarkets || ['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe'],
       maxProducts: 50,
     };
 
