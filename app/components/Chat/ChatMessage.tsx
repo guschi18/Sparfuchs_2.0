@@ -12,18 +12,15 @@ export function ChatMessage({ message }: ChatMessageProps) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div 
-        className={`max-w-[80%] rounded-xl px-5 py-3 shadow-sm ${
-          isUser 
-            ? 'text-white' 
-            : 'text-gray-800'
-        }`}
+        className="max-w-[80%] rounded-xl px-5 py-3 shadow-sm chat-font"
         style={{
           background: isUser 
-            ? 'var(--sparfuchs-primary)' 
-            : 'var(--sparfuchs-border)',
+            ? 'rgba(255, 107, 53, 0.9)' 
+            : 'var(--sparfuchs-surface)',
           border: isUser 
             ? 'none' 
-            : '1px solid var(--sparfuchs-border)'
+            : '1px solid var(--sparfuchs-border)',
+          color: 'var(--sparfuchs-text)'
         }}
       >
         <div className="whitespace-pre-wrap break-words leading-relaxed">
@@ -32,11 +29,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
         
         
         <div 
-          className={`text-xs mt-2 ${
-            isUser ? 'text-white/70' : ''
-          }`}
+          className="text-xs mt-2"
           style={{ 
-            color: isUser ? 'rgba(255,255,255,0.7)' : 'var(--sparfuchs-text-light)' 
+            color: 'var(--sparfuchs-text-light)'
           }}
         >
           {message.timestamp.toLocaleTimeString('de-DE', { 

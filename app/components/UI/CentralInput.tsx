@@ -11,7 +11,7 @@ interface CentralInputProps {
 export function CentralInput({ 
   onSendMessage, 
   disabled = false, 
-  placeholder = "Wonach suchst du? (Obst, Rezeptideen, Preisvergleiche, etc...)"
+  placeholder = "Wonach suchst du? (Obst, Gemüse, Preisvergleiche, etc...)"
 }: CentralInputProps) {
   const [input, setInput] = useState('');
 
@@ -38,7 +38,7 @@ export function CentralInput({
         placeholder={placeholder}
         disabled={disabled}
         rows={3}
-        className="w-full p-3 sm:p-4 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 transition-all duration-200"
+        className="w-full p-3 sm:p-4 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 transition-all duration-200 chat-font"
         style={{
           borderColor: 'var(--sparfuchs-border)',
           background: 'var(--sparfuchs-surface)',
@@ -47,8 +47,8 @@ export function CentralInput({
           lineHeight: '1.5'
         }}
         onFocus={(e) => {
-          e.target.style.borderColor = 'var(--sparfuchs-primary)';
-          e.target.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.1)';
+          e.target.style.borderColor = 'var(--sparfuchs-success)';
+          e.target.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.1)';
         }}
         onBlur={(e) => {
           e.target.style.borderColor = 'var(--sparfuchs-border)';
@@ -60,12 +60,12 @@ export function CentralInput({
         <button 
           onClick={handleSubmit}
           disabled={disabled || !input.trim()}
-          className="px-6 sm:px-8 py-2 sm:py-3 text-white rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:cursor-not-allowed"
+          className="px-12 sm:px-16 py-2 sm:py-3 text-white rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:cursor-not-allowed inter-font-medium"
           style={{ 
             background: disabled || !input.trim() 
               ? 'var(--sparfuchs-text-light)' 
               : 'var(--sparfuchs-success)',
-            minWidth: '100px'
+            minWidth: '200px'
           }}
           onMouseOver={(e) => {
             if (!disabled && input.trim()) {
@@ -81,7 +81,7 @@ export function CentralInput({
               className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"
             ></div>
           ) : (
-            '>'
+            'Senden'
           )}
         </button>
       </div>

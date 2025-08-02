@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* SparFuchs Brand Colors - Original Streamlit Palette */
 :root {
-  --sparfuchs-primary: #28A745;     /* Original Grün - Buttons, Links, Akzente */
+  --sparfuchs-primary: #ff6b35;     /* Orange - Buttons, Links, Akzente */
   --sparfuchs-secondary: #FF6600;   /* Original Orange - Dunkle Flächen, Header */
   --sparfuchs-accent: #E0E0E0;      /* Helles Grau - Helle Flächen, Cards */
   --sparfuchs-background: #E8E0D0;  /* Original Beige/Creme Background */
@@ -30,6 +32,25 @@ body {
   color: var(--sparfuchs-text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
+}
+
+/* Inter font styling classes */
+.chat-font, .inter-font {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.chat-font-medium, .inter-font-medium {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.inter-font-semibold {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 /* Streamlit-inspired styling */

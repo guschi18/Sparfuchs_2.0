@@ -1,5 +1,7 @@
 'use client';
 
+import { motion } from 'framer-motion';
+
 export function Header() {
   return (
     <header 
@@ -8,11 +10,24 @@ export function Header() {
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <div className="flex items-center justify-center gap-3 mb-2">
-          {/* Shopping Cart Emoji */}
-          <span className="text-3xl">🛒</span>
+          {/* Shopping Cart Emoji with Animation */}
+          <motion.span 
+            className="text-3xl"
+            animate={{
+              x: [0, 3, -3, 0],
+              y: [0, -1, 1, 0]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            🛒
+          </motion.span>
           
           <h1 
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold inter-font-semibold"
             style={{ color: 'var(--sparfuchs-text)' }}
           >
             SparFuchs<span style={{ color: 'var(--sparfuchs-primary)' }}>.de</span>
@@ -20,7 +35,7 @@ export function Header() {
         </div>
         
         <p 
-          className="text-sm sm:text-base lg:text-lg"
+          className="text-sm sm:text-base lg:text-lg inter-font"
           style={{ color: 'var(--sparfuchs-text-light)' }}
         >
           Dein KI-Assistent für Supermarkt-Angebote

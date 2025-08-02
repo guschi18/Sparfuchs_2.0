@@ -46,47 +46,45 @@ export function ChatInput({
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex gap-3">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="relative">
         <textarea
           value={inputValue}
           onChange={(e) => handleInputChange(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
           disabled={disabled}
-          rows={1}
-          className="flex-1 resize-none rounded-xl px-4 py-3 focus:outline-none focus:ring-2 disabled:cursor-not-allowed transition-all duration-200"
-          style={{ 
-            minHeight: '48px', 
-            maxHeight: '120px',
-            border: `2px solid var(--sparfuchs-border)`,
+          rows={3}
+          className="w-full p-3 sm:p-4 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 transition-all duration-200 chat-font"
+          style={{
+            borderColor: 'var(--sparfuchs-border)',
             background: 'var(--sparfuchs-surface)',
             color: 'var(--sparfuchs-text)',
-            fontSize: '14px'
+            fontSize: '14px',
+            lineHeight: '1.5'
           }}
           onFocus={(e) => {
-            e.target.style.borderColor = 'var(--sparfuchs-primary)';
+            e.target.style.borderColor = 'var(--sparfuchs-success)';
             e.target.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.1)';
           }}
           onBlur={(e) => {
             e.target.style.borderColor = 'var(--sparfuchs-border)';
             e.target.style.boxShadow = 'none';
           }}
-          onInput={(e) => {
-            const target = e.target as HTMLTextAreaElement;
-            target.style.height = 'auto';
-            target.style.height = `${Math.min(target.scrollHeight, 120)}px`;
-          }}
         />
-        <button
+        
+      </div>
+      
+      <div className="flex justify-center">
+        <button 
           onClick={handleSubmit}
           disabled={disabled || !inputValue.trim()}
-          className="px-6 py-3 text-white rounded-xl font-medium disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
-          style={{
-            background: disabled || !inputValue.trim()
+          className="px-12 sm:px-16 py-2 sm:py-3 text-white rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md disabled:cursor-not-allowed inter-font-medium"
+          style={{ 
+            background: disabled || !inputValue.trim() 
               ? 'var(--sparfuchs-text-light)' 
-              : 'var(--sparfuchs-primary)',
-            minWidth: '80px'
+              : 'var(--sparfuchs-success)',
+            minWidth: '200px'
           }}
           onMouseOver={(e) => {
             if (!disabled && inputValue.trim()) {
@@ -105,13 +103,6 @@ export function ChatInput({
             'Senden'
           )}
         </button>
-      </div>
-      
-      {/* Character counter */}
-      <div className="flex justify-end items-center text-xs">
-        <div style={{ color: characterCount > maxLength * 0.8 ? 'var(--sparfuchs-warning)' : 'var(--sparfuchs-text-light)' }}>
-          {characterCount}/{maxLength}
-        </div>
       </div>
     </div>
   );

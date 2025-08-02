@@ -5,12 +5,12 @@ interface WelcomeMessagesProps {
 }
 
 const WELCOME_SUGGESTIONS = [
-  'Welche Milch ist diese Woche günstig?',
-  'Zeige mir Angebote für Brot bei Aldi',
-  'Günstige Zutaten für Spaghetti Bolognese',
-  'Was kostet Butter bei Lidl?',
-  'Aktuelle Fleisch-Angebote bei Rewe',
-  'Günstige Obst und Gemüse Angebote'
+  '🥛 Welche Milch ist diese Woche günstig?',
+  '🍞 Zeige mir Angebote für Brot',
+  '🍝 Zutaten für Spaghetti Bolognese',
+  '🧈 Wo gibt es Butter im Angebot?',
+  '🥩 Aktuelle Fleisch-Angebote',
+  '🥤 Wo ist Coca Cola im Angebot?'
 ];
 
 
@@ -32,7 +32,7 @@ export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
             <button
               key={index}
               onClick={() => onSuggestionClick(suggestion)}
-              className="text-left p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-xs sm:text-sm hover:shadow-md"
+              className="text-left p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-xs sm:text-sm hover:shadow-md inter-font"
               style={{
                 background: 'var(--sparfuchs-surface)',
                 borderColor: 'var(--sparfuchs-border)',
@@ -47,9 +47,6 @@ export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              {/* Icon für verschiedene Kategorien */}
-              {index === 0 && <span className="mr-2">🔍</span>}
-              {index === 1 && <span className="mr-2">🍎</span>}
               {suggestion}
             </button>
           ))}

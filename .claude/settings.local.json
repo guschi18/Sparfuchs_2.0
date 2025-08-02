@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(git clone:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm install openai csv-parse dotenv)",
+      "Bash(npm install:*)",
+      "Bash(cp:*)",
+      "Bash(npm run:*)",
+      "Bash(curl:*)",
+      "Bash(npm test)",
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(npm test:*)",
+      "Bash(timeout 30s npm run build)",
+      "Bash(rm:*)",
+      "Bash(npm rebuild:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(timeout 15s npm run dev)",
+      "Bash(timeout 60s npm run build)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(timeout 10s npm run dev)",
+      "Bash(node:*)",
+      "Bash(timeout 5s npm run dev)",
+      "Bash(jobs)",
+      "Bash(pkill:*)",
+      "Bash(kill:*)",
+      "Bash(true)",
+      "Bash(npx next:*)"
+    ],
+    "deny": []
+  }
+}

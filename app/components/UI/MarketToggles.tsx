@@ -6,11 +6,11 @@ interface MarketTogglesProps {
 }
 
 const AVAILABLE_MARKETS = [
-  { id: 'Aldi', name: 'Aldi', color: 'var(--color-market-aldi)', bgColor: 'var(--color-market-aldi)' },
-  { id: 'Lidl', name: 'Lidl', color: 'var(--color-market-lidl)', bgColor: 'var(--color-market-lidl)' },
-  { id: 'Rewe', name: 'Rewe', color: 'var(--color-market-rewe)', bgColor: 'var(--color-market-rewe)' },
-  { id: 'Edeka', name: 'Edeka', color: 'var(--color-market-edeka)', bgColor: 'var(--color-market-edeka)' },
-  { id: 'Penny', name: 'Penny', color: 'var(--color-market-penny)', bgColor: 'var(--color-market-penny)' },
+  { id: 'Lidl', name: 'Lidl' },
+  { id: 'Aldi', name: 'Aldi' },
+  { id: 'Edeka', name: 'Edeka' },
+  { id: 'Penny', name: 'Penny' },
+  { id: 'Rewe', name: 'Rewe' },
 ];
 
 export function MarketToggles({ selectedMarkets, onMarketChange }: MarketTogglesProps) {
@@ -27,35 +27,58 @@ export function MarketToggles({ selectedMarkets, onMarketChange }: MarketToggles
   };
 
   return (
-    <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+    <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
       {AVAILABLE_MARKETS.map((market) => {
         const isSelected = selectedMarkets.includes(market.id);
+        const isDisabled = selectedMarkets.length === 1 && isSelected;
         
         return (
-          <button
+          <label
             key={market.id}
-            onClick={() => toggleMarket(market.id)}
-            className="px-4 sm:px-6 py-2 rounded-full font-medium text-xs sm:text-sm transition-all duration-200 border-2"
-            style={{
-              background: isSelected ? market.color : 'var(--sparfuchs-surface)',
-              borderColor: market.color,
-              color: isSelected ? 'var(--sparfuchs-text-on-dark)' : market.color,
-            }}
-            onMouseOver={(e) => {
-              if (!isSelected) {
-                e.currentTarget.style.background = market.color;
-                e.currentTarget.style.color = 'var(--sparfuchs-text-on-dark)';
-              }
-            }}
-            onMouseOut={(e) => {
-              if (!isSelected) {
-                e.currentTarget.style.background = 'var(--sparfuchs-surface)';
-                e.currentTarget.style.color = market.color;
-              }
-            }}
+            className="flex items-center gap-3 cursor-pointer select-none group"
+            style={{ opacity: isDisabled ? 0.6 : 1 }}
           >
-            {market.name}
-          </button>
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={() => !isDisabled && toggleMarket(market.id)}
+                disabled={isDisabled}
+                className="sr-only"
+                aria-label={`${market.name} auswählen`}
+              />
+              <div
+                className="w-6 h-6 rounded-lg border-2 transition-all duration-200 ease-in-out flex items-center justify-center group-hover:scale-105"
+                style={{
+                  borderColor: isSelected ? 'var(--sparfuchs-success)' : 'var(--sparfuchs-text-light)',
+                  backgroundColor: isSelected ? 'var(--sparfuchs-success)' : 'transparent',
+                  boxShadow: isSelected ? '0 0 0 2px rgba(40, 167, 69, 0.2)' : 'none',
+                }}
+              >
+                {isSelected && (
+                  <svg
+                    className="w-4 h-4 text-white animate-in zoom-in-50 duration-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </div>
+            </div>
+            <span
+              className="font-medium text-sm sm:text-base transition-colors duration-200 group-hover:opacity-80"
+              style={{ color: isSelected ? 'var(--sparfuchs-success)' : 'var(--sparfuchs-text-light)' }}
+            >
+              {market.name}
+            </span>
+          </label>
         );
       })}
     </div>

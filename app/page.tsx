@@ -165,7 +165,6 @@ export default function Home() {
       
       {chatStarted ? (
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-          {/* Removed Chat Header */}
 
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -180,9 +179,9 @@ export default function Home() {
             )}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="flex items-center space-x-2 p-3 rounded-lg" style={{ background: 'var(--sparfuchs-border)' }}>
+                <div className="flex items-center space-x-2 p-3 rounded-lg" style={{ background: 'var(--sparfuchs-surface)' }}>
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
-                  <span style={{ color: 'var(--sparfuchs-text)' }}>Suchen nach Angeboten...</span>
+                  <span className="inter-font" style={{ color: 'var(--sparfuchs-text)' }}>Suchen nach Angeboten...</span>
                 </div>
               </div>
             )}
@@ -197,16 +196,24 @@ export default function Home() {
               background: 'var(--sparfuchs-background)'
             }}
           >
+            {/* Market Toggles - über der Chateingabe */}
+            <div className="mb-4">
+              <MarketToggles 
+                selectedMarkets={selectedMarkets}
+                onMarketChange={handleUpdateMarkets}
+              />
+            </div>
+            
             <ChatInput
               onSendMessage={handleSendMessage}
               disabled={isLoading}
-              placeholder="Fragen Sie nach Angeboten, Preisen oder Rezepten..."
+              placeholder="Wonach suchst du? (Obst, Gemüse, Preisvergleiche, etc...)"
             />
             {/* Reset Button below input */}
             <div className="mt-3 text-center">
               <button
                 onClick={handleResetChat}
-                className="px-4 py-2 text-sm rounded-md border"
+                className="px-4 py-2 text-sm rounded-md border inter-font-medium"
                 style={{
                   borderColor: 'var(--sparfuchs-border)',
                   color: 'var(--sparfuchs-text)',

@@ -25,6 +25,7 @@
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.1",
     "eslint-config-next": "^14.2.18",
+    "framer-motion": "^12.23.12",
     "next": "^14.2.18",
     "openai": "^5.10.2",
     "react": "^18.3.1",
