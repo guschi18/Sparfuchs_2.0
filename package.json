@@ -20,6 +20,9 @@
     "production:build": "npm run data:build && npm run cache:warm && next build"
   },
   "dependencies": {
+    "@heroui/react": "^2.6.14",
+    "@heroui/system": "^2.4.18",
+    "@heroui/theme": "^2.4.18",
     "@next/bundle-analyzer": "^14.2.18",
     "critters": "^0.0.23",
     "csv-parse": "^6.1.0",
