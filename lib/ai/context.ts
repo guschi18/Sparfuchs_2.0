@@ -1,6 +1,7 @@
 import { ProductDataService } from '../data/product-data';
 import { SemanticSearchService } from './semantic-search';
 import { Product } from '../../types';
+import { formatDate } from '../utils/helpers';
 
 export interface ContextConfig {
   selectedMarkets: string[];
@@ -142,7 +143,7 @@ Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
             name: product.productName,
             price: product.price.toFixed(2).replace('.', ','),
             market: product.supermarket,
-            dateRange: `${product.startDate} bis ${product.endDate}`,
+            dateRange: `${formatDate(product.startDate)} bis ${formatDate(product.endDate)}`,
             id: product.id
           })}`
         )
