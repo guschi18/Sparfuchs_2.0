@@ -74,7 +74,7 @@ export function InputTip({ text, variant, className = '' }: InputTipProps) {
   };
 
   return (
-    <motion.div
+    <div
       className={`text-center max-w-full ${className}`}
       style={{
         background: 'transparent', // Fließend in das Beige integriert
@@ -85,11 +85,6 @@ export function InputTip({ text, variant, className = '' }: InputTipProps) {
         backfaceVisibility: 'hidden', // Prevent flickering
         ...variantStyles[variant]
       }}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={tipAnimation}
-      layout // Smooth layout changes
     >
       <div className="p-1 sm:p-1">
         {/* Desktop Text - nur auf Desktop sichtbar */}
@@ -99,6 +94,6 @@ export function InputTip({ text, variant, className = '' }: InputTipProps) {
         
         {/* Mobile Text - komplett entfernt */}
       </div>
-    </motion.div>
+    </div>
   );
 }

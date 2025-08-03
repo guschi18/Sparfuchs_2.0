@@ -28,7 +28,7 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="mb-4 max-w-md shadow-md hover:shadow-lg transition-shadow">
+    <Card className="mb-4 max-w-md border border-black shadow-md hover:shadow-lg transition-shadow">
       <CardHeader className="pb-2">
         <h4 className="text-lg font-semibold text-gray-800 leading-tight">
           {product.name}

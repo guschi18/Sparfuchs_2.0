@@ -1,7 +1,8 @@
 Sparfuchs 2.0 Anpassungen: 
 
 - Ausgabewerte Text Standardisieren und Context Suche zwingend Anpassen. Siehe Butter, Fleisch-Angebote 
-- Rahmen um ProjectCards im Chat 
+- Rahmen um ProjectCards im Chat ✅
+- Tip Animation bei Antwort kreieren fest machen ✅
 - Chat Seite Animation beim öffnen ✅
 - Tip mit Enter und Shift und Enter ✅
 - Footer anpassen ✅
