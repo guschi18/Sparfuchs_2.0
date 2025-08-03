@@ -1,5 +1,7 @@
 'use client';
 
+import { motion, Variants } from 'framer-motion';
+
 interface MarketTogglesProps {
   selectedMarkets: string[];
   onMarketChange: (markets: string[]) => void;
@@ -26,17 +28,51 @@ export function MarketToggles({ selectedMarkets, onMarketChange }: MarketToggles
     }
   };
 
+  // Animation configurations
+  const containerAnimation: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemAnimation: Variants = {
+    hidden: { opacity: 0, y: -15, scale: 0.9 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring" as const,
+        damping: 20,
+        stiffness: 100
+      }
+    }
+  };
+
   return (
-    <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+    <motion.div 
+      className="flex flex-wrap justify-center gap-3 sm:gap-4"
+      initial="hidden"
+      animate="visible"
+      variants={containerAnimation}
+    >
       {AVAILABLE_MARKETS.map((market) => {
         const isSelected = selectedMarkets.includes(market.id);
         const isDisabled = selectedMarkets.length === 1 && isSelected;
         
         return (
-          <label
+          <motion.label
             key={market.id}
             className="flex items-center gap-3 cursor-pointer select-none group"
             style={{ opacity: isDisabled ? 0.6 : 1 }}
+            variants={itemAnimation}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <div className="relative">
               <input
@@ -78,9 +114,9 @@ export function MarketToggles({ selectedMarkets, onMarketChange }: MarketToggles
             >
               {market.name}
             </span>
-          </label>
+          </motion.label>
         );
       })}
-    </div>
+    </motion.div>
   );
 }

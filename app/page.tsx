@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MarketToggles } from './components/UI/MarketToggles';
 import { WelcomeMessages } from './components/UI/WelcomeMessages';
 import { CentralInput } from './components/UI/CentralInput';
+
 import { ChatMessage } from './components/Chat/ChatMessage';
 import { ChatInput } from './components/Chat/ChatInput';
 import { Header } from './components/Layout/Header';
@@ -24,6 +26,27 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Animation configurations
+  const springConfig = {
+    type: "spring" as const,
+    damping: 20,
+    stiffness: 100
+  };
+
+  const pageTransition = {
+    initial: { opacity: 0, scale: 0.95 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.95 },
+    transition: springConfig
+  };
+
+  const slideFromBottom = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+    transition: springConfig
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -163,11 +186,19 @@ export default function Home() {
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--sparfuchs-background)' }}>
       <Header />
       
-      {chatStarted ? (
-        <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
+      <AnimatePresence mode="wait">
+        {chatStarted ? (
+          <motion.div 
+            key="chat-interface"
+            className="flex-1 flex flex-col max-w-4xl mx-auto w-full"
+            {...pageTransition}
+          >
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <motion.div 
+            className="flex-1 overflow-y-auto p-4 space-y-4"
+            {...slideFromBottom}
+          >
             {messages.length === 0 ? (
               <div className="text-center py-8" style={{ color: 'var(--sparfuchs-text-light)' }}>
                 Stellen Sie eine Frage über Supermarkt-Angebote...
@@ -186,14 +217,22 @@ export default function Home() {
               </div>
             )}
             <div ref={messagesEndRef} />
-          </div>
+          </motion.div>
 
           {/* Input Area */}
-          <div 
+          <motion.div 
             className="border-t p-4"
             style={{ 
               borderColor: 'var(--sparfuchs-border)',
               background: 'var(--sparfuchs-background)'
+            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              type: "spring", 
+              damping: 20, 
+              stiffness: 100, 
+              delay: 0.2 
             }}
           >
             {/* Market Toggles - über der Chateingabe */}
@@ -209,9 +248,20 @@ export default function Home() {
               disabled={isLoading}
               placeholder="Wonach suchst du? (Obst, Gemüse, Preisvergleiche, etc...)"
             />
+            
             {/* Reset Button below input */}
-            <div className="mt-3 text-center">
-              <button
+            <motion.div 
+              className="mt-3 text-center"
+              initial={{ opacity: 0, y: 10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ 
+                type: "spring", 
+                damping: 25, 
+                stiffness: 100, 
+                delay: 0.4 
+              }}
+            >
+              <motion.button
                 onClick={handleResetChat}
                 className="px-4 py-2 text-sm rounded-md border inter-font-medium"
                 style={{
@@ -219,15 +269,25 @@ export default function Home() {
                   color: 'var(--sparfuchs-text)',
                   backgroundColor: 'var(--sparfuchs-surface)'
                 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  borderColor: 'var(--sparfuchs-primary)',
+                  color: 'var(--sparfuchs-primary)'
+                }}
+                whileTap={{ scale: 0.95 }}
               >
                 Chat zurücksetzen
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="max-w-2xl w-full px-6">
+              </motion.button>
+            </motion.div>
+          </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="welcome-screen"
+            className="flex-1 flex items-center justify-center"
+            {...pageTransition}
+          >
+          <div className="max-w-2xl w-full px-6 mt-4 sm:mt-6">
             {/* Market Toggles - above input */}
             <div className="mb-6">
               <MarketToggles 
@@ -248,8 +308,9 @@ export default function Home() {
               <WelcomeMessages onSuggestionClick={handleStartChat} />
             </div>
           </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <Footer />
     </div>

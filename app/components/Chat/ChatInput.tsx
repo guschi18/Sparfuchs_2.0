@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, KeyboardEvent } from 'react';
+import { InputTip } from '../UI/InputTip';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -46,7 +47,7 @@ export function ChatInput({
   };
 
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-0">
       <div className="relative">
         <textarea
           value={inputValue}
@@ -55,7 +56,7 @@ export function ChatInput({
           placeholder={placeholder}
           disabled={disabled}
           rows={3}
-          className="w-full p-3 sm:p-4 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 transition-all duration-200 chat-font"
+          className="w-full p-2 sm:p-3 rounded-xl border-2 resize-none focus:outline-none focus:ring-2 transition-all duration-200 chat-font"
           style={{
             borderColor: 'var(--sparfuchs-border)',
             background: 'var(--sparfuchs-surface)',
@@ -74,6 +75,13 @@ export function ChatInput({
         />
         
       </div>
+      
+      {/* Input Tip - über dem Senden Button */}
+      <InputTip 
+        text=""
+        variant="chat"
+        className="-mt-2"
+      />
       
       <div className="flex justify-center">
         <button 

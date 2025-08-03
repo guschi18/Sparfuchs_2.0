@@ -27,7 +27,7 @@ export function Header() {
           </motion.span>
           
           <h1 
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold inter-font-semibold"
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold inter-font-semibold"
             style={{ color: 'var(--sparfuchs-text)' }}
           >
             SparFuchs<span style={{ color: 'var(--sparfuchs-primary)' }}>.de</span>
@@ -35,7 +35,7 @@ export function Header() {
         </div>
         
         <p 
-          className="text-sm sm:text-base lg:text-lg inter-font"
+          className="text-base sm:text-lg lg:text-xl inter-font"
           style={{ color: 'var(--sparfuchs-text-light)' }}
         >
           Dein KI-Assistent für Supermarkt-Angebote

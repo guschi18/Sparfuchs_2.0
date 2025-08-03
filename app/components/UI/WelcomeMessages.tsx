@@ -1,5 +1,7 @@
 'use client';
 
+import { motion, Variants } from 'framer-motion';
+
 interface WelcomeMessagesProps {
   onSuggestionClick: (suggestion: string) => void;
 }
@@ -15,21 +17,66 @@ const WELCOME_SUGGESTIONS = [
 
 
 export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
+  // Animation configurations
+  const containerAnimation: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const cardAnimation: Variants = {
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring" as const,
+        damping: 20,
+        stiffness: 100
+      }
+    }
+  };
+
+  const titleAnimation: Variants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring" as const,
+        damping: 20,
+        stiffness: 100,
+        delay: 0.2
+      }
+    }
+  };
+
   return (
-    <div className="text-center space-y-6 sm:space-y-8">
+    <motion.div 
+      className="text-center space-y-6 sm:space-y-8"
+      initial="hidden"
+      animate="visible"
+      variants={containerAnimation}
+    >
       <div className="space-y-4">
-        <h3 
+        <motion.h3 
           className="text-lg sm:text-xl font-semibold flex items-center justify-center gap-2"
           style={{ color: 'var(--sparfuchs-text)' }}
+          variants={titleAnimation}
         >
           👋 Willkommen! Hier sind einige Vorschläge:
-        </h3>
+        </motion.h3>
       </div>
 
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {WELCOME_SUGGESTIONS.map((suggestion, index) => (
-            <button
+            <motion.button
               key={index}
               onClick={() => onSuggestionClick(suggestion)}
               className="text-left p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 text-xs sm:text-sm hover:shadow-md inter-font"
@@ -38,22 +85,21 @@ export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
                 borderColor: 'var(--sparfuchs-border)',
                 color: 'var(--sparfuchs-text)'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = 'var(--sparfuchs-primary)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
+              variants={cardAnimation}
+              whileHover={{ 
+                y: -2,
+                borderColor: 'var(--sparfuchs-primary)',
+                transition: { type: "spring" as const, damping: 25, stiffness: 400 }
               }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = 'var(--sparfuchs-border)';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
+              whileTap={{ scale: 0.98 }}
             >
               {suggestion}
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
 
-    </div>
+    </motion.div>
   );
 }
 
