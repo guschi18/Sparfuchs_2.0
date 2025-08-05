@@ -86,10 +86,8 @@ export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
                 color: 'var(--sparfuchs-text)'
               }}
               variants={cardAnimation}
-              whileHover={{ 
-                y: -2,
-                borderColor: 'var(--sparfuchs-primary)',
-                transition: { type: "spring" as const, damping: 25, stiffness: 400 }
+              whileHover={{                 
+                borderColor: 'var(--sparfuchs-primary)'
               }}
               whileTap={{ scale: 0.98 }}
             >

@@ -1,5 +1,6 @@
 1. Struktur Ausgabe siehe @Angebote 
-2. verschwommene bei den Vorlagen entfernen
-3. Browser Text anpassen 
-
-
+2. verschwommene bei den Vorlagen entfernen ✅
+3. Browser Text anpassen ✅
+4. Produkte mit Preis Null nicht berücksichtigen 
+5. Produktsuche verfeinern, siehe Cola  Zeile 302 Coca-Cola Fanta oder Sprite (teilw. koffeinhaltig 12x1l PET-Flasche),Getränke,Softdrinks,9.99,2025-06-16,2025-06-21,Edeka
+Katzenfutter / Katzennahrung 

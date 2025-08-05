@@ -38,7 +38,7 @@ export function Header() {
           className="text-base sm:text-lg lg:text-xl inter-font"
           style={{ color: 'var(--sparfuchs-text-light)' }}
         >
-          Dein KI-Assistent für Supermarkt-Angebote
+          Dein AI-Assistent für Supermarkt-Angebote
         </p>
       </div>
     </header>

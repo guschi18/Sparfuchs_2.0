@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   authors: [{ name: "SparFuchs Team" }],
   creator: "SparFuchs",
   openGraph: {
-    title: "SparFuchs.de - KI-Supermarkt Angebote",
+    title: "SparFuchs.de - AI-gestützte Supermarkt Angebote",
     description: "Intelligente Suche nach Supermarkt-Angeboten in Deutschland",
     type: "website",
     locale: "de_DE",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SparFuchs.de - KI-Supermarkt Angebote",
+    title: "SparFuchs.de - AI-gestützte Supermarkt Angebote",
     description: "Intelligente Suche nach Supermarkt-Angeboten in Deutschland",
   },
   robots: {
