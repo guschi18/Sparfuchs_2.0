@@ -37,12 +37,30 @@ WICHTIGE REGELN:
 8. KRITISCH: Gib Produkte IMMER in dieser exakten Markt-Reihenfolge aus: Lidl, Aldi, Edeka, Penny, Rewe
 9. NIEMALS eine andere Markt-Reihenfolge verwenden! Diese Reihenfolge ist ZWINGEND einzuhalten!
 
-SPEZIELLE FORMATIERUNG:
-10. Wenn du Produktinformationen in deiner Antwort erwähnst, verwende IMMER das spezielle PRODUCT_CARD Format
-11. Für jedes Produkt das du erwähnst, füge diese Zeile in deine Antwort ein:
+SPEZIELLE ANTWORT-STRUKTUR (ZWINGEND EINHALTEN):
+10. JEDE Antwort MUSS dieser exakten 3-Teil-Struktur folgen:
+    a) EINLEITUNGSTEXT: Persönliche Begrüßung und Erklärung der Suche
+    b) ÜBERGANGSTEXT: "Hier sind die aktuellen Angebote:"
+    c) PRODUCT_CARDS: Alle Product Cards nacheinander ohne individuelle Beschreibungen
+    d) ABSCHLUSSTEXT: Zusammenfassung oder zusätzliche Tipps
+
+11. PRODUCT_CARD Format für jedes Produkt:
     PRODUCT_CARD: {"name": "Produktname", "price": "X,XX", "market": "Marktname", "dateRange": "von bis", "id": "product_id"}
-12. Verwende normale Text-Erklärungen UND die PRODUCT_CARD-Zeilen zusammen
-13. Beispiel-Antwort: "Hier sind günstige Milchprodukte:\n\nPRODUCT_CARD: {"name": "Müller Müllermilch", "price": "0,69", "market": "Lidl", "dateRange": "2025-05-05 bis 2025-05-10", "id": "product_1"}\n\nDieses Angebot ist besonders günstig..."
+    
+12. WICHTIG: Product Cards stehen direkt nacheinander ohne zusätzliche Beschreibungstexte dazwischen
+
+13. VOLLSTÄNDIGES Beispiel der Antwort-Struktur (EXAKTE Vorlage):
+    "Hallo! Vielen Dank für deine Anfrage zu [Produkt]-Angeboten. Ich habe in den aktuellen Daten nach Produkten mit [Produkt] gesucht und die passenden Angebote für dich zusammengestellt.
+
+    Hier sind die aktuellen Angebote:
+
+    PRODUCT_CARD: {"name": "Produktname 1", "price": "X,XX", "market": "Lidl", "dateRange": "DD.MM.YYYY bis DD.MM.YYYY", "id": "product_id_1"}
+
+    PRODUCT_CARD: {"name": "Produktname 2", "price": "Y,YY", "market": "Aldi", "dateRange": "DD.MM.YYYY bis DD.MM.YYYY", "id": "product_id_2"}
+
+    PRODUCT_CARD: {"name": "Produktname 3", "price": "Z,ZZ", "market": "Edeka", "dateRange": "DD.MM.YYYY bis DD.MM.YYYY", "id": "product_id_3"}
+
+    Diese Angebote bieten dir gute Optionen für [allgemeine Zusammenfassung oder Tipp]."
 
 Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
   }
@@ -161,7 +179,22 @@ Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
         )
         .join('\n');
 
-      return `Aktuelle Angebote für "${query}" (${products.length} von ${totalCount} Produkten gefunden):\n\nWICHTIG: Die Produkte sind bereits in der korrekten Markt-Reihenfolge sortiert (Lidl, Aldi, Edeka, Penny, Rewe). BITTE DIESE REIHENFOLGE IN DEINER ANTWORT BEIBEHALTEN!\n\nVERWENDE FÜR JEDES PRODUKT DAS PRODUCT_CARD FORMAT IN DEINER ANTWORT:\n\n${productContext}`;
+      return `PRODUKTDATEN für "${query}" (${products.length} von ${totalCount} Produkten gefunden):
+
+🎯 KRITISCHE ANWEISUNGEN FÜR DEINE ANTWORT:
+1. BEGINNE mit persönlicher Begrüßung: "Hallo! Vielen Dank für deine Anfrage!"
+2. VERWENDE GENAU den Übergangstext: "Hier sind die aktuellen Angebote:"
+3. ZEIGE alle PRODUCT_CARDS direkt nacheinander OHNE individuelle Beschreibungen dazwischen
+4. BEHALTE die Markt-Reihenfolge bei: Lidl, Aldi, Edeka, Penny, Rewe
+5. SCHLIESSE mit einem allgemeinen hilfreichen Kommentar ab
+
+VERWENDE DIESE PRODUCT_CARDS IN DEINER ANTWORT (in genau dieser Reihenfolge):
+
+${productContext}
+
+🔥 WICHTIG: Keine individuellen Beschreibungen nach jeder Product Card - nur die Cards nacheinander und dann ein abschließender Kommentar!
+
+FOLGE EXAKT DEM VEREINFACHTEN BEISPIEL-TEMPLATE AUS DEN SYSTEM-ANWEISUNGEN!`;
     } catch (error) {
       console.error('Error generating product context:', error);
       return 'Fehler beim Laden der Produktdaten.';
