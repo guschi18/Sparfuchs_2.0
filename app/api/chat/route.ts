@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
               controller.enqueue(encoder.encode(data));
             }
           }
-
+          
           // Hallucination detection (ohne Warning-Ausgabe)
           const hallucinationCheck = HallucinationDetector.validateResponse(fullResponse);
 

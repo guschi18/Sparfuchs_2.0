@@ -14,6 +14,7 @@ export class ContextGenerator {
   private static readonly DEFAULT_CONFIG: ContextConfig = {
     selectedMarkets: ['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe'],
     maxProducts: 50,
+    useSemanticSearch: true,  // ✅ AKTIVIERT Intent-basierte Suche!
   };
 
   static generateSystemContext(config: ContextConfig = this.DEFAULT_CONFIG): string {
@@ -77,6 +78,17 @@ Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
           products = semanticResults.products;
           totalCount = semanticResults.totalAnalyzed;
           searchMethod = semanticResults.cacheHit ? 'Semantic (cached)' : 'Semantic (AI)';
+          
+          // Intent-Detection Info hinzufügen
+          if (semanticResults.intent) {
+            searchMethod += ` + Intent("${semanticResults.intent.primaryIntent}")`;
+            console.log(`🎯 [CONTEXT] Intent detected: "${semanticResults.intent.primaryIntent}" | Confidence: ${(semanticResults.intent.confidence * 100).toFixed(1)}%`);
+          }
+          
+          // Reduction Stats loggen
+          if (semanticResults.reductionStats && semanticResults.reductionStats.reductionPercent > 0) {
+            console.log(`📊 [PERFORMANCE] Products reduced: ${semanticResults.reductionStats.before} → ${semanticResults.reductionStats.after} (-${semanticResults.reductionStats.reductionPercent}%)`);
+          }
           
           // Semantic search completed
           
@@ -185,7 +197,9 @@ Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
     ingredients: string[] = [],
     options: { useSemanticSearch?: boolean } = {}
   ): Promise<{ systemMessage: string; contextMessage: string }> {
-    const systemMessage = this.generateSystemContext(config);
+    // WICHTIG: Intent-Detection für bessere System-Prompts
+    const intent = await this.detectUserIntent(userQuery);
+    const systemMessage = this.generateIntentAwareSystemContext(config, intent);
     
     // Semantische Suche aktivieren falls gewünscht
     const enhancedConfig = {
@@ -205,5 +219,87 @@ Du hast Zugang zu aktuellen Angebotsdaten von deutschen Supermärkten.`;
       systemMessage,
       contextMessage,
     };
+  }
+
+  /**
+   * NEUE METHODE: Intent-Detection für System-Context
+   */
+  private static async detectUserIntent(userQuery: string) {
+    // Dynamischer Import um Circular Dependencies zu vermeiden
+    const { intentDetection } = await import('./intent-detection');
+    return intentDetection.detectIntent(userQuery);
+  }
+
+  /**
+   * NEUE METHODE: Intent-bewusster System-Context
+   * Enthält spezifische Anweisungen basierend auf erkanntem Intent
+   */
+  private static generateIntentAwareSystemContext(config: ContextConfig, intent: any): string {
+    const baseSystemMessage = this.generateSystemContext(config);
+    
+    if (!intent) {
+      return baseSystemMessage;
+    }
+
+    // Intent-spezifische Anweisungen hinzufügen
+    const intentInstructions = this.generateIntentSpecificInstructions(intent);
+    
+    return `${baseSystemMessage}
+
+🎯 SPEZIELLE INTENT-ANWEISUNGEN für "${intent.primaryIntent}":
+${intentInstructions}
+
+KRITISCH: Diese Intent-Anweisungen haben HÖCHSTE PRIORITÄT und überschreiben allgemeine Regeln!`;
+  }
+
+  /**
+   * NEUE METHODE: Generiere Intent-spezifische Anweisungen
+   */
+  private static generateIntentSpecificInstructions(intent: any): string {
+    const intentInstructions: Record<string, string> = {
+      'butter': `
+🧈 BUTTER-SUCHE ERKANNT:
+- ✅ SUCHE NUR nach: Streichfett, Margarine, echter Butter zum Streichen
+- ❌ NIEMALS erwähnen: Buttergebäck, Kekse, Backwaren, süße Produkte
+- ❌ ABSOLUTES VERBOT: "BISCOTTO Dänisches Buttergebäck" oder ähnliche Backwaren
+- ✅ BEVORZUGE: Produkte mit "Butter" im Namen aus Milchprodukte-Kategorien
+- 🎯 PRIORITÄT: Streichfähige Butter-Produkte für Brot/Kochen`,
+
+      'milch': `
+🥛 MILCH-SUCHE ERKANNT:
+- ✅ SUCHE NUR nach: Trinkmilch, Vollmilch, Frischmilch, Landmilch zum Trinken
+- ❌ NIEMALS erwähnen: Joghurt, Quark, Desserts, Buttermilch-Drinks, Almighurt
+- ❌ ABSOLUTES VERBOT: Joghurt-Produkte als Milch-Alternative
+- ✅ BEVORZUGE: Reine Milch-Produkte in Flaschen/Kartons
+- 🎯 PRIORITÄT: Milch zum Trinken, nicht für Desserts`,
+
+      'fleisch': `
+🥩 FLEISCH-SUCHE ERKANNT:
+- ✅ SUCHE NUR nach: Hackfleisch, Schnitzel, Rindfleisch, Schweinefleisch, echtes Fleisch
+- ❌ NIEMALS erwähnen: Geschirrspülmittel, Putzmittel, Haushaltsartikel, Fisch
+- ❌ ABSOLUTES VERBOT: Reinigungsprodukte bei Fleisch-Anfragen
+- ✅ BEVORZUGE: Frisches Fleisch, Hackfleisch, Fleisch zum Kochen
+- 🎯 PRIORITÄT: Echte Fleischprodukte für Mahlzeiten`,
+
+      'käse': `
+🧀 KÄSE-SUCHE ERKANNT:
+- ✅ SUCHE NUR nach: Gouda, Emmental, Schnittkäse, echtem Käse
+- ❌ NIEMALS erwähnen: Käsekuchen, süße Desserts, Käse-Aromen
+- ✅ BEVORZUGE: Käse-Produkte zum Essen/Kochen
+- 🎯 PRIORITÄT: Echter Käse für herzhafte Gerichte`,
+
+      'obst': `
+🍎 OBST-SUCHE ERKANNT:
+- ✅ SUCHE NUR nach: Frisches Obst, Äpfel, Birnen, Bananen
+- ❌ NIEMALS erwähnen: Obstsäfte, Süßwaren, Obstmus, verarbeitete Produkte
+- ✅ BEVORZUGE: Frisches, unverarbeitetes Obst
+- 🎯 PRIORITÄT: Frische Früchte zum direkten Verzehr`
+    };
+
+    return intentInstructions[intent.primaryIntent] || `
+🎯 INTENT "${intent.primaryIntent}" ERKANNT:
+- ✅ FOKUS auf Kategorien: ${intent.includeCategories.join(', ')}
+- ❌ NIEMALS Produkte aus: ${intent.excludeCategories.join(', ')}
+- 🎯 PRIORITÄT: Produkte die genau zum Intent passen`;
   }
 }

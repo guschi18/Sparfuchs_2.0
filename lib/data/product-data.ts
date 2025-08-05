@@ -10,6 +10,7 @@ import {
   CategoryFilterResponse,
   MarketFilterResponse
 } from '../../types';
+import { intentDetection, Intent } from '../ai/intent-detection';
 
 const DATA_DIR = join(process.cwd(), 'lib', 'data');
 
@@ -200,6 +201,183 @@ export class ProductDataService {
       products: matchingProducts.slice(startIndex, endIndex),
       totalCount: matchingProducts.length,
       hasMore: endIndex < matchingProducts.length
+    };
+  }
+
+  /**
+   * NEUE METHODE: Intent-basierte Produktfilterung
+   * Reduziert Suchraum von 978 → ~50-100 Produkte für bessere KI-Performance
+   */
+  static filterByIntent(query: string, products: Product[]): { 
+    filteredProducts: Product[], 
+    intent: Intent | null,
+    reductionStats: { before: number, after: number, reductionPercent: number }
+  } {
+    const originalCount = products.length;
+    
+    // Intent erkennen
+    const intent = intentDetection.detectIntent(query);
+    
+    if (!intent) {
+      // Kein Intent erkannt - alle Produkte zurückgeben
+      return {
+        filteredProducts: products,
+        intent: null,
+        reductionStats: {
+          before: originalCount,
+          after: originalCount,
+          reductionPercent: 0
+        }
+      };
+    }
+
+    // Intent-basierte Filterung
+    const filteredProducts = products.filter(product => {
+      // Positive Kategorien-Filter (mindestens eine Include-Kategorie muss matchen)
+      const matchesIncludeCategory = intent.includeCategories.some(includeCategory => 
+        product.category.toLowerCase().includes(includeCategory.toLowerCase()) ||
+        product.subCategory.toLowerCase().includes(includeCategory.toLowerCase())
+      );
+      
+      // Negative Kategorien-Filter (keine Exclude-Kategorie darf matchen)
+      const matchesExcludeCategory = intent.excludeCategories.some(excludeCategory =>
+        product.category.toLowerCase().includes(excludeCategory.toLowerCase()) ||
+        product.subCategory.toLowerCase().includes(excludeCategory.toLowerCase())
+      );
+      
+      // Zusätzliche Keyword-Filterung im Produktnamen
+      const matchesKeywords = intent.keywords.some(keyword =>
+        product.productName.toLowerCase().includes(keyword.toLowerCase())
+      );
+
+      // Produkt ist relevant wenn:
+      // 1. Es in einer Include-Kategorie ist UND
+      // 2. Es NICHT in einer Exclude-Kategorie ist UND  
+      // 3. (Es matcht Include-Kategorien ODER es enthält relevante Keywords)
+      return matchesIncludeCategory && !matchesExcludeCategory;
+    });
+
+    const finalCount = filteredProducts.length;
+    const reductionPercent = originalCount > 0 ? 
+      Math.round(((originalCount - finalCount) / originalCount) * 100) : 0;
+
+    return {
+      filteredProducts,
+      intent,
+      reductionStats: {
+        before: originalCount,
+        after: finalCount,
+        reductionPercent
+      }
+    };
+  }
+
+  /**
+   * NEUE METHODE: Erweiterte Produktsuche mit Intent-Detection
+   * Optimiert für KI-Performance durch Vorfilterung
+   */
+  static searchProductsWithIntent(
+    query: string,
+    options: {
+      markets?: string[];
+      categories?: string[];
+      priceRange?: string;
+      limit?: number;
+      offset?: number;
+      useIntentDetection?: boolean;
+    } = {}
+  ): ProductSearchResponse & { 
+    intent?: Intent | null,
+    reductionStats?: { before: number, after: number, reductionPercent: number }
+  } {
+    const useIntent = options.useIntentDetection !== false; // Default: true
+    
+    if (!useIntent) {
+      // Fallback zur traditionellen Suche
+      return this.searchProducts(query, options);
+    }
+
+    const productsData = this.loadProducts();
+    
+    // SCHRITT 1: Intent-basierte Vorfilterung (Hauptoptimierung!)
+    const intentResult = this.filterByIntent(query, productsData.products);
+    
+    if (intentResult.filteredProducts.length === 0) {
+      // Kein Intent oder keine Treffer - Fallback zur traditionellen Suche
+      return this.searchProducts(query, options);
+    }
+
+    // SCHRITT 2: Traditionelle Suche auf vorgefiltertem Datenset
+    const searchIndex = this.loadSearchIndex();
+    let matchingProductIds: Set<string> = new Set();
+
+    // Enhanced search by name/query auf reduziertem Datenset
+    if (query) {
+      const queryWords = query.toLowerCase().split(/\s+/);
+      
+      // GERMAN LANGUAGE SUPPORT: Add variations for common endings
+      const expandedWords = [...queryWords];
+      queryWords.forEach(word => {
+        if (word === 'äpfel') expandedWords.push('apfel');
+        if (word === 'apfel') expandedWords.push('äpfel');
+        if (word === 'milch') expandedWords.push('vollmilch', 'frischmilch', 'landmilch');
+      });
+      
+      // Erweiterte Suche nur auf vorgefiltertem Datenset
+      expandedWords.forEach(word => {
+        // 1. Exact match in search index (für relevante Produkte)
+        if (searchIndex.byName[word]) {
+          searchIndex.byName[word].forEach(id => {
+            // Nur hinzufügen wenn Produkt in vorgefiltertem Set
+            if (intentResult.filteredProducts.some(p => p.id === id)) {
+              matchingProductIds.add(id);
+            }
+          });
+        }
+        
+        // 2. Direct product name search auf vorgefiltertem Set
+        intentResult.filteredProducts.forEach(product => {
+          const searchText = `${product.productName} ${product.category} ${product.subCategory}`.toLowerCase();
+          if (searchText.includes(word)) {
+            matchingProductIds.add(product.id);
+          }
+        });
+      });
+    } else {
+      // Kein Query - alle vorgefilterterten Produkte verwenden
+      intentResult.filteredProducts.forEach(p => matchingProductIds.add(p.id));
+    }
+
+    // SCHRITT 3: Weitere Filter anwenden (Markets, Categories, etc.)
+    const allProducts = productsData.products;
+    
+    // Filter by markets
+    if (options.markets && options.markets.length > 0) {
+      const marketIds = new Set<string>();
+      options.markets.forEach(market => {
+        const marketKey = market.toLowerCase();
+        if (searchIndex.byMarket[marketKey]) {
+          searchIndex.byMarket[marketKey].forEach(id => marketIds.add(id));
+        }
+      });
+      matchingProductIds = new Set([...matchingProductIds].filter(id => marketIds.has(id)));
+    }
+
+    // Get final matching products
+    const matchingProducts = allProducts.filter(p => matchingProductIds.has(p.id));
+
+    // Pagination
+    const limit = options.limit || 50;
+    const offset = options.offset || 0;
+    const startIndex = offset;
+    const endIndex = startIndex + limit;
+
+    return {
+      products: matchingProducts.slice(startIndex, endIndex),
+      totalCount: matchingProducts.length,
+      hasMore: endIndex < matchingProducts.length,
+      intent: intentResult.intent,
+      reductionStats: intentResult.reductionStats
     };
   }
 

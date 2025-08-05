@@ -9,9 +9,9 @@ interface WelcomeMessagesProps {
 const WELCOME_SUGGESTIONS = [
   '🥛 Welche Milch ist diese Woche günstig?',
   '🍞 Zeige mir Angebote für Brot',
-  '🍝 Zutaten für Spaghetti Bolognese',
+  '🍝 Welches Obst ist diese Woche günstig?',
   '🧈 Wo gibt es Butter im Angebot?',
-  '🥩 Aktuelle Fleisch-Angebote',
+  '🥩 Welches Fleisch ist diese Woche im Angebot?',
   '🥤 Wo ist Coca Cola im Angebot?'
 ];
 
