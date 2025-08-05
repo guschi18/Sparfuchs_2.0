@@ -1,6 +1,0 @@
-Sparfuchs 2.0 Anpassungen: 
-
-- Ausgabewerte Text Standardisieren und Context Suche zwingend Anpassen. Siehe Butter, Fleisch-Angebote 
-- Chat soll erst rendern und dann mit einem leichten delay erscheinen
-
-
