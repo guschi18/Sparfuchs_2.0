@@ -1,5 +1,5 @@
-1. Emojis ändern Vorschläge 
-2. Produkte mit Preis Null nicht berücksichtigen 
+1. Emojis ändern Vorschläge ✅
+2. Produkte mit Preis Null nicht berücksichtigen ✅
 3. Produktsuche verfeinern, siehe Cola  Zeile 302 Coca-Cola Fanta oder Sprite (teilw. koffeinhaltig 12x1l PET-Flasche),Getränke,Softdrinks,9.99,2025-06-16,2025-06-21,Edeka
 Katzenfutter / Katzennahrung 
 4. Anfrage defekt, wenn ich Chatinputfield wähle expliziet auch bei zweiter Anfrage. 

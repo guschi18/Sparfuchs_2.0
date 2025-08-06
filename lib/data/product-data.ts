@@ -21,6 +21,11 @@ let marketsCache: MarketsData | null = null;
 let searchIndexCache: SearchIndex | null = null;
 
 export class ProductDataService {
+  // Helper function to validate product prices (exclude exactly 0.00)
+  private static isValidPrice(price: number): boolean {
+    return price > 0;
+  }
+
   // Load and cache data
   private static loadProducts(): ProductsData {
     if (!productsCache) {
@@ -73,15 +78,15 @@ export class ProductDataService {
   // Public API methods
   static getAllProducts(limit?: number, offset?: number): ProductSearchResponse {
     const productsData = this.loadProducts();
-    const products = productsData.products;
+    const validProducts = productsData.products.filter(p => this.isValidPrice(p.price));
 
     const startIndex = offset || 0;
-    const endIndex = limit ? startIndex + limit : products.length;
+    const endIndex = limit ? startIndex + limit : validProducts.length;
     
     return {
-      products: products.slice(startIndex, endIndex),
-      totalCount: products.length,
-      hasMore: endIndex < products.length
+      products: validProducts.slice(startIndex, endIndex),
+      totalCount: validProducts.length,
+      hasMore: endIndex < validProducts.length
     };
   }
 
@@ -188,10 +193,10 @@ export class ProductDataService {
       matchingProductIds = new Set([...matchingProductIds].filter(id => priceIds.has(id)));
     }
 
-    // Convert IDs to products
+    // Convert IDs to products and filter out zero-price products
     const matchingProducts = [...matchingProductIds]
       .map(id => productsData.products.find(p => p.id === id))
-      .filter(p => p !== undefined) as Product[];
+      .filter(p => p !== undefined && this.isValidPrice(p.price)) as Product[];
 
     // Apply pagination
     const startIndex = options.offset || 0;
@@ -299,8 +304,9 @@ export class ProductDataService {
 
     const productsData = this.loadProducts();
     
-    // SCHRITT 1: Intent-basierte Vorfilterung (Hauptoptimierung!)
-    const intentResult = this.filterByIntent(query, productsData.products);
+    // SCHRITT 1: Intent-basierte Vorfilterung (Hauptoptimierung!) + Preisfilter
+    const validProducts = productsData.products.filter(p => this.isValidPrice(p.price));
+    const intentResult = this.filterByIntent(query, validProducts);
     
     if (intentResult.filteredProducts.length === 0) {
       // Kein Intent oder keine Treffer - Fallback zur traditionellen Suche
@@ -363,8 +369,8 @@ export class ProductDataService {
       matchingProductIds = new Set([...matchingProductIds].filter(id => marketIds.has(id)));
     }
 
-    // Get final matching products
-    const matchingProducts = allProducts.filter(p => matchingProductIds.has(p.id));
+    // Get final matching products and filter out zero-price products
+    const matchingProducts = allProducts.filter(p => matchingProductIds.has(p.id) && this.isValidPrice(p.price));
 
     // Pagination
     const limit = options.limit || 50;
@@ -384,7 +390,7 @@ export class ProductDataService {
   static getProductsByMarket(market: string, limit?: number): Product[] {
     const productsData = this.loadProducts();
     const products = productsData.products.filter(p => 
-      p.supermarket.toLowerCase() === market.toLowerCase()
+      p.supermarket.toLowerCase() === market.toLowerCase() && this.isValidPrice(p.price)
     );
     
     return limit ? products.slice(0, limit) : products;
@@ -393,7 +399,7 @@ export class ProductDataService {
   static getProductsByCategory(category: string, limit?: number): Product[] {
     const productsData = this.loadProducts();
     const products = productsData.products.filter(p => 
-      p.category.toLowerCase() === category.toLowerCase()
+      p.category.toLowerCase() === category.toLowerCase() && this.isValidPrice(p.price)
     );
     
     return limit ? products.slice(0, limit) : products;
@@ -429,9 +435,10 @@ export class ProductDataService {
     const productsData = this.loadProducts();
     const categoriesData = this.loadCategories();
     const marketsData = this.loadMarkets();
+    const validProducts = productsData.products.filter(p => this.isValidPrice(p.price));
     
     return {
-      totalProducts: productsData.totalCount,
+      totalProducts: validProducts.length,
       totalCategories: Object.keys(categoriesData.categories).length,
       totalMarkets: Object.keys(marketsData.markets).length,
       lastUpdated: productsData.lastUpdated
