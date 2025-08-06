@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     const stream = await client.createStreamingCompletion(messages, { 
       model: model || 'x-ai/grok-3-mini',
-      maxTokens: 8000,
+      maxTokens: 16000,
       temperature: 0.7,
       stream: true 
     });
