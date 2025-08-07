@@ -1,0 +1,773 @@
+{
+  "mappings": {
+    "lebensmittel": {
+      "patterns": [
+        "lebensmittel"
+      ],
+      "includeCategories": [
+        "Lebensmittel",
+        "Obst",
+        "Fleisch (Geflügel)",
+        "Milchprodukte (Butter)",
+        "Fleisch (Wurstwaren)",
+        "Fertiggerichte",
+        "Käse",
+        "Backwaren (Gebäck)",
+        "Speiseeis",
+        "Gemüse (Tomaten)",
+        "Gemüse",
+        "Fleisch (Rind)",
+        "Fleisch (Schnitzel)",
+        "Fisch",
+        "Milchprodukte (Frischkäse)",
+        "Backwaren (Baguette)",
+        "Milchprodukte (Käse)",
+        "Milchprodukte (Joghurt)",
+        "Desserts (Pudding)",
+        "Tiefkühl (Fisch)",
+        "Suppen & Brühen",
+        "Konserven (Gemüse)",
+        "Hülsenfrüchte (Konserve)",
+        "Milchprodukte",
+        "Backwaren (Kuchen)",
+        "Backwaren",
+        "Süßwaren",
+        "Schokolade",
+        "Nüsse",
+        "Snacks",
+        "Kaffee",
+        "Aufstrich/Konfitüre",
+        "Aufstrich/Senf",
+        "Feinkost",
+        "Aufstrich",
+        "Tiefkühlpizzen",
+        "Margarine",
+        "Saucen",
+        "Gemüsekonserven",
+        "Salate",
+        "Speiseöle",
+        "Kaffeeweißer",
+        "Joghurt-Drink",
+        "Antipasti",
+        "Pasta",
+        "Milchprodukte/Käse",
+        "Fleisch",
+        "Tiefkühlkost/Fertiggerichte",
+        "Kaffee/Tee",
+        "Wurst",
+        "Fleisch/Geflügel",
+        "Backwaren/Snacks",
+        "Saucen/Dips",
+        "Wurst/Schinken",
+        "Feinkost/Salate",
+        "Tiefkühlkost/Fisch",
+        "Tiefkühlkost/Pizza",
+        "Tiefkühlkost/Gemüse",
+        "Tiefkühlkost/Snacks",
+        "Tiefkühlkost/Eis",
+        "Butter/Margarine",
+        "Milchersatzprodukte",
+        "Milchprodukte/Desserts",
+        "Getränke/Milchprodukte",
+        "Teigwaren",
+        "Brotaufstrich",
+        "Backmischungen/Desserts",
+        "Cerealien",
+        "Konserven",
+        "Reis",
+        "Saucen/Fertiggerichte",
+        "Backzutaten",
+        "Kochzutaten",
+        "Tiefkühlkost/Obst",
+        "Essig/Öl",
+        "Süßwaren/Gebäck",
+        "Eier",
+        "Tiefkühlkost/Geflügel",
+        "Fischkonserven",
+        "Milchprodukte/Getränke",
+        "Getränke",
+        "Milchprodukte/Joghurt",
+        "Fleisch/Wurstwaren",
+        "Gemüse/Salat",
+        "Fleisch/Rind",
+        "Fleisch/Schwein",
+        "Fleisch/Fertiggerichte",
+        "Vegetarisch/Vegan",
+        "Milchprodukte/Butter",
+        "Desserts/Sportnahrung",
+        "Backwaren/Kuchen",
+        "Snacks/Salzgebäck",
+        "Pasta/Fertiggerichte",
+        "Fleisch/Wurst",
+        "Brotaufstrich/Feinkost",
+        "Brotaufstrich/Süßungsmittel",
+        "Tiefkühlkost",
+        "Snacks/Nüsse",
+        "Feinkostsalate",
+        "Fisch/Tiefkühl",
+        "Snacks/Gebäck",
+        "Kochzutaten/Fix-Produkte",
+        "Snacks/Chips",
+        "Kaffee/Tee/Kakao",
+        "Eis/Tiefkühl",
+        "Snacks/Wurstwaren",
+        "Frühstückscerealien",
+        "Pasta/Nudeln",
+        "Butter & Margarine",
+        "Fleisch & Geflügel",
+        "Fleisch & Schwein",
+        "Fleisch & Rind",
+        "Fleisch & Lamm",
+        "Wurstwaren",
+        "Vegan",
+        "Eis",
+        "Milchprodukte/Sahne",
+        "Süßungsmittel",
+        "Brot/Backwaren",
+        "Milchprodukte/Frischkäse",
+        "Konserven/Gemüse",
+        "Obstkonserven/Mus",
+        "Fisch/Meeresfrüchte",
+        "Feinkost/Dips",
+        "Saucen/Ketchup",
+        "Öl/Essig",
+        "Brotaufstriche",
+        "Kuchen/Gebäck",
+        "Backzutaten/Desserts",
+        "Saucen/Dressing",
+        "Zutaten/Konserven",
+        "Obst/Gemüse",
+        "Getränke/Tee",
+        "Müsli/Cerealien",
+        "Süßwaren/Eis",
+        "Saucen/Pesto",
+        "Würzmittel",
+        "Wurst/Aufschnitt",
+        "Snacks/Knabberartikel",
+        "Saucen/Dressings",
+        "Grundnahrungsmittel",
+        "Milchprodukte/Fette",
+        "Milchalternativen/Getränke",
+        "Kochzutaten/Saucen",
+        "Tiefkühlkost/Fleisch",
+        "Vegan/Vegetarisch",
+        "Kochzutaten/Öle",
+        "Süßwaren/Pralinen",
+        "Konserven/Wurstwaren",
+        "Backwaren/Teigwaren",
+        "Fertiggerichte/Snacks",
+        "Konserven/Feinkost",
+        "Süßwaren/Schokolade",
+        "Kaffee/Kapseln",
+        "Konserven/Hülsenfrüchte",
+        "Brotaufstrich/Konserven",
+        "Backzutaten/Saaten",
+        "Frühstück/Cerealien"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "geflügel",
+        "butter",
+        "wurstwaren",
+        "gebäck",
+        "tomaten",
+        "rind",
+        "schnitzel",
+        "frischkäse",
+        "baguette",
+        "käse",
+        "joghurt",
+        "pudding",
+        "fisch",
+        "gemüse",
+        "konserve",
+        "kuchen",
+        "aufstrich",
+        "konfitüre",
+        "senf",
+        "milchprodukte",
+        "tiefkühlkost",
+        "fertiggerichte",
+        "kaffee",
+        "tee",
+        "fleisch",
+        "backwaren",
+        "snacks",
+        "saucen",
+        "dips",
+        "wurst",
+        "schinken",
+        "feinkost",
+        "salate",
+        "pizza",
+        "eis",
+        "margarine",
+        "desserts",
+        "getränke",
+        "backmischungen",
+        "obst",
+        "essig",
+        "öl",
+        "süßwaren",
+        "salat",
+        "schwein",
+        "vegetarisch",
+        "vegan",
+        "sportnahrung",
+        "salzgebäck",
+        "pasta",
+        "brotaufstrich",
+        "süßungsmittel",
+        "nüsse",
+        "tiefkühl",
+        "kochzutaten",
+        "fix-produkte",
+        "chips",
+        "kakao",
+        "nudeln",
+        "sahne",
+        "brot",
+        "konserven",
+        "obstkonserven",
+        "mus",
+        "meeresfrüchte",
+        "ketchup",
+        "backzutaten",
+        "dressing",
+        "zutaten",
+        "müsli",
+        "cerealien",
+        "pesto",
+        "aufschnitt",
+        "knabberartikel",
+        "dressings",
+        "fette",
+        "milchalternativen",
+        "öle",
+        "pralinen",
+        "teigwaren",
+        "schokolade",
+        "kapseln",
+        "hülsenfrüchte",
+        "saaten",
+        "frühstück"
+      ],
+      "priority": 13
+    },
+    "fleisch": {
+      "patterns": [
+        "fleisch",
+        "meat",
+        "hackfleisch",
+        "rindfleisch",
+        "schweinefleisch"
+      ],
+      "includeCategories": [
+        "Fleisch",
+        "Rindfleisch",
+        "Geflügel",
+        "Lamm",
+        "Schinken",
+        "Aufschnitt",
+        "Wurst"
+      ],
+      "excludeCategories": [
+        "Fisch",
+        "Meeresfrüchte",
+        "Haushaltsartikel"
+      ],
+      "keywords": [],
+      "priority": 8
+    },
+    "getraenke": {
+      "patterns": [
+        "getränke",
+        "drinks",
+        "beverages",
+        "getränken",
+        "getraenke"
+      ],
+      "includeCategories": [
+        "Getränke",
+        "Spirituosen",
+        "Limonaden",
+        "Mineralwasser",
+        "Fruchtsäfte/Sirupe",
+        "Eistee",
+        "Fruchtsäfte",
+        "Bier",
+        "Energy Drinks",
+        "Wein (Rosé)",
+        "Wein (Rotwein)",
+        "Cidre/Apfelwein",
+        "Liköre/Cognac",
+        "Aperitifs",
+        "Energydrinks",
+        "Bittergetränke",
+        "Säfte",
+        "Sekt",
+        "Wein",
+        "Sekt/Prosecco",
+        "Saft",
+        "Alkoholische Getränke",
+        "Tee",
+        "Softdrinks",
+        "Wasser",
+        "Alkoholfreie Getränke",
+        "Säfte/Shots",
+        "Alkoholische Getränke/Spirituosen",
+        "Alkoholische Getränke/Cider",
+        "Alkoholische Getränke/Bier",
+        "Säfte/Smoothies",
+        "Kaffee/Tee",
+        "Saft/Fruchtsaftgetränke",
+        "Sportgetränke",
+        "Milchprodukte/Getränke",
+        "Bier/Biermischgetränke",
+        "Spirituosen/Aperitif",
+        "Spirituosen/Rum",
+        "Spirituosen/Wodka",
+        "Biermischgetränke",
+        "Saft/Nektar",
+        "Wasser/Softdrinks",
+        "Spirituosen/Likör",
+        "Alkopops",
+        "Spirituosen/Whisky"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "fruchtsäfte",
+        "sirupe",
+        "rosé",
+        "rotwein",
+        "cidre",
+        "apfelwein",
+        "liköre",
+        "cognac",
+        "sekt",
+        "prosecco",
+        "säfte",
+        "shots",
+        "alkoholische getränke",
+        "spirituosen",
+        "cider",
+        "bier",
+        "smoothies",
+        "kaffee",
+        "tee",
+        "saft",
+        "fruchtsaftgetränke",
+        "milchprodukte",
+        "getränke",
+        "biermischgetränke",
+        "aperitif",
+        "rum",
+        "wodka",
+        "nektar",
+        "wasser",
+        "softdrinks",
+        "likör",
+        "whisky"
+      ],
+      "priority": 13
+    },
+    "garten": {
+      "patterns": [
+        "garten"
+      ],
+      "includeCategories": [
+        "Garten",
+        "Pflanzen",
+        "Blumen",
+        "Erde"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "haushalt__hygiene": {
+      "patterns": [
+        "haushalt & hygiene",
+        "haushalt & hygienen"
+      ],
+      "includeCategories": [
+        "Haushalt & Hygiene",
+        "Raum-/Textilerfrischer",
+        "Lufterfrischer",
+        "Waschmittel",
+        "Spülmittel",
+        "Reiniger"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "raum-",
+        "textilerfrischer"
+      ],
+      "priority": 8
+    },
+    "frische_lebensmittel": {
+      "patterns": [
+        "frische lebensmittel"
+      ],
+      "includeCategories": [
+        "Frische Lebensmittel",
+        "Gemüse",
+        "Obst",
+        "Salat/Gemüse"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "salat",
+        "gemüse"
+      ],
+      "priority": 7
+    },
+    "garten__pflanzen": {
+      "patterns": [
+        "garten & pflanzen"
+      ],
+      "includeCategories": [
+        "Garten & Pflanzen",
+        "Zierpflanzen",
+        "Zimmerpflanzen",
+        "Stauden/Gartenpflanzen",
+        "Gartenpflanzen"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "stauden",
+        "gartenpflanzen"
+      ],
+      "priority": 7
+    },
+    "backwaren": {
+      "patterns": [
+        "brot",
+        "brötchen",
+        "backwaren",
+        "bread"
+      ],
+      "includeCategories": [
+        "Backwaren",
+        "Brot",
+        "Brötchen",
+        "Blätterteig"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "fisch": {
+      "patterns": [
+        "fisch"
+      ],
+      "includeCategories": [
+        "Fisch",
+        "Lachs",
+        "Fischfilets",
+        "Fischkonserven"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "fertiggerichte": {
+      "patterns": [
+        "fertiggerichte",
+        "fertiggerichten"
+      ],
+      "includeCategories": [
+        "Fertiggerichte",
+        "Fertiggericht"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "grills": {
+      "patterns": [
+        "grills",
+        "grill"
+      ],
+      "includeCategories": [
+        "Grills",
+        "Gasgrills"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "blumen__pflanzen": {
+      "patterns": [
+        "blumen & pflanzen"
+      ],
+      "includeCategories": [
+        "Blumen & Pflanzen",
+        "Pflanzen",
+        "Schnittblumen",
+        "Topfpflanzen"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "drogerie": {
+      "patterns": [
+        "drogerie",
+        "körperpflege",
+        "hygiene",
+        "drogerien"
+      ],
+      "includeCategories": [
+        "Drogerie",
+        "Hygieneartikel",
+        "Zahnpflege",
+        "Körperpflege",
+        "Waschmittel",
+        "Haarpflege",
+        "Reinigungsmittel",
+        "Sonnenpflege",
+        "Babybedarf",
+        "Haushaltswaren",
+        "Mundpflege",
+        "Haushalt",
+        "Baby/Windeln",
+        "Körperpflege/Duschgel",
+        "Körperpflege/Deo",
+        "Haarpflege/Shampoo",
+        "Gesichtspflege"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "baby",
+        "windeln",
+        "körperpflege",
+        "duschgel",
+        "deo",
+        "haarpflege",
+        "shampoo"
+      ],
+      "priority": 9
+    },
+    "tierbedarf": {
+      "patterns": [
+        "tierfutter",
+        "futter",
+        "tiernahrung",
+        "petfood",
+        "tierbedarf"
+      ],
+      "includeCategories": [
+        "Tierbedarf",
+        "Katzenfutter",
+        "Hundefutter",
+        "Hundenahrung/Snacks",
+        "Hundenahrung/Trockenfutter",
+        "Katzennahrung/Nassfutter",
+        "Katzennahrung/Trockenfutter",
+        "Hundenahrung/Nassfutter"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "hundenahrung",
+        "snacks",
+        "trockenfutter",
+        "katzennahrung",
+        "nassfutter"
+      ],
+      "priority": 11
+    },
+    "katzenfutter": {
+      "patterns": [
+        "katzenfutter",
+        "katzennahrung",
+        "katzenfresste",
+        "cat food"
+      ],
+      "includeCategories": [
+        "Katzenfutter",
+        "Katzennahrung/Nassfutter",
+        "Katzennahrung/Trockenfutter"
+      ],
+      "excludeCategories": [
+        "Hundefutter",
+        "Hundenahrung"
+      ],
+      "keywords": [
+        "katze",
+        "kitten",
+        "nassfutter",
+        "trockenfutter"
+      ],
+      "priority": 10
+    },
+    "hundefutter": {
+      "patterns": [
+        "hundefutter",
+        "hundenahrung",
+        "hundefresste",
+        "dog food"
+      ],
+      "includeCategories": [
+        "Hundefutter",
+        "Hundenahrung/Snacks",
+        "Hundenahrung/Trockenfutter",
+        "Hundenahrung/Nassfutter"
+      ],
+      "excludeCategories": [
+        "Katzenfutter",
+        "Katzennahrung"
+      ],
+      "keywords": [
+        "hund",
+        "welpe",
+        "nassfutter",
+        "trockenfutter"
+      ],
+      "priority": 10
+    },
+    "haushalt": {
+      "patterns": [
+        "haushalt",
+        "reiniger",
+        "waschmittel"
+      ],
+      "includeCategories": [
+        "Haushalt",
+        "Sonstiges",
+        "Wasserfilter",
+        "Reinigungsmittel",
+        "Waschmittel/Zusätze",
+        "Papierwaren",
+        "Hygieneartikel",
+        "Waschmittel/Reiniger",
+        "Küchenutensilien",
+        "Küchenpapier",
+        "Spülmittel/Waschmittel",
+        "Waschmittel",
+        "Toilettenpapier"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "waschmittel",
+        "zusätze",
+        "reiniger",
+        "spülmittel"
+      ],
+      "priority": 8
+    },
+    "nonfood": {
+      "patterns": [
+        "non-food"
+      ],
+      "includeCategories": [
+        "Non-Food",
+        "Freizeit/Haushalt",
+        "Haushaltsgeräte"
+      ],
+      "excludeCategories": [],
+      "keywords": [
+        "freizeit",
+        "haushalt"
+      ],
+      "priority": 7
+    },
+    "gartenpflanzen": {
+      "patterns": [
+        "garten/pflanzen"
+      ],
+      "includeCategories": [
+        "Garten/Pflanzen",
+        "Pflanzen"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "pflanzenblumen": {
+      "patterns": [
+        "pflanzen/blumen"
+      ],
+      "includeCategories": [
+        "Pflanzen/Blumen",
+        "Pflanzen",
+        "Blumen"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "pflanzen": {
+      "patterns": [
+        "pflanzen",
+        "blumen",
+        "garten",
+        "plants"
+      ],
+      "includeCategories": [
+        "Pflanzen",
+        "Zierpflanzen",
+        "Schnittblumen"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "fleischwaren": {
+      "patterns": [
+        "fleischwaren"
+      ],
+      "includeCategories": [
+        "Fleischwaren",
+        "Geflügel",
+        "Rind",
+        "Kalb",
+        "Schwein",
+        "Wurstwaren"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 8
+    },
+    "haushaltgarten": {
+      "patterns": [
+        "haushalt/garten"
+      ],
+      "includeCategories": [
+        "Haushalt/Garten",
+        "Grillen"
+      ],
+      "excludeCategories": [],
+      "keywords": [],
+      "priority": 7
+    },
+    "butter_spezial": {
+      "patterns": [
+        "butter",
+        "streichfett",
+        "butterfett"
+      ],
+      "includeCategories": [
+        "Milchprodukte (Butter)",
+        "Butter/Margarine",
+        "Milchprodukte/Butter",
+        "Butter & Margarine"
+      ],
+      "excludeCategories": [
+        "Backwaren",
+        "Gebäck",
+        "Süßwaren",
+        "Desserts"
+      ],
+      "keywords": [
+        "streichfett",
+        "margarine",
+        "butterfett",
+        "kräuterbutter"
+      ],
+      "priority": 10
+    }
+  },
+  "generatedAt": "2025-08-06T17:19:10.226Z",
+  "sourceVersion": "categories.json"
+}

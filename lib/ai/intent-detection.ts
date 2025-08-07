@@ -3,7 +3,12 @@
  * 
  * Erkennt Benutzer-Intent und mappt auf relevante Produktkategorien
  * für präzisere KI-Suche ohne zusätzliche Token-Kosten.
+ * 
+ * UPGRADED: Jetzt mit automatisch generierten Intent-Mappings!
  */
+
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export interface Intent {
   primaryIntent: string;
@@ -19,6 +24,12 @@ export interface IntentMapping {
   excludeCategories: string[];
   keywords: string[];
   priority: number;
+}
+
+interface IntentMappingsData {
+  mappings: Record<string, IntentMapping>;
+  generatedAt: string;
+  sourceVersion: string;
 }
 
 /**
@@ -127,12 +138,49 @@ const INTENT_MAPPINGS: Record<string, IntentMapping> = {
 
 export class IntentDetectionService {
   private static instance: IntentDetectionService;
+  private dynamicMappings: Record<string, IntentMapping> | null = null;
 
   static getInstance(): IntentDetectionService {
     if (!IntentDetectionService.instance) {
       IntentDetectionService.instance = new IntentDetectionService();
     }
     return IntentDetectionService.instance;
+  }
+
+  /**
+   * Lädt dynamische Intent-Mappings (generiert aus categories.json)
+   */
+  private loadDynamicMappings(): Record<string, IntentMapping> {
+    if (this.dynamicMappings) {
+      return this.dynamicMappings;
+    }
+
+    try {
+      const mappingsPath = join(process.cwd(), 'lib', 'data', 'intent-mappings.json');
+      const fileContent = readFileSync(mappingsPath, 'utf-8');
+      const mappingsData: IntentMappingsData = JSON.parse(fileContent);
+      
+      this.dynamicMappings = mappingsData.mappings;
+      console.log(`🎯 Loaded ${Object.keys(this.dynamicMappings).length} dynamic intent mappings`);
+      
+      return this.dynamicMappings;
+    } catch (error) {
+      console.warn('⚠️ Dynamic intent mappings not found, using static fallback');
+      return {};
+    }
+  }
+
+  /**
+   * Kombiniert statische und dynamische Intent-Mappings
+   */
+  private getAllMappings(): Record<string, IntentMapping> {
+    const dynamicMappings = this.loadDynamicMappings();
+    
+    // Dynamische Mappings haben Vorrang, statische als Fallback
+    return {
+      ...INTENT_MAPPINGS, // Statische Basis-Mappings
+      ...dynamicMappings  // Dynamische Mappings überschreiben statische
+    };
   }
 
   /**
@@ -146,8 +194,9 @@ export class IntentDetectionService {
     const normalizedQuery = query.toLowerCase().trim();
     let bestMatch: { intent: string; mapping: IntentMapping; confidence: number } | null = null;
 
-    // Durchsuche alle Intent-Mappings
-    for (const [intentKey, mapping] of Object.entries(INTENT_MAPPINGS)) {
+    // Durchsuche alle Intent-Mappings (statische + dynamische)
+    const allMappings = this.getAllMappings();
+    for (const [intentKey, mapping] of Object.entries(allMappings)) {
       const confidence = this.calculateConfidence(normalizedQuery, mapping);
       
       if (confidence > 0 && (!bestMatch || confidence > bestMatch.confidence)) {
@@ -215,21 +264,53 @@ export class IntentDetectionService {
    * Debug-Methode: Alle verfügbaren Intents anzeigen
    */
   getAvailableIntents(): string[] {
-    return Object.keys(INTENT_MAPPINGS);
+    const allMappings = this.getAllMappings();
+    return Object.keys(allMappings);
   }
 
   /**
    * Debug-Methode: Intent-Details abrufen
    */
   getIntentDetails(intentKey: string): IntentMapping | null {
-    return INTENT_MAPPINGS[intentKey] || null;
+    const allMappings = this.getAllMappings();
+    return allMappings[intentKey] || null;
+  }
+
+  /**
+   * Debug-Methode: Statistiken über Intent-Mappings
+   */
+  getIntentStats(): { static: number; dynamic: number; total: number; lastGenerated?: string } {
+    const staticCount = Object.keys(INTENT_MAPPINGS).length;
+    const dynamicMappings = this.loadDynamicMappings();
+    const dynamicCount = Object.keys(dynamicMappings).length;
+    
+    return {
+      static: staticCount,
+      dynamic: dynamicCount,
+      total: staticCount + dynamicCount,
+      lastGenerated: this.dynamicMappings ? 'loaded' : 'not available'
+    };
   }
 
   /**
    * Neue Intent-Mappings zur Laufzeit hinzufügen
    */
   addIntentMapping(intentKey: string, mapping: IntentMapping): void {
-    INTENT_MAPPINGS[intentKey] = mapping;
+    // Füge zu den dynamischen Mappings hinzu (falls geladen)
+    if (this.dynamicMappings) {
+      this.dynamicMappings[intentKey] = mapping;
+    } else {
+      // Fallback: zu statischen Mappings hinzufügen
+      INTENT_MAPPINGS[intentKey] = mapping;
+    }
+  }
+
+  /**
+   * Cache für dynamische Mappings leeren (z.B. nach Update)
+   */
+  clearDynamicCache(): void {
+    this.dynamicMappings = null;
+    console.log('🔄 Dynamic intent mappings cache cleared');
   }
 }
 

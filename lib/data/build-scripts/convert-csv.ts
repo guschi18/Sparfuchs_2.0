@@ -9,6 +9,7 @@ import {
   MarketsData, 
   SearchIndex 
 } from '../../../types';
+import { generateIntentMappingsFromCategories } from './generate-intent-mappings';
 
 const DATA_DIR = join(process.cwd(), 'data');
 const OUTPUT_DIR = join(process.cwd(), 'lib', 'data');
@@ -29,6 +30,9 @@ export class CSVConverter {
     await this.generateCategoriesJSON();
     await this.generateMarketsJSON();
     await this.generateSearchIndex();
+    
+    // Generate intent mappings from categories (NEW!)
+    await this.generateIntentMappings();
     
     console.log('✅ CSV conversion completed successfully!');
   }
@@ -213,6 +217,21 @@ export class CSVConverter {
     if (price < 10) return '5-10';
     if (price < 20) return '10-20';
     return '20+';
+  }
+
+  /**
+   * Generate intent mappings from categories (NEW!)
+   */
+  private async generateIntentMappings(): Promise<void> {
+    try {
+      const categoriesPath = join(OUTPUT_DIR, 'categories.json');
+      const intentMappingsPath = join(OUTPUT_DIR, 'intent-mappings.json');
+      
+      await generateIntentMappingsFromCategories(categoriesPath, intentMappingsPath);
+    } catch (error) {
+      console.error('❌ Failed to generate intent mappings:', error);
+      // Non-fatal error - continue with build
+    }
   }
 }
 
