@@ -47,13 +47,6 @@ export const SORT_OPTIONS = [
   { label: 'Supermarkt', value: 'market_asc' },
 ] as const;
 
-export const API_ENDPOINTS = {
-  DATA: '/api/data',
-  OFFERS: '/api/offers',
-  META: '/api/meta',
-  CHAT: '/api/chat',
-} as const;
-
 export const SEARCH_LIMITS = {
   DEFAULT: 20,
   MAX: 100,
@@ -65,25 +58,6 @@ export const CHAT_ROLES = {
   ASSISTANT: 'assistant',
   SYSTEM: 'system',
 } as const;
-
-export const OPENROUTER_MODELS = [
-  'x-ai/grok-3-mini',
-  'x-ai/grok-2-1212',
-  'anthropic/claude-3-5-sonnet-20241022',
-  'openai/gpt-4o-mini',
-  'openai/gpt-4o',
-] as const;
-
-export const DEFAULT_SYSTEM_PROMPT = `Du bist SparFuchs, ein KI-Assistent für deutsche Supermarkt-Angebote. 
-Du hilfst Nutzern dabei, die besten Angebote in deutschen Supermärkten (Aldi, Lidl, Rewe, Edeka, Penny) zu finden.
-
-Deine Aufgaben:
-- Produktsuche basierend auf natürlichen Anfragen
-- Preisvergleiche zwischen verschiedenen Märkten
-- Rezeptvorschläge mit passenden Angeboten
-- Einkaufstipps und Spartipps
-
-Antworte immer auf Deutsch, sei hilfsbereit und konkret. Wenn du Produkte empfiehlst, nenne immer den Preis und den Supermarkt.`;
 
 export const ERROR_MESSAGES = {
   GENERAL: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',

@@ -2,217 +2,304 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Standard Workflow
+**<PRIORITY NUMBER 1>** Change as little code as necessary!
 
+Work carefully with internal thinking and revision steps (do not output).
+Output ONLY the following artifacts:
+
+1) BRIEF PLAN (max. 5 bullet points)
+2) SOLUTION (complete code)
+3) TESTS (representative cases incl. edge cases; as list or unit tests)
+4) SELF-CHECK (checklist: correctness, edge cases, complexity, readability, security)
+5) RISKS & TODOs (brief)
+6) SUMMARY (max. 5 sentences)
+
+Perform at least two internal rounds of Solve→Critique→Improve.
+If uncertainty exists or data is missing: state explicitly and name what is needed.
+Do not output extensive thought processes; only the artifacts.
+Keep as concise as necessary while explaining everything compactly.
+
+## Standard Workflow
 1. First think through the problem, read the codebase for relevant files, and write a plan to projectplan.md.
 2. The plan should have a list of todo items that you can check off as you complete them
-3. Before you begin working, check in with me and i will verify the plan.
+3. Before you begin working, check in with me and I will verify the plan.
 4. Then, begin working on the todo items, marking them as complete as you go.
-5. Please every step of the way just gibe me a high level explanation of what changes you made
-6. Make ery task and code change you do as simple as possible. We want to avoid making any massive or complex changes. Every change should impact as little code as possible. Everything is about simplicity.
-7. Wichtige Erkenntnis für die Zukunft: Bei Tailwind CSS + CSS-Variablen immer das korrekte Format verwenden:
-   ❌ RGB: 255 255 255
-   ✅ HSL: 0 0% 100%
+5. Please every step of the way just give me a high level explanation of what changes you made
+6. Make every task and code change you do as simple as possible. We want to avoid making any massive or complex changes. Every change should impact as little code as possible. Everything is about simplicity.
+7. Finally, add a review section to the projectplan.md file with a summary of the changes you made and any other relevant information.
 
-## Debugging
-
-1. Immer echte API-Responses analysieren, nicht auf Annahmen vertrauen.
-2. Bei unklaren API-Verhaltensweisen sofort umfassendes Logging implementieren für Step by Step Fehlersuche.
-3. Wenn etwas funktioniert, erstmal verstehen, wARUM es funktioniert, bevor man es "verbessert".
-4. Komplexe Systeme erfordern strukturierte, schrittweise Debugging-Approaches.
-5. Echte User-Journeys testen, nicht nur theoretische Szenarien.
-6. Analysiere Ergebnisse systematisch.               │     
-7. Entferne Debug-Code nach der Lösung.  
+## <prompt-optimization> XML-Tag Usage
+- **<context>**: Use XML-like tags in prompts for better structure recognition
+- **<examples>**: `<new-feature>`, `<bug-fix>`, `<analysis>`, `<research>`, `<ui-update>`, `<data-processing>`
+- **<benefit>**: Claude understands structured prompts better and works more efficiently
+- **<usage>**: Categorize requests with tags for more precise responses
 
 ## Development Commands
+All commands run from project root directory:
+- `npm run dev` - Development server (default port 3000)
+- `npm run build` - Production build
+- `npm run lint` - Code quality check
+- `npm run test` - Run Jest tests
+- `npm run test:watch` - Jest in watch mode
+- `npm run test:coverage` - Test coverage report
+- `npm run generate:docs` - Generate documentation
+- `npm run analyze:docs` - Generate analyzed documentation
 
-```bash
-# Core development
-npm run dev                    # Start development server (Next.js)
-npm run build                  # Production build (includes data processing)
-npm run start                  # Start production server
-npm run lint                   # ESLint code checking
+## Architecture Overview - Details in `docs/` folder
 
-# Testing
-npm test                       # Run Jest tests
-npm run test:watch            # Run tests in watch mode
-npm run test:coverage         # Generate coverage report
+### Technology Stack
+- **Framework**: Next.js 14.2.18 with App Router
+- **Language**: TypeScript (strict mode, target: ES2017)
+- **Styling**: Tailwind CSS v3.3.6
+- **UI Library**: HeroUI v2.6.14 (HeroUI React components)
+- **Animations**: Framer Motion v12.23.12
+- **Data Processing**: CSV-Parse v6.1.0
+- **Testing**: Jest v29.7.0 with React Testing Library
+- **Build Analysis**: Next.js Bundle Analyzer
 
-# Data management
-npm run data:build            # Convert CSV → JSON (required before build)
-npm run data:update           # Update data (alias for data:build)
-npm run data:validate         # Validate data integrity
-
-# Performance & Analysis
-npm run analyze               # Bundle analyzer
-npm run build:analyze         # Build with analysis
-npm run cache:warm            # Warm production cache
-npm run cache:test            # Test cache functionality
-npm run production:build      # Full production build with optimizations
+### Project Structure & Documentation Map
+```
+/
+├── app/              # Next.js App Router pages & components
+│   ├── components/   # React Components
+│   ├── page.tsx      # Main chat interface page
+│   ├── layout.tsx    # Root layout with metadata
+│   └── globals.css   # Global styles & CSS variables
+├── lib/              # Services & Utilities
+│   ├── hooks/        # Custom React Hooks
+│   └── utils/        # Helper functions & constants
+├── types/            # TypeScript Type Definitions
+├── scripts/          # Build & documentation scripts
+├── docs/             # Comprehensive documentation
+├── Angebote/         # Offers data directory
+├── Prompts/          # AI prompts & optimization guides
+└── public/           # Static assets
 ```
 
-## Architecture Overview
+## 📋 Documentation Reference Map
 
-SparFuchs 2.0 is a Next.js 15 migration of a German supermarket deals AI assistant. The application uses OpenRouter (not OpenAI directly) for AI services and processes supermarket data from CSV to optimized JSON structures.
+### 🏠 **App Components** - Details in `docs/app/components/`
 
-### Core Data Flow
-1. **CSV → JSON Build Process**: Original `data/Angebote.csv` is processed at build time into optimized JSON files
-2. **In-Memory Caching**: `ProductDataService` provides cached access to product data for serverless functions
-3. **AI Context Generation**: `ContextGenerator` creates market-specific prompts for OpenRouter API
-4. **Streaming Chat**: Real-time responses via Server-Sent Events with hallucination detection
+**Chat Components** (`docs/app/components/Chat/`):
+- Main Container: `ChatContainer_documentation.md`
+- User Input: `ChatInput_documentation.md`
+- Message Display: `ChatMessage_documentation.md`
+- Product Cards: `ProductCard_documentation.md`
 
-### Key Technical Constraints
-- **CRITICAL**: Uses OpenRouter API exclusively (not OpenAI directly)
-- **Market Order**: Products MUST be displayed in exact order: Lidl, Aldi, Edeka, Penny, Rewe
-- **German Language**: All UI and responses must be in German
-- **Vercel Optimized**: 60-second timeout limits, serverless-friendly caching
+**Error Handling** (`docs/app/components/Error/`):
+- Chat Error Boundary: `ChatErrorBoundary_documentation.md`
+- General Error Boundary: `ErrorBoundary_documentation.md`
+- UI Error Boundary: `UIErrorBoundary_documentation.md`
 
-## Project Structure
+**Layout Components** (`docs/app/components/Layout/`):
+- Header: `Header_documentation.md`
+- Footer: `Footer_documentation.md`
 
-```
-app/
-├── api/                          # Next.js API routes
-│   ├── chat/route.ts            # 🧠 Grok-3 streaming chat with dual-field parsing
-│   ├── data/route.ts            # 🔍 Product search API with semantic matching
-│   ├── meta/route.ts            # 📊 Categories/markets metadata
-│   └── offers/route.ts          # 🎯 Advanced product filtering
-├── components/                   # React UI components
-│   ├── Chat/                    # 💬 Chat interface (streaming, messages, input)
-│   │   ├── ChatInterface.tsx    # Main chat component
-│   │   ├── MessageList.tsx      # Message display with streaming
-│   │   └── ChatInput.tsx        # User input with voice support
-│   ├── UI/                      # 🎨 Interactive UI elements
-│   │   ├── MarketToggles.tsx    # Supermarket selection toggles
-│   │   ├── LoadingSpinner.tsx   # Loading states
-│   │   └── WelcomeMessage.tsx   # Onboarding messages
-│   └── Layout/                  # 🏗️ Page structure components
-│       ├── Header.tsx           # App header with logo
-│       └── Footer.tsx           # App footer with links
-└── page.tsx                     # 🏠 Main application page
+**UI Components** (`docs/app/components/UI/`):
+- Central Input: `CentralInput_documentation.md`
+- Input Tips: `InputTip_documentation.md`
+- Market Toggles: `MarketToggles_documentation.md`
+- Welcome Messages: `WelcomeMessages_documentation.md`
+- Loading Spinner: `LoadingSpinner_documentation.md`
+- Console Component: `Konsole_documentation.md`
 
-lib/
-├── ai/                          # 🤖 Grok-3 & OpenRouter integration
-│   ├── context.ts               # System prompts & context generation
-│   ├── openrouter-client.ts     # OpenRouter API client with model pool
-│   ├── semantic-search.ts       # 🧠 Intent-based AI product search (99% token reduction)
-│   ├── intent-detection.ts      # 🎯 Query intent analysis (confidence-based)
-│   └── hallucination-detection.ts # Response validation against product DB
-├── data/                        # 📊 Data management & processing
-│   ├── product-data.ts          # Main data service with in-memory caching
-│   ├── build-scripts/           # Build-time data processing
-│   │   └── convert-csv.ts       # CSV→JSON conversion pipeline
-│   └── *.json                   # Generated data files:
-│       ├── products.json        # 978 products from 5 supermarkets
-│       ├── categories.json      # 21 categories with subcategories
-│       ├── markets.json         # Market metadata with product counts
-│       └── search-index.json    # 2,662 pre-computed search terms
-├── hooks/                       # ⚛️ React state management
-│   ├── useSessionState.ts       # localStorage session persistence
-│   ├── useChatHistory.ts        # Message history (100-message limit)
-│   └── useRealTimeUpdates.ts    # Server-Sent Events streaming
-└── utils/                       # 🔧 Utility functions
-    ├── constants.ts             # Model configurations, market data
-    └── helpers.ts               # Common utility functions
+**Special Components** (`docs/app/components/`):
+- Performance Reporter: `Performance/PerformanceReporter_documentation.md`
+- Structured Data (SEO): `SEO/StructuredData_documentation.md`
 
-scripts/
-├── build-data.ts                # 🔨 Data build script (pre-build process)
-└── warm-cache.ts                # 🚀 Production cache warming
+### 🎣 **Custom Hooks** - Details in `docs/lib/hooks/`
+- Chat History Management: `useChatHistory_documentation.md`
+- Form Validation: `useFormValidation_documentation.md`
+- Input Handling: `useInputHandling_documentation.md`
+- Real-time Updates: `useRealTimeUpdates_documentation.md`
+- Session State: `useSessionState_documentation.md`
 
-types/index.ts                   # 📝 TypeScript definitions (Product, Market, Message, etc.)
+### 🛠️ **Utilities & Services** - Details in `docs/lib/utils/`
+- Application Constants: `constants_documentation.md`
+- Environment Variables: `env_documentation.md`
+- Helper Functions: `helpers_documentation.md`
+- Performance Utilities: `performance_documentation.md`
 
-data/
-└── Angebote.csv                 # 📄 Source data: 978 real products from German supermarkets
-```
+### 📝 **Type Definitions** - Details in `docs/types/`
+- Core App Types: `index_documentation.md`
 
-### Key Architecture Improvements (Latest)
-- **🧠 Grok-3 Dual-Field Support**: Optimally uses content + reasoning fields
-- **🎯 Intent Detection System**: 99% token reduction (978 → 8 products)
-- **⚡ Performance Optimized**: Debug logging removed, production-ready
-- **📊 Smart Caching**: In-memory data service for serverless functions
-- **🔄 Streaming Pipeline**: Real-time chat with Server-Sent Events
+### ⚙️ **Configuration Files** - Details in `docs/`
+- Next.js Config: `next.config_documentation.md`
+- Tailwind Config: `tailwind.config_documentation.md`
+- ESLint Config: `eslint.config_documentation.md`
+- PostCSS Config: `postcss.config_documentation.md`
+- TypeScript: `next-env.d_documentation.md`
 
-## Data Architecture
+### 📚 **App Pages** - Details in `docs/app/`
+- Main Page: `page_documentation.md` (Chat interface with market selection)
+- Root Layout: `layout_documentation.md`
+- Global Styles: `globals_documentation.md`
 
-### Build-Time Processing
-- **Input**: `data/Angebote.csv` (978 products from 5 German supermarkets)
-- **Output**: Optimized JSON files in `lib/data/`
-  - `products.json` - All product data
-  - `categories.json` - 21 categories with subcategories
-  - `markets.json` - 5 markets with product counts
-  - `search-index.json` - 2,662 search terms for fast lookup
+### 🔧 **Scripts** - Details in `docs/scripts/`
+- Documentation Generator: `generate-analyzed-docs_documentation.md`
 
-### Search System
-- **Traditional Search**: Bidirectional substring matching for German compound words
-- **Semantic Search**: AI-powered relevance matching 
-- **German Language Support**: Special handling for Umlauts and plural forms
-- **Market Filtering**: Enforce strict market order in results
+### 📖 **Prompts & Configuration** - Details in `docs/Prompts/` & `docs/.claude/`
+- Claude Optimization: `Prompts/Claude optimieren_documentation.md`
+- Documentation Adjustments: `Prompts/Docs anpassen_documentation.md`
+- New Documentation: `Prompts/Docs neu_documentation.md`
+- Settings: `.claude/settings.local_documentation.md`
 
-## AI Integration
+## Quick Reference
 
-### OpenRouter Configuration
+### Core Application Features
+**SparFuchs** is a smart supermarket deals comparison application with AI-powered chat interface:
+- Multi-market product search (Aldi, Lidl, Rewe, Edeka, Penny)
+- Real-time AI chat for product queries and price comparisons
+- Streaming responses for better UX
+- Market toggle filters
+- Product card displays with pricing information
+- Welcome screen with suggestion chips
+
+### State Management Pattern
 ```typescript
-// Environment variables required
-OPENROUTER_API_KEY=your_key_here
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_TITLE=SparFuchs.de
+// Simple useState-based state management - no complex state libraries
+const [selectedMarkets, setSelectedMarkets] = useState<string[]>(['Aldi', 'Lidl', ...]);
+const [chatStarted, setChatStarted] = useState(false);
+const [messages, setMessages] = useState<Message[]>([]);
 ```
 
-### Context Generation System
-- **System Context**: German supermarket assistant prompts
-- **Product Context**: Query-specific product data with pricing
-- **Recipe Mode**: Multi-ingredient search for cooking recipes
-- **Market Ordering**: Products sorted by Lidl → Aldi → Edeka → Penny → Rewe
-
-### Response Validation
-- **Hallucination Detection**: Validate AI responses against known product database
-- **Price Validation**: Ensure mentioned prices match actual offer data
-- **Product Existence**: Warn if AI mentions unavailable products
-
-## State Management
-
-### Session Persistence
-- **localStorage-based**: Survives browser refresh
-- **Session History**: 100-message limit with export functionality
-- **Market Selection**: Persistent user preferences
-- **Recipe Mode**: Toggle between normal and recipe search
-
-### Real-Time Updates
-- **Streaming Responses**: Server-Sent Events for chat
-- **Connection Resilience**: Automatic retry with exponential backoff
-- **Timeout Handling**: 60-second limit for Vercel compatibility
-
-## Critical Business Rules
-
-1. **Market Order**: NEVER change the market display order (Lidl, Aldi, Edeka, Penny, Rewe)
-2. **German Only**: All user-facing text must be in German
-3. **OpenRouter Only**: Never use OpenAI API directly - only through OpenRouter
-4. **Price Format**: Always display prices as "X,XX €" (German format)
-5. **Data Freshness**: Run `npm run data:build` after CSV updates
-6. **Vercel Limits**: Keep API responses under 60 seconds
-
-## Testing & Validation
-
-```bash
-# Data validation
-npm run data:validate        # Verify CSV→JSON conversion integrity
-npm run cache:test          # Test caching mechanisms
-
-# Application testing  
-npm test                    # Unit tests with Jest
-npm run test:coverage       # Coverage reports
+### Message Interface
+```typescript
+interface Message {
+  id: string;
+  content: string;
+  role: 'user' | 'assistant';
+  timestamp: Date;
+}
 ```
 
-## Performance Considerations
+### Key Design Patterns
+- **Animation**: Framer Motion with spring configs (damping: 20, stiffness: 100)
+- **Responsive**: Mobile-first approach with Tailwind utilities
+- **Client-Side**: All main components use `'use client'` directive
+- **SSR Safety**: Client check with `isClient` state before rendering
+- **Streaming**: Server-Sent Events for AI responses
+- **Error Handling**: Multiple error boundary layers (Chat, UI, General)
+- **Performance**: Loading states, smooth animations, optimized re-renders
 
-- **In-Memory Caching**: ProductDataService caches all data for serverless efficiency
-- **Build-Time Processing**: Heavy CSV processing happens at build time, not runtime
-- **Streaming Responses**: Reduce perceived latency with real-time message streaming
-- **Search Optimization**: Pre-built search index with 2,662 terms for fast lookups
+### CSS Variables Pattern (globals.css)
+```css
+--sparfuchs-background: /* Main background */
+--sparfuchs-surface: /* Card/surface backgrounds */
+--sparfuchs-primary: /* Primary brand color */
+--sparfuchs-text: /* Main text color */
+--sparfuchs-text-light: /* Secondary text color */
+--sparfuchs-border: /* Border color */
+```
 
-## Common Issues
+### Animation Configurations
+```typescript
+// Spring animation config
+const springConfig = {
+  type: "spring" as const,
+  damping: 20,
+  stiffness: 100
+};
 
-1. **Missing Products**: Run `npm run data:build` if product search returns empty
-2. **OpenRouter Errors**: Check OPENROUTER_API_KEY environment variable
-3. **Market Order Wrong**: Verify ContextGenerator market sorting logic
-4. **German Text Issues**: Ensure all user-facing strings use German localization
-5. **Build Failures**: Data build must complete before Next.js build step
+// Page transitions
+const pageTransition = {
+  initial: { opacity: 0, scale: 0.95 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.95 },
+  transition: springConfig
+};
+
+// Slide animations
+const slideFromBottom = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+  transition: springConfig
+};
+```
+
+### API Integration
+- **Chat Endpoint**: `/api/chat` (POST with streaming response)
+- **Request Format**: `{ message: string, selectedMarkets: string[], useSemanticSearch: boolean }`
+- **Response Format**: Server-Sent Events with `data:` prefix
+- **Error Handling**: Status checks + try-catch with user-friendly error messages
+
+### Market Constants
+Available markets defined in `lib/utils/constants.ts`:
+- Aldi (Blue: #00a8e6)
+- Lidl (Yellow: #ffcc00)
+- Rewe (Red: #cc0000)
+- Edeka (Blue: #005ca4)
+- Penny (Orange: #ff6900)
+
+### Common Development Tasks
+- **New Components**: Create in `app/components/[Category]/` + add documentation in `docs/app/components/[Category]/`
+- **New Hooks**: Add to `lib/hooks/` + document in `docs/lib/hooks/`
+- **New Utilities**: Add to `lib/utils/` + document in `docs/lib/utils/`
+- **Styling Changes**: Modify CSS variables in `app/globals.css` for theme consistency
+- **Type Updates**: Update `types/index.ts` + regenerate documentation
+- **API Changes**: Update `/api/chat` route (currently removed - needs reimplementation)
+
+### Testing Strategy
+- **Framework**: Jest with React Testing Library
+- **Config**: `jest.config.js` with jsdom environment
+- **Coverage**: Available via `npm run test:coverage`
+- **Testing Types**: Component tests, hook tests, utility tests
+
+### Current Application State
+⚠️ **Note**: The AI chat API (`/api/chat`) has been removed. The application currently shows a placeholder error message:
+```
+"Die Chat-Funktion ist derzeit deaktiviert, da die frühere KI entfernt wurde."
+```
+Future development should reimplement the chat API with new AI service integration.
+
+### Data Sources
+- **Offers Data**: Located in `/Angebote/` directory
+- **Format**: CSV files processed with csv-parse
+- **Markets**: Aldi, Lidl, Rewe, Edeka, Penny
+
+### Build & Deployment
+- **Build Command**: `npm run build` or `npm run production:build`
+- **Build Analysis**: `npm run analyze` or `npm run build:analyze`
+- **Output**: Static `.next` folder for deployment
+- **Compression**: Enabled in next.config.mjs
+
+### Environment Variables
+Managed in `.env.local` - see `docs/lib/utils/env_documentation.md` for details.
+
+### Important File Paths
+- Main Page: `app/page.tsx:1`
+- Root Layout: `app/layout.tsx:1`
+- Global Styles: `app/globals.css:1`
+- Constants: `lib/utils/constants.ts:1`
+- Type Definitions: `types/index.ts:1`
+- Package Config: `package.json:1`
+- Next Config: `next.config.mjs:1`
+- Tailwind Config: `tailwind.config.js:1`
+
+### Code Style Guidelines
+1. **TypeScript Strict Mode**: Always maintain strict type checking
+2. **'use client' Directive**: Required for components using hooks/interactivity
+3. **Animations**: Use Framer Motion with consistent spring configs
+4. **Naming**: PascalCase for components, camelCase for functions/variables
+5. **Comments**: Document complex logic, avoid obvious comments
+6. **Error Messages**: User-friendly German language messages
+7. **Loading States**: Always provide visual feedback during async operations
+8. **Accessibility**: Maintain semantic HTML and ARIA labels
+
+### Performance Optimization
+- **Code Splitting**: Automatic via Next.js App Router
+- **Image Optimization**: Use Next.js Image component when applicable
+- **CSS**: Tailwind with PurgeCSS for minimal bundle
+- **Bundle Analysis**: Available via `@next/bundle-analyzer`
+- **Lazy Loading**: Implement for heavy components
+- **Memoization**: Use React.memo, useMemo, useCallback where appropriate
+
+### Documentation Standards
+All major components and utilities should have corresponding documentation in the `docs/` folder following the pattern: `[filename]_documentation.md`
+
+Run `npm run generate:docs` or `npm run analyze:docs` to generate/update documentation files.
+
+**Last Updated**: 2025-10-22
+**Project Version**: 0.1.0
+**Next.js Version**: 14.2.18

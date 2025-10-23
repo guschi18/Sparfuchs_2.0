@@ -1,0 +1,54 @@
+Gemini 2.5 Pro -> Prompt ->
+
+Ich benötige eine detaillierte Auflistung ALLER Produkte von dem PDF File. Analysiere alle Seiten. 
+Verwende deine Fähigkeiten um den Inhalt der PDF-Datei zu analysieren. 
+In der dem angehängten CSV File ist die Struktur die ich benötige. 
+Anschließend erstelle eine CSV-Datei und gib mir die Daten aus. 
+
+Beachte bitte noch folgendes: 
+- Wenn du Mengenangaben erkennen kannst, erfasse diese mit 
+- WICHTIG achte auf die Formatierung bei Mengenangaben und verwende KEINE Kommas innerhalb des Feldwertes weil sonst die Formatierung der Tabelle geändert wird 
+- verwende in Klammern () keine Kommas um unsere Formatierung nicht zu zerstören
+
+Ich gebe dir hier noch einen Beispiel Phyton Code welches bereits sehr gut war.
+
+```
+import pandas as pd
+import io
+
+# Define the main validity period
+start_date_main = "2025-04-22"
+end_date_main = "2025-04-26"
+start_date_thursday = "2025-04-24" # For items starting later
+
+# List to hold product data
+products_data = [
+    # Page 1
+    {'Produktname': 'CUCINA NOBILE Tortelloni XXL (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Pasta/Fertiggerichte', 'Preis_EUR': 1.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA Grissotti (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Snacks/Gebäck', 'Preis_EUR': 0.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA NOBILE Dessert (versch. Sorten, enthält Alkohol)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Milchprodukte/Desserts', 'Preis_EUR': 2.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'YUM YUM Instant-Nudelgericht (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Fertiggerichte', 'Preis_EUR': 0.44, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'MÜLLER Müllermilch (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Getränke/Milchprodukte', 'Preis_EUR': 0.59, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA NOBILE Aperitivo Sprizz', 'Kategorie': 'Getränke', 'Unterkategorie': 'Alkoholische Getränke', 'Preis_EUR': 1.49, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA NOBILE Hartkäse (gerieben & getrocknet)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Milchprodukte/Käse', 'Preis_EUR': 2.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'Mini-Roma-Rispentomaten', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Gemüse', 'Preis_EUR': 1.39, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'Maltesers (175g)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Süßwaren', 'Preis_EUR': 1.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'MEINE METZGEREI Hähnchenbrustfilet-Teilstücke (600g)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Fleisch/Geflügel', 'Preis_EUR': 4.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'UP2FASHION Leder-Pantolette', 'Kategorie': 'Kleidung', 'Unterkategorie': 'Schuhe', 'Preis_EUR': 9.99, 'Startdatum': start_date_thursday, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'}, # Ab Do
+]
+
+# Create DataFrame
+df = pd.DataFrame(products_data)
+
+# Define output filenames
+csv_filename = 'aldi_angebote_extrahiert.csv'
+excel_filename = 'aldi_angebote_extrahiert.xlsx'
+
+# Save to CSV
+df.to_csv(csv_filename, index=False, sep=',', encoding='utf-8')
+print(f"CSV file '{csv_filename}' created successfully.")
+
+# Save to Excel
+df.to_excel(excel_filename, index=False)
+print(f"Excel file '{excel_filename}' created successfully.")
+```

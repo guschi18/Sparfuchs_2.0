@@ -1,9 +1,6 @@
 // Environment variables utility
 
 export const env = {
-  // OpenRouter Configuration
-  OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY || '',
-  
   // Public App Configuration
   NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   NEXT_PUBLIC_APP_TITLE: process.env.NEXT_PUBLIC_APP_TITLE || 'SparFuchs.de',
@@ -22,10 +19,6 @@ export const env = {
 export function validateEnv(): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
   
-  if (!env.OPENROUTER_API_KEY) {
-    errors.push('OPENROUTER_API_KEY is required');
-  }
-  
   if (!env.NEXT_PUBLIC_APP_URL) {
     errors.push('NEXT_PUBLIC_APP_URL is required');
   }
@@ -41,13 +34,3 @@ export function validateEnv(): { valid: boolean; errors: string[] } {
     errors
   };
 }
-
-// OpenRouter configuration object
-export const openRouterConfig = {
-  apiKey: env.OPENROUTER_API_KEY,
-  baseUrl: 'https://openrouter.ai/api/v1',
-  headers: {
-    'HTTP-Referer': env.NEXT_PUBLIC_APP_URL,
-    'X-Title': env.NEXT_PUBLIC_APP_TITLE,
-  },
-} as const;

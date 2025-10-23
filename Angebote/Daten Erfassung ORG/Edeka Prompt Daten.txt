@@ -1,0 +1,72 @@
+Unstract -> Raw View -> Gemini 2.5 Pro -> Prompt -> 
+
+
+Aufgabe: Extrahiere ALLE Produktnamen und die dazugehörigen aktuellen Angebotspreise aus dem folgenden Werbetext.
+	 In der dem angehängten CSV File ist die Struktur die ich benötige. Anschließend erstelle eine CSV-Datei und gib mir die Daten aus. 
+
+Beachte bitte noch folgendes: 
+- Wenn du Mengenangaben erkennen kannst, erfasse diese mit 
+- achte auf die Formatierung bei Mengenangaben und verwende keine Kommas in den Klammern weil sonst die Formatierung der Tabelle geändert wird 
+
+
+CSV Datei generieren: Ich gebe dir hier noch einen Beispiel Phyton Code, welches bereits sehr gut war.
+
+```
+import pandas as pd
+import io
+
+# Define the main validity period
+start_date_main = "2025-04-22"
+end_date_main = "2025-04-26"
+start_date_thursday = "2025-04-24" # For items starting later
+
+# List to hold product data
+products_data = [
+    # Page 1
+    {'Produktname': 'CUCINA NOBILE Tortelloni XXL (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Pasta/Fertiggerichte', 'Preis_EUR': 1.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA Grissotti (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Snacks/Gebäck', 'Preis_EUR': 0.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA NOBILE Dessert (versch. Sorten, enthält Alkohol)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Milchprodukte/Desserts', 'Preis_EUR': 2.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'YUM YUM Instant-Nudelgericht (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Fertiggerichte', 'Preis_EUR': 0.44, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'MÜLLER Müllermilch (versch. Sorten)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Getränke/Milchprodukte', 'Preis_EUR': 0.59, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA NOBILE Aperitivo Sprizz', 'Kategorie': 'Getränke', 'Unterkategorie': 'Alkoholische Getränke', 'Preis_EUR': 1.49, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'CUCINA NOBILE Hartkäse (gerieben & getrocknet)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Milchprodukte/Käse', 'Preis_EUR': 2.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'Mini-Roma-Rispentomaten', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Gemüse', 'Preis_EUR': 1.39, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'Maltesers (175g)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Süßwaren', 'Preis_EUR': 1.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'MEINE METZGEREI Hähnchenbrustfilet-Teilstücke (600g)', 'Kategorie': 'Lebensmittel', 'Unterkategorie': 'Fleisch/Geflügel', 'Preis_EUR': 4.99, 'Startdatum': start_date_main, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'},
+    {'Produktname': 'UP2FASHION Leder-Pantolette', 'Kategorie': 'Kleidung', 'Unterkategorie': 'Schuhe', 'Preis_EUR': 9.99, 'Startdatum': start_date_thursday, 'Enddatum': end_date_main, 'Supermarkt': 'Aldi'}, # Ab Do
+]
+
+# Create DataFrame
+df = pd.DataFrame(products_data)
+
+# Define output filenames
+csv_filename = 'aldi_angebote_extrahiert.csv'
+excel_filename = 'aldi_angebote_extrahiert.xlsx'
+
+# Save to CSV
+df.to_csv(csv_filename, index=False, sep=',', encoding='utf-8')
+print(f"CSV file '{csv_filename}' created successfully.")
+
+# Save to Excel
+df.to_excel(excel_filename, index=False)
+print(f"Excel file '{excel_filename}' created successfully.")
+```
+
+
+Kontext: Der Text stammt wahrscheinlich aus einem eingescannten Werbeprospekt und ist unstrukturiert. Die größte Herausforderung besteht darin, den korrekten Angebotspreis (oft als "TOP-PREIS" gekennzeichnet) einem Produkt zuzuordnen, auch wenn dieser Preis nicht direkt neben der Produktbeschreibung steht, sondern möglicherweise in einer anderen Zeile oder durch andere Elemente getrennt ist. Achte besonders auf Preise, die aus mehreren Teilen bestehen könnten (z.B. "10" und "49" in separaten Bereichen, die zusammen "10.49" ergeben).
+
+Anweisungen:
+
+## Identifiziere die beworbenen Produkte (z.B. "Beck's Pilsener", "Senseo Kaffeepads", "Frosta Fertiggerichte").
+## Extrahiere für jedes Produkt den primären Angebotspreis. Dies ist oft der "TOP-PREIS".
+## Achte auf bedingte Preise: Wenn es einen zusätzlichen Angebotspreis gibt, der an eine Bedingung geknüpft ist (z.B. "BEIM KAUF VON MIND. 2 KISTEN"), extrahiere diesen Preis ebenfalls und gib die Bedingung klar an.
+## Zahlen korrekt zusammensetzen: Füge Preisbestandteile zusammen, die durch Zeilenumbrüche oder Leerzeichen getrennt sein könnten (z.B. "10" und "49" zu "10.49"). Gehe davon aus, dass Preise im Format X.XX € angegeben sind.
+## Ignoriere explizit:
+- Sparbeträge (z.B. "SIE SPAREN X.XX €")
+- Pfandbeträge (z.B. "+ 3,42 Pfand")
+- Preise pro Einheit (z.B. "1l = X.XX")
+- Den niedrigsten Gesamtpreis der letzten 30 Tage (z.B. "n. G. = X.XX")
+- Punkteangaben (z.B. "Extra Punkte PAYBACK")
+## Beispiel: Für "Beck's Pilsener" im untenstehenden Text solltest du den Einzelkistenpreis von 10.49 € und den bedingten Preis von 9.99 € (Bedingung: Beim Kauf von mind. 2 Kisten) extrahieren.
+
+

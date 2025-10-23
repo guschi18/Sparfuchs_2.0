@@ -4,20 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run data:build && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "generate:docs": "node scripts/generate-docs.mjs",
+    "analyze:docs": "node scripts/generate-analyzed-docs.mjs",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "analyze": "ANALYZE=true npm run build",
     "build:analyze": "npm run analyze",
-    "data:build": "tsx scripts/build-data.ts",
-    "data:update": "npm run data:build",
-    "data:validate": "tsx scripts/validate-data.ts",
-    "cache:warm": "tsx scripts/warm-cache.ts warm",
-    "cache:test": "tsx scripts/warm-cache.ts test",
-    "production:build": "npm run data:build && npm run cache:warm && next build"
+    "production:build": "next build"
   },
   "dependencies": {
     "@heroui/react": "^2.6.14",
@@ -30,7 +27,6 @@
     "eslint-config-next": "^14.2.18",
     "framer-motion": "^12.23.12",
     "next": "^14.2.18",
-    "openai": "^5.10.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

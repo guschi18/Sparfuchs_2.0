@@ -1,189 +1,181 @@
-# SparFuchs 2.0 - Automatisierte Intent-Generation Projekt
+# SparFuchs KI-Integration mit OpenRouter ‚Äì Projektplan
 
-## <Ø Projektziel: Revolution‰re Such-Performance durch KI-Intent-Automatisierung
+<analysis>
+Dieser Plan beschreibt die minimal-invasive Re-Implementierung der Chat-KI √ºber OpenRouter. Fokus: Einfachheit, robuste Ergebnisqualit√§t, kein Over-Engineering. Wir entfernen komplexe Intent-Pipelines und nutzen klare semantische Prompts [[memory:5223658]] [[memory:5223633]].
+</analysis>
 
-**STATUS:  ERFOLGREICH IMPLEMENTIERT**
+## Ziele
+- KI versteht Benutzeranfragen und liefert relevante Angebote als Text + Produktkarten.
+- Datenquelle ist lokal (`Angebote/latest/Angebote.txt` 
+- Antworten sind strikt auf vorhandene Daten beschr√§nkt (keine Halluzinationen).
+- Streaming-Antworten kompatibel mit bestehender UI (`ChatMessage` erwartet `PRODUCT_CARD: {...}`).
 
----
+## Architektur (einfach und erweiterbar)
+- API: `app/api/chat/route.ts` (Node runtime).
+- KI-Client: `lib/ai/openrouter.ts` (Aufruf `https://openrouter.ai/api/v1/chat/completions`, Streaming; Modell: `google/gemini-2.5-flash`).
+- Datenzugriff: `lib/data/offers.ts` (Parser, Normalisierung, Suche).
+- UI: Weiterverwendung bestehender Komponenten ‚Äì keine √Ñnderungen n√∂tig.
 
-## =  Ergebnisse & Erfolg
-
-### Performance-Verbesserungen
-- **=Ä 580% mehr Intent-Coverage:** 5 statische í 29 dynamische Intents
-- **° 99% Token-Reduktion:** 978 í ~8-15 Produkte bei Intent-Match
-- **<Ø 100% Treffsicherheit:** Katzenfutter/Katzennahrung Problem gelˆst
-- **= Zero-Maintenance:** Self-updating bei neuen CSV-Daten
-
-### Katzenfutter-Testfall (Problem gelˆst!)
-```
- "Katzenfutter" í Intent erkannt (3 Kategorien, 66.7% Confidence)
- "Katzennahrung" í Gleicher Intent (alle Unterkategorien gefunden)
- Kategorien: ["Katzenfutter", "Katzennahrung/Nassfutter", "Katzennahrung/Trockenfutter"]
-```
-
----
-
-## <◊ Architektur-‹bersicht
-
-### Automatisierte Build-Pipeline
-```
-CSV-Update í categories.json í intent-mappings.json í Runtime-Optimierung
-     ì              ì                   ì                      ì
-Wˆchentlich    Build-Time          24 Intents          99% Token-Reduktion
-```
-
-### Komponenten-Stack
-1. **Intent-Generator** (`generate-intent-mappings.ts`)
-2. **Build-Pipeline** (`convert-csv.ts`)  
-3. **Dynamic Intent-Detection** (`intent-detection.ts`)
-4. **Runtime-Optimization** (Semantic Search Service)
-
----
-
-##  Implementierte Features
-
-### 1. Automatischer Intent-Generator
-**Datei:** `lib/data/build-scripts/generate-intent-mappings.ts`
-- ** Analysiert alle 21 Kategorien** aus `categories.json`
-- ** Generiert 24 intelligente Intent-Mappings**
-- ** Synonym-Unterst¸tzung** f¸r deutsche Begriffe
-- ** Pattern-Variationen** (Singular/Plural, Umlaute)
-- ** Keyword-Extraktion** aus Unterkategorien
-- ** Priorit‰ts-basierte Confidence-Berechnung**
-
-**Besondere Features:**
-- **Tierbedarf-Spezialisierung:** Separate Intents f¸r Katzen/Hunde
-- **Fleisch-Kategorisierung:** Intelligente Fleisch-Unterkategorien
-- **Exclusion-Logic:** Vermeidet False-Positives (z.B. Butter ` Buttergeb‰ck)
-
-### 2. Build-Pipeline Integration
-**Datei:** `lib/data/build-scripts/convert-csv.ts`
-- ** Automatische Integration** nach `generateCategoriesJSON()`
-- ** Fehler-tolerant:** Non-fatal errors, build continues
-- ** Performance-Logging:** Token-Reduktion und Statistiken
-- ** Output:** `lib/data/intent-mappings.json`
-
-### 3. Dynamic Intent-Detection
-**Datei:** `lib/ai/intent-detection.ts`
-- ** Hybrid-System:** Statische + dynamische Mappings
-- ** Lazy Loading:** Intent-Mappings on-demand laden
-- ** Fallback-System:** Graceful degradation bei Problemen  
-- ** Debug-Tools:** `getIntentStats()`, `clearDynamicCache()`
-- ** Cache-Management:** Performance-optimiert
-
----
-
-## =» Technische Spezifikationen
-
-### Intent-Mapping Format
-```typescript
-{
-  "katzenfutter": {
-    "patterns": ["katzenfutter", "katzennahrung", "cat food"],
-    "includeCategories": ["Katzenfutter", "Katzennahrung/Nassfutter", "..."],
-    "excludeCategories": ["Hundefutter", "Hundenahrung"],
-    "keywords": ["katze", "kitten", "nassfutter"],
-    "priority": 10
+## Datenformat
+- **Quelle**: JSONL-Format in `Angebote/latest/Angebote.txt` .
+- **Schema** (alle Felder aus tats√§chlichen Daten):
+  ```json
+  {
+    "supermarket": "<string>",           // Aldi, Lidl, Rewe, Edeka, Penny
+    "brand": "<string|null>",            // Markenname
+    "product_name": "<string>",          // Produktname
+    "variant": "<string|null>",          // Variante/Geschmacksrichtung
+    "pack_size": "<string|null>",        // z.B. "750 g", "1 L"
+    "unit": "<string|null>",             // g, ml, St√ºck, etc.
+    "pack_count": "<int|null>",          // Anzahl im Paket
+    "price": <float>,                    // Aktionspreis in EUR
+    "currency": "EUR",                   // Immer EUR
+    "promo_type": "<string|null>",       // discount, app_price, Aktion, etc.
+    "compare_price": "<string|null>",    // z.B. "1 kg = 2.39"
+    "uvp": "<float|null>",               // Unverbindliche Preisempfehlung
+    "discount_pct": "<int|null>",        // Rabatt in %
+    "valid_from": "YYYY-MM-DD",          // G√ºltig ab
+    "valid_to": "YYYY-MM-DD",            // G√ºltig bis
+    "special_validity": "<string|null>", // Besondere G√ºltigkeitshinweise
+    "notes": "<string|null>"             // z.B. "Begrenzte Verf√ºgbarkeit"
   }
-}
+  ```
+
+
+## API-Design
+- Request: 
+  ```json
+  { 
+    "message": "g√ºnstige Milch", 
+    "selectedMarkets": ["Aldi","Rewe"],  // Nur in diesen M√§rkten suchen
+    "useSemanticSearch": true 
+  }
+  ```
+  **Wichtig**: `selectedMarkets` sind die vom User aktiv ausgew√§hlten Superm√§rkte (Frontend-Buttons). 
+  - Wenn **alle** M√§rkte ausgew√§hlt: Suche √ºber alle 5 M√§rkte (Aldi, Lidl, Rewe, Edeka, Penny)
+  - Wenn **nur einzelne** ausgew√§hlt (z.B. nur Aldi + Rewe): Suche **nur** in diesen beiden
+  - Die KI soll **ausschlie√ülich** Produkte aus den `selectedMarkets` zur√ºckgeben
+
+- Streaming Response (SSE-Linien): 
+  - `data: {"content":"Text..."}` 
+  - `data: {"content":"PRODUCT_CARD: {JSON}"}`
+  - Abschluss: `data: {"done": true}`
+
+## Prompting (Kernprinzipien)
+- System Prompt (Kernaussagen):
+  - ‚ÄûNutze ausschlie√ülich die bereitgestellten Angebotsdaten (vollst√§ndiges Schema mit brand, variant, pack_size, uvp, discount_pct, etc.)." 
+  - ‚Äû**WICHTIG**: Nutze NUR Produkte aus folgenden Superm√§rkten: [selectedMarkets]. Ignoriere alle anderen M√§rkte komplett!"
+  - ‚ÄûKeine Produkte erfinden; wenn nichts passt, kurz sagen, dass nichts gefunden wurde."
+  - ‚ÄûBei Treffern: erg√§nze hilfreiche Textantwort in Deutsch (nutze discount_pct, uvp, notes f√ºr Kontext); f√ºr jedes Produkt eine Zeile `PRODUCT_CARD: {...}` .
+  - ‚ÄûNutze dein Wissen √ºber Lebensmittel f√ºr semantische Interpretation (z.B. 'Milch' findet auch 'H-Milch', 'Bio-Milch')."
+- **Markt-Filter**: Server filtert Daten VOR dem KI-Aufruf nach `selectedMarkets` ‚Üí KI sieht nur relevante M√§rkte
+- Minimalistische Semantik statt komplizierter Intent-Erkennung [[memory:5223658]] [[memory:5223633]].
+
+## Implementierung ‚Äì ToDo-Liste
+- [ ] 0. Voraussetzungen
+  - [ ] `OPENROUTER_API_KEY` in `.env.local` setzen
+  - [ ]  `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_APP_TITLE` (f√ºr Headers)
+  - [ ] `Angebote/latest/Angebote.txt` ist bereits bef√ºllt 
+- [ ] 1. `lib/ai/openrouter.ts`
+  - [ ] Wrapper f√ºr Chat Completions (Streaming, Headers: Authorization, Referer, X-Title)
+  - [ ] Standardmodell auf `google/gemini-2.5-flash` setzen
+- [ ] 2. `lib/data/offers.ts`
+  - [ ] Parser: JSONL -> vollst√§ndiges `Offer` Interface (alle 17 Felder aus Schema)
+  - [ ] Suche-Funktion:
+    1. **Markt-Filter**: Filtere Angebote nach `supermarket` ‚àà `selectedMarkets` (case-insensitive)
+    2. **Keyword-Matching**: Suche in `product_name`, `brand`, `variant`
+    3. **Normalisierung**: lowercase, trim, Unicode-Hyphen ‚Üí '-', doppelte Spaces entfernen
+    4. **Synonyme (klein, erweiterbar)**: z. B. "coca-cola" ‚âà ["coca cola", "coke"]
+  - [ ] Hilfsfunktion: `toProductCard()` ‚Äì konvertiert vollst√§ndiges Offer zu vereinfachtem UI-Format
+    - Markt normalisieren auf {Aldi, Lidl, Rewe, Edeka, Penny}
+    - `dateRange` im Format "DD.MM. - DD.MM.YYYY"
+- [ ] 3. `app/api/chat/route.ts`
+  - [ ] `runtime = 'nodejs'` setzen (FS-Zugriff)
+  - [ ] Request validieren (message, selectedMarkets erforderlich)
+  - [ ] Daten laden und nach `selectedMarkets` filtern (nur diese Superm√§rkte ber√ºcksichtigen!)
+  - [ ] Keyword-Suche in gefilterten Daten ‚Üí Top N Kandidaten
+  - [ ] Kontext-Aufbereitung: vollst√§ndige Offer-Daten (inkl. `uvp`, `discount_pct`, `notes`) an KI
+  - [ ] System-Prompt erg√§nzen: "Nutze NUR Produkte aus folgenden M√§rkten: [selectedMarkets]"
+  - [ ] OpenRouter-Aufruf mit System-Prompt + Kontext
+  - [ ] Server erzeugt `PRODUCT_CARD:`-Zeilen aus den gefilterten Treffern (validiert gegen Datenbestand); KI liefert nur Begleittext
+  - [ ] Streaming an Frontend: Server streamt KI-Text + `PRODUCT_CARD:` (serverseitig erzeugt)
+  - [ ] Fehlerf√§lle: 
+    - Keine selectedMarkets ‚Üí "Bitte w√§hle mindestens einen Supermarkt aus"
+    - Ung√ºltige M√§rkte im Request ‚Üí still ignorieren, nur Schnittmenge {Aldi,Lidl,Rewe,Edeka,Penny} nutzen
+    - Keine Treffer in selectedMarkets ‚Üí "Leider keine Angebote in den ausgew√§hlten M√§rkten gefunden"
+- [ ] 4. Qualit√§t
+  - [ ] Unit-Tests f√ºr Parser + Suche
+  - [ ] Smoke-Test f√ºr API (einfacher Query-Flow)
+  - [ ] Performanz: lazy loading + Caching (Datei-Hash, in-memory Cache in Dev)
+- [ ] 5. Dokumentation
+  - [ ] `docs/` kurz erg√§nzen (API, Datenformat, Env)
+  - [ ] Review-Abschnitt unten ausf√ºllen
+
+## Phasen / Meilensteine
+- P1: Basis l√§uft (Parsing, Suche, OpenRouter-Streaming, UI zeigt Karten)
+- P2: H√§rtung
+  - Server-seitige Card-Validierung: Nur IDs aus Datenbestand zulassen; JSON serverseitig erzeugen (optional)
+  - Rate Limiting, Timeouts, bessere Fehlermeldungen
+- P3: Relevanz
+  - Optionale Embeddings/Semantic Search, Ranking-Tuning
+  - Tests/Analytics f√ºr Klick-Through und Nutzerzufriedenheit
+
+
+## Beispiel: KI-Antwort mit vollst√§ndigen Daten
+
+### Beispiel 1: Alle M√§rkte ausgew√§hlt
+**User-Query**: "g√ºnstige Milch unter 2 Euro"  
+**selectedMarkets**: ["Aldi", "Lidl", "Rewe", "Edeka", "Penny"]
+
+**KI-Antwort** (nutzt discount_pct, uvp, notes):
+```
+Ich habe 3 g√ºnstige Milch-Angebote f√ºr dich gefunden:
+
+PRODUCT_CARD: {"id":"penny-milk-1","name":"Weihenstephan H-Milch 3,5%","price":"0.99","market":"PENNY","dateRange":"20.10. - 25.10.2025"}
+
+PRODUCT_CARD: {"id":"aldi-milk-2","name":"Milram Frische Vollmilch","price":"1.29","market":"Aldi","dateRange":"20.10. - 26.10.2025"}
+
+PRODUCT_CARD: {"id":"lidl-milk-3","name":"Milbona Bio-Milch 3,8%","price":"1.49","market":"Lidl","dateRange":"20.10. - 26.10.2025"}
+
+Die Weihenstephan H-Milch bei Penny ist mit 45% Rabatt das beste Angebot (UVP 1.79‚Ç¨). Achtung: Begrenzte Verf√ºgbarkeit!
 ```
 
-### Generierte Intents (Auswahl)
-- **=1 katzenfutter:** 3 Unterkategorien, 4 Patterns
-- **= hundefutter:** 3 Unterkategorien, 4 Patterns  
-- **>i fleisch:** 12+ Unterkategorien, 5 Patterns
-- **<z getr‰nke:** 45+ Unterkategorien, automatisch
-- **>¿ k‰se:** Intelligente Milchprodukt-Zuordnung
+### Beispiel 2: Nur Aldi + Rewe ausgew√§hlt
+**User-Query**: "g√ºnstige Milch unter 2 Euro"  
+**selectedMarkets**: ["Aldi", "Rewe"]
 
-### Performance-Metriken
-- **Build-Time:** ~2-3 Sekunden zus‰tzlich
-- **Runtime-Overhead:** <1ms (Lazy Loading)
-- **Memory-Usage:** ~50KB f¸r Intent-Mappings
-- **Token-Einsparung:** 99% bei Intent-Match
-
----
-
-## =' Development Workflow
-
-### 1. Neue CSV-Daten verarbeiten
-```bash
-npm run data:build  # Automatisch: CSV í JSON í Intents
+**KI-Antwort** (zeigt NUR Aldi + Rewe):
 ```
+Ich habe 2 Milch-Angebote in deinen ausgew√§hlten M√§rkten (Aldi, Rewe) gefunden:
 
-### 2. Intent-Statistiken pr¸fen
-```typescript
-const stats = intentDetection.getIntentStats();
-// { static: 5, dynamic: 24, total: 29 }
+PRODUCT_CARD: {"id":"aldi-milk-1","name":"Milram Frische Vollmilch","price":"1.29","market":"Aldi","dateRange":"20.10. - 26.10.2025"}
+
+PRODUCT_CARD: {"id":"rewe-milk-1","name":"Weide-Milch 3,8%","price":"1.69","market":"Rewe","dateRange":"20.10. - 26.10.2025"}
+
+Hinweis: Bei Aldi sparst du 20% (UVP 1.59‚Ç¨).
 ```
+**Wichtig**: Keine Penny/Lidl/Edeka-Produkte, obwohl dort eventuell g√ºnstigere Angebote existieren!
 
-### 3. Custom Intent hinzuf¸gen
-```typescript
-intentDetection.addIntentMapping('custom', {
-  patterns: ['pattern1', 'pattern2'],
-  includeCategories: ['Category1'],
-  excludeCategories: ['Category2'],
-  keywords: ['keyword1'],
-  priority: 8
-});
-```
+## Offene Fragen
+- Gew√ºnschte maximale Anzahl Produktkarten pro Antwort? So wievle wie in unseren Daten vorhanden sind. 
+- Sollen wir UVP und Rabatt auch in der ProductCard-UI anzeigen? (Aktuell nur name, price, market, dateRange) Ja
 
-### 4. Cache invalidieren (nach Updates)
-```typescript
-intentDetection.clearDynamicCache();
-```
 
----
+## Akzeptanzkriterien
+- Eine einfache Query (‚ÄûMilch unter 2‚Ç¨") liefert in <3s:
+  - Hilfreiche Textantwort mit Kontext (nutzt discount_pct, uvp, notes)
+  - ‚â•3 korrekte `PRODUCT_CARD`-Zeilen aus echten Daten (Angebote/latest/Angebote.txt)
+- **Markt-Filter funktioniert korrekt**:
+  - Alle M√§rkte ausgew√§hlt ‚Üí Ergebnisse aus allen 5 M√§rkten
+  - Nur Aldi + Rewe ausgew√§hlt ‚Üí **NUR** Aldi + Rewe Produkte (keine anderen!)
+  - Keine M√§rkte ausgew√§hlt ‚Üí Fehlermeldung
+- KI nutzt vollst√§ndige Datenfelder f√ºr intelligente Antworten (z.B. "45% Rabatt", "UVP 3.49‚Ç¨")
+- Keine Karten, wenn keine passenden Daten ‚Üí klare Meldung.
+- Semantische Suche funktioniert (z.B. "Joghurt" findet auch "Fruchtjoghurt", "Naturjoghurt")
+- Fehler werden deutsch und freundlich kommuniziert.
 
-## =Ä N‰chste Entwicklungsstufen
+## N√ºtzliche Referenzen
+- OpenRouter Quickstart: https://openrouter.ai/docs/quickstart
 
-### Phase 2: ML-Enhanced Intent-Generation
-- **> GPT-4 Integration:** Automatische Synonym-Generierung
-- **=  User-Behavior Analytics:** Intent-Optimierung durch Nutzungsdaten
-- **= Real-time Learning:** Adaptive Intent-Mappings
-
-### Phase 3: Multi-Language Support
-- **<Ï<Á Englisch:** Internationale Expansion
-- **<Î<˜ Franzˆsisch:** EU-Markt Expansion
-- **=$ Auto-Translation:** Intent-Mapping Lokalisierung
-
-### Phase 4: Advanced Kategorisierung
-- **<˜ Semantic Clustering:** ƒhnliche Produkte automatisch gruppieren
-- **=Ê Brand-Awareness:** Marken-spezifische Intents
-- **P Quality-Scoring:** Intent-Confidence Optimierung
-
----
-
-## =° Lessons Learned
-
-### Was funktioniert hervorragend
-- **Automatisierung:** 100% self-maintaining system
-- **Performance:** Dramatische Token-Reduktion
-- **Skalierung:** W‰chst automatisch mit Datenbestand
-- **Robustheit:** Graceful fallback auf statische Intents
-
-### Herausforderungen gemeistert
-- **TypeScript Integration:** ES Modules + Dynamic Loading
-- **Build-Pipeline Timing:** Correct dependency order
-- **Error Handling:** Non-breaking intent generation
-- **Performance:** Lazy loading + caching strategy
-
-### Best Practices etabliert
-- **Single Source of Truth:** categories.json als Basis
-- **Fail-Safe Design:** Statische Mappings als Fallback
-- **Performance First:** Lazy loading + intelligent caching
-- **Debug-Friendly:** Comprehensive logging + statistics
-
----
-
-## =› Fazit
-
-Die **Automatisierte Intent-Generation** ist ein **voller Erfolg**! 
-
-Das System:
--  **Lˆst das urspr¸ngliche Katzenfutter-Problem** vollst‰ndig
--  **Skaliert automatisch** mit neuen Daten
--  **Reduziert Kosten** um 99% bei Intent-Matches
--  **Erhˆht Treffsicherheit** durch umfassende Kategorien-Abdeckung
--  **Benˆtigt zero Maintenance** - l‰uft vollautomatisch
-
-**<Ø Mission accomplished!** Das SparFuchs 2.0 System ist jetzt deutlich intelligenter, effizienter und wartungsfreier.
+## Review
+- Wird nach Umsetzung ausgef√ºllt: √Ñnderungen, Learnings, n√§chste Schritte.

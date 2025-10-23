@@ -151,7 +151,7 @@ export default function Home() {
       console.error('Chat error:', error);
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        content: 'Entschuldigung, es gab einen Fehler bei der Verarbeitung Ihrer Anfrage. Bitte versuchen Sie es erneut.',
+        content: 'Die Chat-Funktion ist derzeit deaktiviert, da die frühere KI entfernt wurde. Bitte try später erneut oder nutze bald das neue System.',
         role: 'assistant',
         timestamp: new Date()
       };

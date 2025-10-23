@@ -1,8 +1,0 @@
-1. Produktsuche verfeinern, siehe Cola  Zeile 302 Coca-Cola Fanta oder Sprite (teilw. koffeinhaltig 12x1l PET-Flasche),Getränke,Softdrinks,9.99,2025-06-16,2025-06-21,Edeka
-Katzenfutter / Katzennahrung 
-2. Anfrage defekt, wenn ich Chatinputfield wähle expliziet auch bei zweiter Anfrage. 
-
-
-- Angebote Datei Kategorien vereinfachen 
-- Kategrien mit einem script in der semantic search aktualisieren bei jeder neuen angebote.csav Datei
-- Code überprüfen auf Leichen und aufräumen für mehr Klarheit 
