@@ -75,36 +75,73 @@ export function ChatMessage({ message }: ChatMessageProps) {
   
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
-      <div 
-        className="max-w-[80%] rounded-xl px-5 py-3 shadow-sm chat-font"
+      <div
+        className={`${isUser ? 'max-w-[80%]' : 'max-w-[95%]'} rounded-xl px-5 py-3 shadow-sm chat-font`}
         style={{
-          background: isUser 
-            ? 'rgba(255, 107, 53, 0.9)' 
+          background: isUser
+            ? 'rgba(255, 107, 53, 0.9)'
             : 'var(--sparfuchs-surface)',
-          border: isUser 
-            ? 'none' 
+          border: isUser
+            ? 'none'
             : '1px solid var(--sparfuchs-border)',
           color: 'var(--sparfuchs-text)'
         }}
       >
         {/* Render parsed content */}
         <div className="leading-relaxed">
-          {parsedContent.map((part, index) => {
-            if (typeof part === 'string') {
-              return (
-                <div key={index} className="whitespace-pre-wrap break-words mb-2">
-                  {part}
-                </div>
-              );
-            } else {
-              // Render ProductCard for product data
-              return (
-                <div key={index} className="my-3">
-                  <ProductCard product={part} />
-                </div>
-              );
-            }
-          })}
+          {(() => {
+            const groupedContent: JSX.Element[] = [];
+            let productBuffer: ProductData[] = [];
+
+            const flushProductBuffer = (key: number) => {
+              if (productBuffer.length > 0) {
+                // Group products by market
+                const productsByMarket: { [market: string]: ProductData[] } = {};
+                productBuffer.forEach((product) => {
+                  if (!productsByMarket[product.market]) {
+                    productsByMarket[product.market] = [];
+                  }
+                  productsByMarket[product.market].push(product);
+                });
+
+                // Render each market group separately
+                Object.entries(productsByMarket).forEach(([market, products], marketIdx) => {
+                  groupedContent.push(
+                    <div key={`market-${key}-${marketIdx}`} className="my-4">
+                      <h3 className="text-lg font-semibold mb-3 pb-2 text-gray-700 border-b-2 border-gray-300">{market}</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {products.map((product, idx) => (
+                          <ProductCard key={`product-${key}-${marketIdx}-${idx}`} product={product} />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                });
+
+                productBuffer = [];
+              }
+            };
+
+            parsedContent.forEach((part, index) => {
+              if (typeof part === 'string') {
+                // Flush any accumulated products before text
+                flushProductBuffer(index);
+                groupedContent.push(
+                  <div key={`text-${index}`} className="whitespace-pre-wrap break-words mb-2">
+                    {part}
+                  </div>
+                );
+              } else {
+                // Accumulate product cards
+                productBuffer.push(part);
+              }
+            });
+
+            // Flush any remaining products
+            flushProductBuffer(parsedContent.length);
+
+            return groupedContent;
+          })()}
         </div>
         
         <div 

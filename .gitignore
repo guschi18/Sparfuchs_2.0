@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Angebote folder - only track latest/
+/Angebote/*
+!/Angebote/latest/
+
+# Prompts folder - internal documentation
+/Prompts/

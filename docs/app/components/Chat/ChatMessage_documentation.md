@@ -21,6 +21,13 @@ interface ChatMessageProps {
 ```
 
 
+## Geschäftslogik
+- **Markt-Gruppierung**: Produkte werden nach Supermarkt gruppiert (`productsByMarket` Objekt)
+- **Layout-Rendering**:
+  - Desktop: 2-spaltiges Grid (`grid-cols-1 md:grid-cols-2`)
+  - Mobile: 1-spaltig für bessere Lesbarkeit
+- **Visuelle Struktur**: H3-Überschriften pro Markt mit `border-b-2 border-gray-300` Unterstrich
+- **Container-Breite**: 95% für KI-Antworten, 80% für User-Nachrichten
 
 
 ## Error Handling
@@ -28,5 +35,6 @@ interface ChatMessageProps {
 
 
 ## Performance Considerations
-- Keine auffälligen Performance-Muster.
+- Effiziente Gruppierung durch Object.entries() Loop
+- Minimale Re-Renders durch gezielte Key-Verwendung (`market-${key}-${marketIdx}`)
 

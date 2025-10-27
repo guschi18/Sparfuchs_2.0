@@ -19,3 +19,50 @@ export interface AppState {
   chatHistory: ChatMessage[];
   isLoading: boolean;
 }
+
+// Offer data structure (from Angebote.txt JSONL)
+export interface Offer {
+  supermarket: string;
+  brand: string | null;
+  product_name: string;
+  variant: string | null;
+  pack_size: string | null;
+  unit: string | null;
+  pack_count: number | null;
+  price: number;
+  currency: string;
+  promo_type: string | null;
+  compare_price: string | null;
+  uvp: number | null;
+  discount_pct: number | null;
+  valid_from: string;
+  valid_to: string;
+  special_validity: string | null;
+  notes: string | null;
+}
+
+// Product card data for UI display
+export interface ProductCard {
+  id: string;
+  name: string;
+  price: string;
+  market: string;
+  dateRange: string;
+  brand?: string;
+  uvp?: string;
+  discount_pct?: number;
+  notes?: string;
+}
+
+// API Request/Response types
+export interface ChatRequest {
+  message: string;
+  selectedMarkets: string[];
+  useSemanticSearch?: boolean;
+}
+
+export interface ChatResponse {
+  content?: string;
+  done?: boolean;
+  error?: string;
+}

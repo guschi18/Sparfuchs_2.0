@@ -4,7 +4,8 @@
 
 ## Architektur & Zweck
 - **Zweck**: Wiederverwendbare UI-/Feature-Komponente
-- Client-Komponente (`"use client"`).
+- Client-Komponente (`"use client"`)
+- **Styling**: Vollbreite (`w-full`) für optimale Grid-Integration (2-Spalten-Layout)
 
 
 ## Dependencies & Integration

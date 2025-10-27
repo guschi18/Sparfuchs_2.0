@@ -98,7 +98,9 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Versuche, den Fehler vom Server zu lesen
+        const errorData = await response.json().catch(() => ({ error: 'Unbekannter Fehler' }));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
       // Process streaming response
@@ -149,9 +151,10 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Chat error:', error);
+      const errorText = error instanceof Error ? error.message : 'Ein unbekannter Fehler ist aufgetreten.';
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        content: 'Die Chat-Funktion ist derzeit deaktiviert, da die frühere KI entfernt wurde. Bitte try später erneut oder nutze bald das neue System.',
+        content: `Fehler: ${errorText}\n\nBitte versuche es erneut oder stelle deine Frage anders.`,
         role: 'assistant',
         timestamp: new Date()
       };
