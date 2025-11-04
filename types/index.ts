@@ -29,7 +29,7 @@ export interface Offer {
   pack_size: string | null;
   unit: string | null;
   pack_count: number | null;
-  price: number;
+  price: number | null;
   currency: string;
   promo_type: string | null;
   compare_price: string | null;

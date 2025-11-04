@@ -46,3 +46,9 @@ next-env.d.ts
 
 # Prompts folder - internal documentation
 /Prompts/
+
+# Query logs - runtime data
+/logs/
+
+# Scripts folder - analysis and utility scripts
+/scripts/

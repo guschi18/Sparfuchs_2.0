@@ -3,7 +3,7 @@ import { join } from 'path';
 import type { Offer, ProductCard } from '@/types';
 
 // Synonyme für bessere Suchergebnisse
-const SYNONYMS: Record<string, string[]> = {
+export const SYNONYMS: Record<string, string[]> = {
   "adventskalender": ["weihnachtskalender", "kalender", "schokoladenkalender"],
   "alkohol": ["spirituosen", "schnaps", "bier", "wein", "sekt", "likör", "wodka", "whisky", "rum"],
   "apfel": ["äpfel", "rote äpfel", "elstar", "braeburn", "kanzi"],
@@ -27,7 +27,7 @@ const SYNONYMS: Record<string, string[]> = {
   "fisch": ["lachs", "seelachs", "rotbarsch", "fischstäbchen", "schlemmerfilet", "backfisch", "garnelen", "muscheln", "thunfisch"],
   "fleisch": ["hackfleisch", "gulasch", "braten", "rouladen", "schnitzel", "steak", "geschnetzeltes", "kasseler", "hähnchen", "pute", "schwein", "rind", "ente", "lamm"],
   "frischkäse": ["philadelphia", "bresso", "miree", "exquisa", "frischkäsezubereitung", "kräuterquark", "buko"],
-  "gemüse": ["tomaten", "gurken", "paprika", "zwiebeln", "kartoffeln", "kürbis", "champignons", "spinat", "rosenkohl", "blumenkohl", "brokkoli", "sauerkraut", "rotkohl", "bohnen", "mais", "salat"],
+  "gemüse": ["tomaten", "gurke", "gurken", "paprika", "zwiebeln", "kartoffeln", "kürbis", "champignons", "spinat", "rosenkohl", "blumenkohl", "brokkoli", "sauerkraut", "rotkohl", "bohnen", "mais", "salat"],
   "getränk": ["saft", "nektar", "limonade", "eistee", "wasser", "schorle", "haferdrink", "milchshake", "smoothie"],
   "gewürze": ["salz", "pfeffer", "kräuter", "gewürzmischung", "just spices", "maggi", "knorr"],
   "hackfleisch": ["mett", "rinderhack", "schweinehack", "gemischtes hack", "tartar", "hack"],
@@ -44,7 +44,7 @@ const SYNONYMS: Record<string, string[]> = {
   "müsli": ["cerealien", "cornflakes", "haferflocken", "knuspermüsli", "vitalis", "kölln", "lion cereals", "smarties cereals"],
   "nudeln": ["pasta", "spaghetti", "penne", "fusilli", "teigwaren", "barilla", "birkel", "3 glocken", "gnocchi"],
   "nüsse": ["erdnüsse", "walnüsse", "haselnüsse", "mandeln", "cashews", "pistazien", "nussmischung"],
-  "obst": ["äpfel", "bananen", "orangen", "mandarinen", "birnen", "trauben", "kiwi", "mango", "beeren", "erdbeeren", "heidelbeeren", "ananas", "granatapfel"],
+  "obst": ["äpfel", "bananen", "orangen", "mandarinen", "birnen", "trauben", "kiwi", "mango", "beeren", "erdbeeren", "heidelbeeren", "ananas", "granatapfel", "tafeltrauben"],
   "öl": ["sonnenblumenöl", "rapsöl", "olivenöl", "frittieröl", "speiseöl", "thomy", "solvel", "mazola"],
   "pizza": ["tiefkühlpizza", "steinofenpizza", "die backfrische", "big pizza", "piccolinis", "gustavo gusto", "wagner", "pinsa"],
   "pudding": ["dessert", "mousse", "götterspeise", "grand dessert", "monte", "high protein pudding", "ehrmann"],
@@ -61,7 +61,7 @@ const SYNONYMS: Record<string, string[]> = {
   "suppe": ["eintopf", "brühe", "tütensuppe", "dosensuppe", "knorr", "maggi", "erasco"],
   "süßigkeiten": ["bonbons", "schokolade", "gummibärchen", "lakritz", "pralinen", "kekse", "riegel", "maoam", "fritt"],
   "tee": ["schwarztee", "kräutertee", "früchtetee", "grüntee", "teebeutel", "teekanne", "cupper", "meßmer"],
-  "tiernahrung": ["hundefutter", "katzenfutter", "leckerli", "trockenfutter", "nassfutter", "pedigree", "whiskas", "felix", "lucky dog", "lucky cat", "purina"],
+  "katzenfutter": ["hundefutter", "katzennahrung", "leckerli", "trockenfutter", "nassfutter", "pedigree", "whiskas", "felix", "lucky dog", "lucky cat", "purina", "sheba"],
   "tomaten": ["rispentomaten", "cherrytomaten", "romatomaten"],
   "waschmittel": ["vollwaschmittel", "colorwaschmittel", "waschpulver", "flüssigwaschmittel", "pods", "ariel", "persil", "lenor", "perwoll", "omo", "coral"],
   "wasser": ["mineralwasser", "stilles wasser", "sprudelwasser", "gerolsteiner", "volvic"],
@@ -200,7 +200,8 @@ export function searchOffers(offers: Offer[], query: string): Offer[] {
 /**
  * Formatiert ein Datum von YYYY-MM-DD zu DD.MM.
  */
-function formatDate(dateString: string): string {
+function formatDate(dateString?: string | null): string {
+  if (typeof dateString !== 'string' || !dateString.includes('-')) return '';
   const [year, month, day] = dateString.split('-');
   return `${day}.${month}.`;
 }
@@ -208,12 +209,22 @@ function formatDate(dateString: string): string {
 /**
  * Erstellt einen DateRange-String im Format "DD.MM. - DD.MM.YYYY"
  */
-function createDateRange(validFrom: string, validTo: string): string {
-  const fromFormatted = formatDate(validFrom);
-  const [year, month, day] = validTo.split('-');
-  const toFormatted = `${day}.${month}.${year}`;
+function createDateRange(validFrom?: string | null, validTo?: string | null): string {
+  const hasFrom = typeof validFrom === 'string' && validFrom.includes('-');
+  const hasTo = typeof validTo === 'string' && validTo.includes('-');
 
-  return `${fromFormatted} - ${toFormatted}`;
+  if (hasFrom && hasTo) {
+    const fromFormatted = formatDate(validFrom);
+    const [year, month, day] = (validTo as string).split('-');
+    const toFormatted = `${day}.${month}.${year}`;
+    return `${fromFormatted} - ${toFormatted}`;
+  }
+  if (hasFrom) return `ab ${formatDate(validFrom)}`;
+  if (hasTo) {
+    const [year, month, day] = (validTo as string).split('-');
+    return `bis ${day}.${month}.${year}`;
+  }
+  return 'Gültigkeit unbekannt';
 }
 
 /**
@@ -259,11 +270,17 @@ export function toProductCard(offer: Offer): ProductCard {
   return {
     id,
     name,
-    price: offer.price.toFixed(2),
+    price: (typeof offer.price === 'number' && Number.isFinite(offer.price) && offer.price > 0)
+      ? offer.price.toFixed(2)
+      : 'Tagesaktueller Preis - Im Markt erfragen',
     market: normalizeMarketName(offer.supermarket),
     dateRange: createDateRange(offer.valid_from, offer.valid_to),
     brand: offer.brand || undefined,
-    uvp: offer.uvp ? offer.uvp.toFixed(2) : undefined,
+    uvp: (typeof offer.uvp === 'number' && Number.isFinite(offer.uvp))
+      ? offer.uvp.toFixed(2)
+      : (typeof (offer as any).uvp === 'string'
+          ? (() => { const n = parseFloat((offer as any).uvp); return Number.isFinite(n) ? n.toFixed(2) : undefined; })()
+          : undefined),
     discount_pct: offer.discount_pct || undefined,
     notes: offer.notes || undefined,
   };
@@ -288,6 +305,14 @@ export function findOffers(
   // 3. Suche nach Keywords
   const searchResults = searchOffers(marketFiltered, query);
 
-  // 4. Konvertiere zu ProductCards
-  return searchResults.map(toProductCard);
+  // 4. Sortiere: Angebote mit gültigem Preis zuerst, danach ohne Preis
+  const sortedResults = [...searchResults].sort((a, b) => {
+    const aHasPrice = typeof a.price === 'number' && Number.isFinite(a.price) && a.price > 0;
+    const bHasPrice = typeof b.price === 'number' && Number.isFinite(b.price) && b.price > 0;
+    if (aHasPrice === bHasPrice) return 0;
+    return aHasPrice ? -1 : 1;
+  });
+
+  // 5. Konvertiere zu ProductCards
+  return sortedResults.map(toProductCard);
 }

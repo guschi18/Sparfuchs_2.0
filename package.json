@@ -9,6 +9,8 @@
     "lint": "next lint",
     "generate:docs": "node scripts/generate-docs.mjs",
     "analyze:docs": "node scripts/generate-analyzed-docs.mjs",
+    "analyze:synonyms": "tsx scripts/Synonyms/analyze-synonyms.ts",
+    "analyze:queries": "tsx scripts/Queries/analyze-user-queries.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

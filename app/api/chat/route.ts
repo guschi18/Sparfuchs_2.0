@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { findOffers, toProductCard } from '@/lib/data/offers';
 import { createChatCompletion, parseStreamingResponse } from '@/lib/ai/openrouter';
+import { logQuery } from '@/scripts/Queries/query-logger';
 import type { ChatRequest, ProductCard } from '@/types';
 
 // Wichtig: Node Runtime für Filesystem-Zugriff
@@ -23,9 +24,10 @@ function createSystemPrompt(selectedMarkets: string[], products: ProductCard[]):
 2. Nutze NUR Produkte aus folgenden Supermärkten: ${marketList}
 3. Ignoriere alle anderen Supermärkte komplett!
 4. Antworte in freundlichem, hilfreichem Deutsch.
-5. Nutze die Felder discount_pct, uvp, notes für hilfreiche Zusatzinfos.
+5. Nutze die Felder variant, pack_size, unit, discount_pct, uvp und notes für hilfreiche Zusatzinfos.
 6. Für jedes Produkt, das du empfiehlst, gib EINE Zeile aus:
-   PRODUCT_CARD: {"id":"...","name":"...","price":"...","market":"...","dateRange":"...","brand":"...","uvp":"...","discount_pct":...,"notes":"..."}
+   PRODUCT_CARD: {"id":"...","name":"...","price":"...","market":"...","dateRange":"...","brand":"...","variant":"...","pack_size":"...","unit":"...","uvp":"...","discount_pct":...,"notes":"..."}
+   - Lass optionale Felder weg, wenn keine Daten vorhanden sind.
 
 SEMANTISCHE INTERPRETATION – SEHR WICHTIG:
 1) Extrahiere 1–5 Suchbegriffe aus der Nutzerfrage (Produkt, Marke, Attribute).
@@ -90,6 +92,9 @@ export async function POST(request: NextRequest) {
     let matchingProducts: ProductCard[] = [];
     try {
       matchingProducts = findOffers(validSelectedMarkets, message);
+      
+      // 🔥 LOGGING: Suchanfrage protokollieren
+      logQuery(message, matchingProducts.length, validSelectedMarkets);
     } catch (searchError) {
       console.error('Fehler beim Suchen der Angebote:', searchError);
       return new Response(

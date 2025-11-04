@@ -1,4 +1,8 @@
 Führe bitte den folgenden Prompt aus und speichere die PDFs in den jeweiligen Hauptordnern der Supermärkte.
 Schreibe bitte ein Script mit pypdf um die folgenden PDFs in mehrere PDFs zu splitten. Die PDFs sollen maximal 8 Seiten haben. 
 Aktuell haben die Prospekt folgende Anzahl an Seiten: 
-Penny: 44 Seiten 
+Aldi: 50 Seiten 
+Lidl: 66 Seiten 
+Penny: 46 Seiten 
+Rewe: 30 Seiten 
+Edeka: 18 Seiten 
