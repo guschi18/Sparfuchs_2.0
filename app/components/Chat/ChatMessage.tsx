@@ -5,9 +5,12 @@ import { ProductCard, ProductData } from './ProductCard';
 
 interface ChatMessageProps {
   message: Message;
+  selectedMarkets: string[];
+  onAddToList?: (product: ProductData) => void;
+  isInList?: (productId: string) => boolean;
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, selectedMarkets, onAddToList, isInList }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   // Parse message content for product cards with real-time JSON hiding
@@ -104,14 +107,30 @@ export function ChatMessage({ message }: ChatMessageProps) {
                   productsByMarket[product.market].push(product);
                 });
 
-                // Render each market group separately
-                Object.entries(productsByMarket).forEach(([market, products], marketIdx) => {
+                // Sort markets by selectedMarkets order, then render each market group
+                const sortedMarkets = Object.entries(productsByMarket).sort(([marketA], [marketB]) => {
+                  const indexA = selectedMarkets.indexOf(marketA);
+                  const indexB = selectedMarkets.indexOf(marketB);
+
+                  // Markets not in selectedMarkets go to the end
+                  if (indexA === -1) return 1;
+                  if (indexB === -1) return -1;
+
+                  return indexA - indexB;
+                });
+
+                sortedMarkets.forEach(([market, products], marketIdx) => {
                   groupedContent.push(
                     <div key={`market-${key}-${marketIdx}`} className="my-4">
                       <h3 className="text-lg font-semibold mb-3 pb-2 text-gray-700 border-b-2 border-gray-300">{market}</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {products.map((product, idx) => (
-                          <ProductCard key={`product-${key}-${marketIdx}-${idx}`} product={product} />
+                          <ProductCard
+                            key={`product-${key}-${marketIdx}-${idx}`}
+                            product={product}
+                            onAddToList={onAddToList}
+                            isInList={isInList ? isInList(product.id) : false}
+                          />
                         ))}
                       </div>
                     </div>

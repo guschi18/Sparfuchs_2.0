@@ -44,6 +44,7 @@ All commands run from project root directory:
 - `npm run test:coverage` - Test coverage report
 - `npm run generate:docs` - Generate documentation
 - `npm run analyze:docs` - Generate analyzed documentation
+- `npm run analyze:queries` - Analyze user search queries (Query-Logging System)
 
 ## Architecture Overview - Details in `docs/` folder
 
@@ -53,6 +54,7 @@ All commands run from project root directory:
 - **Styling**: Tailwind CSS v3.3.6
 - **UI Library**: HeroUI v2.6.14 (HeroUI React components)
 - **Animations**: Framer Motion v12.23.12
+- **AI Integration**: OpenRouter API (google/gemini-2.5-flash-lite)
 - **Data Processing**: CSV-Parse v6.1.0
 - **Testing**: Jest v29.7.0 with React Testing Library
 - **Build Analysis**: Next.js Bundle Analyzer
@@ -61,17 +63,22 @@ All commands run from project root directory:
 ```
 /
 ├── app/              # Next.js App Router pages & components
-│   ├── components/   # React Components
+│   ├── api/          # API routes (chat endpoint with streaming)
+│   ├── components/   # React Components (Chat, Layout, UI, Error)
 │   ├── page.tsx      # Main chat interface page
 │   ├── layout.tsx    # Root layout with metadata
 │   └── globals.css   # Global styles & CSS variables
 ├── lib/              # Services & Utilities
+│   ├── ai/           # AI Integration (OpenRouter)
+│   ├── data/         # Data Management (Offers, Synonyms)
 │   ├── hooks/        # Custom React Hooks
 │   └── utils/        # Helper functions & constants
 ├── types/            # TypeScript Type Definitions
-├── scripts/          # Build & documentation scripts
-├── docs/             # Comprehensive documentation
-├── Angebote/         # Offers data directory
+├── scripts/          # Build, documentation & analysis scripts
+│   ├── Queries/      # Query-Logging System
+│   └── Synonyms/     # Synonym Management System
+├── docs/             # Comprehensive documentation (100% coverage)
+├── Angebote/         # Offers data directory (JSONL format)
 ├── Prompts/          # AI prompts & optimization guides
 └── public/           # Static assets
 ```
@@ -83,8 +90,9 @@ All commands run from project root directory:
 **Chat Components** (`docs/app/components/Chat/`):
 - Main Container: `ChatContainer_documentation.md`
 - User Input: `ChatInput_documentation.md`
-- Message Display: `ChatMessage_documentation.md`
-- Product Cards: `ProductCard_documentation.md`
+- Message Display: `ChatMessage_documentation.md` (with market sorting, shopping list integration)
+- Product Cards: `ProductCard_documentation.md` (no redundant market badge, shopping list integration)
+- **Add To List Button**: `AddToListButton_documentation.md` (compact button, icon-based, disabled state)
 
 **Error Handling** (`docs/app/components/Error/`):
 - Chat Error Boundary: `ChatErrorBoundary_documentation.md`
@@ -92,7 +100,7 @@ All commands run from project root directory:
 - UI Error Boundary: `UIErrorBoundary_documentation.md`
 
 **Layout Components** (`docs/app/components/Layout/`):
-- Header: `Header_documentation.md`
+- Header: `Header_documentation.md` (with shopping list button integration)
 - Footer: `Footer_documentation.md`
 
 **UI Components** (`docs/app/components/UI/`):
@@ -102,10 +110,26 @@ All commands run from project root directory:
 - Welcome Messages: `WelcomeMessages_documentation.md`
 - Loading Spinner: `LoadingSpinner_documentation.md`
 - Console Component: `Konsole_documentation.md`
+- **Shopping List Button**: `ShoppingListButton_documentation.md` (header button with badge & pulse animation)
+- **Shopping List Panel**: `ShoppingListPanel_documentation.md` (slide-in panel, filter, ESC key support)
+- **Toast System**: `Toast_documentation.md` (custom toasts, bottom-right, auto-dismiss)
 
 **Special Components** (`docs/app/components/`):
 - Performance Reporter: `Performance/PerformanceReporter_documentation.md`
 - Structured Data (SEO): `SEO/StructuredData_documentation.md`
+
+### 🤖 **AI Integration** - Details in `docs/lib/ai/`
+- **OpenRouter Client**: `openrouter_documentation.md`
+  - Streaming chat completions with SSE
+  - Model: google/gemini-2.5-flash-lite
+  - Environment: OPENROUTER_API_KEY required
+
+### 📊 **Data Management** - Details in `docs/lib/data/`
+- **Offers System**: `offers_documentation.md`
+  - 121 categories, ~240 brand synonyms
+  - 26.9% coverage (619/2299 terms)
+  - Semantic search with synonym expansion
+  - Integration with Query-Logging & Synonym-Management Systems
 
 ### 🎣 **Custom Hooks** - Details in `docs/lib/hooks/`
 - Chat History Management: `useChatHistory_documentation.md`
@@ -113,12 +137,15 @@ All commands run from project root directory:
 - Input Handling: `useInputHandling_documentation.md`
 - Real-time Updates: `useRealTimeUpdates_documentation.md`
 - Session State: `useSessionState_documentation.md`
+- **Shopping List Management**: `useShoppingList_documentation.md` (CRUD, LocalStorage, useMemo/useCallback optimized)
+- **Toast Notifications**: `useToast_documentation.md` (success/error/info toasts, no external deps)
 
 ### 🛠️ **Utilities & Services** - Details in `docs/lib/utils/`
 - Application Constants: `constants_documentation.md`
 - Environment Variables: `env_documentation.md`
 - Helper Functions: `helpers_documentation.md`
 - Performance Utilities: `performance_documentation.md`
+- **LocalStorage Service**: `localStorage_documentation.md` (SSR-safe, MemoryStorage fallback, shopping list API)
 
 ### 📝 **Type Definitions** - Details in `docs/types/`
 - Core App Types: `index_documentation.md`
@@ -131,151 +158,122 @@ All commands run from project root directory:
 - TypeScript: `next-env.d_documentation.md`
 
 ### 📚 **App Pages** - Details in `docs/app/`
-- Main Page: `page_documentation.md` (Chat interface with market selection)
+- Main Page: `page_documentation.md` (Chat interface, shopping list integration, default market order: Lidl→Aldi→Edeka→Penny→Rewe)
 - Root Layout: `layout_documentation.md`
 - Global Styles: `globals_documentation.md`
 
-### 🔧 **Scripts** - Details in `docs/scripts/`
-- Documentation Generator: `generate-analyzed-docs_documentation.md`
+### 🔧 **Scripts & Systems** - Details in `docs/scripts/` & `scripts/`
+- **Documentation Generator**: `scripts/generate-analyzed-docs_documentation.md`
+- **Query-Logging System**: `scripts/Queries/README.md`
+  - Automatic tracking of user searches
+  - Analysis: `npm run analyze:queries`
+- **Synonym Management System**: `scripts/Synonyms/README.md`
+  - Weekly workflow for coverage improvement
+  - Smart brand mapping (83 top brands)
+  - Coverage analysis & CSV reports
 
 ### 📖 **Prompts & Configuration** - Details in `docs/Prompts/` & `docs/.claude/`
 - Claude Optimization: `Prompts/Claude optimieren_documentation.md`
 - Documentation Adjustments: `Prompts/Docs anpassen_documentation.md`
 - New Documentation: `Prompts/Docs neu_documentation.md`
-- Settings: `.claude/settings.local_documentation.md`
 
 ## Quick Reference
 
 ### Core Application Features
 **SparFuchs** is a smart supermarket deals comparison application with AI-powered chat interface:
-- Multi-market product search (Aldi, Lidl, Rewe, Edeka, Penny)
-- Real-time AI chat for product queries and price comparisons
-- Streaming responses for better UX
-- Market toggle filters
-- Product card displays with pricing information
+- Multi-market product search (5 markets: Lidl, Aldi, Edeka, Penny, Rewe)
+- Real-time AI chat powered by OpenRouter (Gemini 2.5 Flash Lite)
+- Streaming responses for progressive UI updates
+- Market toggle filters (default order: Lidl→Aldi→Edeka→Penny→Rewe)
+- Product cards grouped by market (no redundant badges)
+- **Shopping List Feature**: Add products to persistent shopping list with LocalStorage
+  - Header button with badge & pulse animation
+  - Slide-in panel with checkboxes & "Hide completed" filter
+  - Toast notifications for user feedback
+  - SSR-safe with 300ms debounced writes
+- Semantic search with 121 categories & ~240 brand synonyms
+- Query-logging for search optimization
 - Welcome screen with suggestion chips
 
-### State Management Pattern
-```typescript
-// Simple useState-based state management - no complex state libraries
-const [selectedMarkets, setSelectedMarkets] = useState<string[]>(['Aldi', 'Lidl', ...]);
-const [chatStarted, setChatStarted] = useState(false);
-const [messages, setMessages] = useState<Message[]>([]);
-```
-
-### Message Interface
-```typescript
-interface Message {
-  id: string;
-  content: string;
-  role: 'user' | 'assistant';
-  timestamp: Date;
-}
-```
-
 ### Key Design Patterns
-- **Animation**: Framer Motion with spring configs (damping: 20, stiffness: 100)
-- **Responsive**: Mobile-first approach with Tailwind utilities
-- **Client-Side**: All main components use `'use client'` directive
+- **State Management**: Simple useState (no complex libraries) - see `docs/app/page_documentation.md`
+- **LocalStorage Persistence**: SSR-safe with MemoryStorage fallback - see `docs/lib/utils/localStorage_documentation.md`
+- **Animation**: Framer Motion with spring configs - see `docs/app/globals_documentation.md`
+- **Responsive**: Mobile-first approach with Tailwind
+- **Client-Side**: Main components use `'use client'` directive
 - **SSR Safety**: Client check with `isClient` state before rendering
-- **Streaming**: Server-Sent Events for AI responses
-- **Error Handling**: Multiple error boundary layers (Chat, UI, General)
-- **Performance**: Loading states, smooth animations, optimized re-renders
-
-### CSS Variables Pattern (globals.css)
-```css
---sparfuchs-background: /* Main background */
---sparfuchs-surface: /* Card/surface backgrounds */
---sparfuchs-primary: /* Primary brand color */
---sparfuchs-text: /* Main text color */
---sparfuchs-text-light: /* Secondary text color */
---sparfuchs-border: /* Border color */
-```
-
-### Animation Configurations
-```typescript
-// Spring animation config
-const springConfig = {
-  type: "spring" as const,
-  damping: 20,
-  stiffness: 100
-};
-
-// Page transitions
-const pageTransition = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.95 },
-  transition: springConfig
-};
-
-// Slide animations
-const slideFromBottom = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
-  transition: springConfig
-};
-```
+- **Streaming**: Server-Sent Events for AI responses - see `docs/lib/ai/openrouter_documentation.md`
+- **Error Handling**: Multiple boundary layers - see `docs/app/components/Error/`
+- **Performance**: Loading states, smooth animations, optimized re-renders, debounced writes
 
 ### API Integration
-- **Chat Endpoint**: `/api/chat` (POST with streaming response)
-- **Request Format**: `{ message: string, selectedMarkets: string[], useSemanticSearch: boolean }`
-- **Response Format**: Server-Sent Events with `data:` prefix
-- **Error Handling**: Status checks + try-catch with user-friendly error messages
+**Chat Endpoint**: `/api/chat` (POST with streaming response)
+- **Request**: `{ message: string, selectedMarkets: string[], useSemanticSearch: boolean }`
+- **Response**: Server-Sent Events with `data:` prefix
+- **AI Model**: google/gemini-2.5-flash-lite via OpenRouter
+- Details: `docs/lib/ai/openrouter_documentation.md`
 
-### Market Constants
-Available markets defined in `lib/utils/constants.ts`:
-- Aldi (Blue: #00a8e6)
-- Lidl (Yellow: #ffcc00)
-- Rewe (Red: #cc0000)
-- Edeka (Blue: #005ca4)
-- Penny (Orange: #ff6900)
+### Market Configuration
+Default market order (Lidl first): `['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe']`
+- Market colors defined in `lib/utils/constants.ts`
+- Frontend sorting in `ChatMessage` component
+- Details: `docs/lib/utils/constants_documentation.md`
 
 ### Common Development Tasks
 - **New Components**: Create in `app/components/[Category]/` + add documentation in `docs/app/components/[Category]/`
 - **New Hooks**: Add to `lib/hooks/` + document in `docs/lib/hooks/`
 - **New Utilities**: Add to `lib/utils/` + document in `docs/lib/utils/`
-- **Styling Changes**: Modify CSS variables in `app/globals.css` for theme consistency
+- **Styling Changes**: Modify CSS variables in `app/globals.css` - see `docs/app/globals_documentation.md`
 - **Type Updates**: Update `types/index.ts` + regenerate documentation
-- **API Changes**: Update `/api/chat` route (currently removed - needs reimplementation)
+- **Synonym Updates**: Weekly workflow in `scripts/Synonyms/` - see `scripts/Synonyms/README.md`
+- **Query Analysis**: Run `npm run analyze:queries` after 1-2 weeks - see `scripts/Queries/README.md`
 
 ### Testing Strategy
 - **Framework**: Jest with React Testing Library
 - **Config**: `jest.config.js` with jsdom environment
-- **Coverage**: Available via `npm run test:coverage`
-- **Testing Types**: Component tests, hook tests, utility tests
+- **Coverage**: `npm run test:coverage`
+- **Types**: Component tests, hook tests, utility tests
 
 ### Current Application State
-⚠️ **Note**: The AI chat API (`/api/chat`) has been removed. The application currently shows a placeholder error message:
-```
-"Die Chat-Funktion ist derzeit deaktiviert, da die frühere KI entfernt wurde."
-```
-Future development should reimplement the chat API with new AI service integration.
+✅ **OpenRouter AI Integration**: Fully functional chat system with streaming responses
+- Model: google/gemini-2.5-flash-lite
+- Streaming: Server-Sent Events (SSE)
+- Semantic Search: 26.9% coverage (improving weekly)
+- Query-Logging: Active for search optimization
 
-### Data Sources
-- **Offers Data**: Located in `/Angebote/` directory
-- **Format**: CSV files processed with csv-parse
-- **Markets**: Aldi, Lidl, Rewe, Edeka, Penny
+### Data Management
+- **Source**: `Angebote/latest/Angebote.txt` (JSONL format, ~1574 offers)
+- **Processing**: CSV-Parse for data loading
+- **Search**: Synonym-based semantic search
+- **Systems**:
+  - Query-Logging (`scripts/Queries/`)
+  - Synonym-Management (`scripts/Synonyms/`)
+- Details: `docs/lib/data/offers_documentation.md`
 
 ### Build & Deployment
-- **Build Command**: `npm run build` or `npm run production:build`
-- **Build Analysis**: `npm run analyze` or `npm run build:analyze`
-- **Output**: Static `.next` folder for deployment
+- **Build**: `npm run build` or `npm run production:build`
+- **Analysis**: `npm run analyze` or `npm run build:analyze`
+- **Output**: Static `.next` folder
 - **Compression**: Enabled in next.config.mjs
 
 ### Environment Variables
-Managed in `.env.local` - see `docs/lib/utils/env_documentation.md` for details.
+Required variables in `.env.local`:
+- `OPENROUTER_API_KEY` - OpenRouter API key (required)
+- `NEXT_PUBLIC_APP_URL` - App URL (optional, default: localhost:3000)
+- `NEXT_PUBLIC_APP_TITLE` - App title (optional, default: SparFuchs.de)
+
+Details: `docs/lib/utils/env_documentation.md`
 
 ### Important File Paths
-- Main Page: `app/page.tsx:1`
-- Root Layout: `app/layout.tsx:1`
-- Global Styles: `app/globals.css:1`
+- Main Page: `app/page.tsx:23` (selectedMarkets default order, shopping list integration)
+- Chat API: `app/api/chat/route.ts:1`
+- OpenRouter Client: `lib/ai/openrouter.ts:1`
+- Offers System: `lib/data/offers.ts:1`
+- Shopping List Hook: `lib/hooks/useShoppingList.ts:1`
+- LocalStorage Service: `lib/utils/localStorage.ts:1`
 - Constants: `lib/utils/constants.ts:1`
+- Global Styles: `app/globals.css:1`
 - Type Definitions: `types/index.ts:1`
-- Package Config: `package.json:1`
-- Next Config: `next.config.mjs:1`
-- Tailwind Config: `tailwind.config.js:1`
 
 ### Code Style Guidelines
 1. **TypeScript Strict Mode**: Always maintain strict type checking
@@ -291,15 +289,33 @@ Managed in `.env.local` - see `docs/lib/utils/env_documentation.md` for details.
 - **Code Splitting**: Automatic via Next.js App Router
 - **Image Optimization**: Use Next.js Image component when applicable
 - **CSS**: Tailwind with PurgeCSS for minimal bundle
-- **Bundle Analysis**: Available via `@next/bundle-analyzer`
+- **Bundle Analysis**: `@next/bundle-analyzer`
 - **Lazy Loading**: Implement for heavy components
-- **Memoization**: Use React.memo, useMemo, useCallback where appropriate
+- **Memoization**: React.memo, useMemo, useCallback where appropriate
+- **Streaming**: AI responses via SSE for progressive rendering
 
 ### Documentation Standards
-All major components and utilities should have corresponding documentation in the `docs/` folder following the pattern: `[filename]_documentation.md`
+All major components and utilities must have corresponding documentation in the `docs/` folder following the pattern: `[filename]_documentation.md`
 
-Run `npm run generate:docs` or `npm run analyze:docs` to generate/update documentation files.
+**Current Coverage**: 100% (48/48 files documented)
 
-**Last Updated**: 2025-10-22
+**Generation Commands**:
+- `npm run generate:docs` - Generate documentation
+- `npm run analyze:docs` - Generate analyzed documentation
+
+**Shopping List Documentation** (7 new files):
+- `useShoppingList_documentation.md`, `useToast_documentation.md`, `localStorage_documentation.md`
+- `ShoppingListButton_documentation.md`, `ShoppingListPanel_documentation.md`, `AddToListButton_documentation.md`, `Toast_documentation.md`
+
+### Weekly Maintenance Tasks
+1. **Synonym Updates**: Run weekly workflow in `scripts/Synonyms/` (5-10 min)
+2. **Query Analysis**: Analyze user queries every 1-2 weeks (see `scripts/Queries/README.md`)
+3. **Coverage Check**: Monitor synonym coverage improvements
+4. **Documentation**: Update docs when adding new features
+
+**Last Updated**: 2025-11-06
 **Project Version**: 0.1.0
 **Next.js Version**: 14.2.18
+**AI Model**: google/gemini-2.5-flash-lite (OpenRouter)
+**Documentation Coverage**: 100% (48/48 files)
+**Latest Feature**: Shopping List Integration with LocalStorage persistence

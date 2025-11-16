@@ -1,15 +1,39 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { ShoppingListButton } from '@/app/components/UI/ShoppingListButton';
 
-export function Header() {
+interface HeaderProps {
+  shoppingListCount?: number;
+  onOpenShoppingList?: () => void;
+  isShoppingListOpen?: boolean;
+}
+
+export function Header({
+  shoppingListCount = 0,
+  onOpenShoppingList,
+  isShoppingListOpen = false
+}: HeaderProps) {
   return (
-    <header 
-      className="py-6 sm:py-8"
+    <header
+      className="py-6 sm:py-8 relative"
       style={{ background: 'var(--sparfuchs-background)' }}
     >
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <div className="flex items-center justify-center gap-3 mb-2">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        {/* Shopping List Button - positioned absolute top-right */}
+        {onOpenShoppingList && (
+          <div className="absolute top-4 right-4 sm:right-6">
+            <ShoppingListButton
+              itemCount={shoppingListCount}
+              onClick={onOpenShoppingList}
+              isOpen={isShoppingListOpen}
+            />
+          </div>
+        )}
+
+        {/* Centered Content */}
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
           {/* Shopping Cart Emoji with Animation */}
           <motion.span 
             className="text-3xl"
@@ -34,12 +58,13 @@ export function Header() {
           </h1>
         </div>
         
-        <p 
-          className="text-base sm:text-lg lg:text-xl inter-font"
-          style={{ color: 'var(--sparfuchs-text-light)' }}
-        >
-          Dein AI-Assistent für Supermarkt-Angebote
-        </p>
+          <p
+            className="text-base sm:text-lg lg:text-xl inter-font"
+            style={{ color: 'var(--sparfuchs-text-light)' }}
+          >
+            Dein AI-Assistent für Supermarkt-Angebote
+          </p>
+        </div>
       </div>
     </header>
   );

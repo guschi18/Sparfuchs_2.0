@@ -66,3 +66,26 @@ export interface ChatResponse {
   done?: boolean;
   error?: string;
 }
+
+// Shopping List types
+export interface ShoppingListItem {
+  id: string;                    // Unique identifier for the list item
+  productId: string;             // Reference to original product
+  name: string;                  // Product name
+  price: string;                 // Price as string (e.g., "2.49")
+  priceNumeric: number;          // Price as number for calculations
+  market: string;                // Market name (Lidl, Aldi, etc.)
+  dateRange: string;             // Validity period
+  brand?: string;                // Optional brand
+  uvp?: string;                  // Optional UVP (Unverbindliche Preisempfehlung)
+  discount_pct?: number;         // Optional discount percentage
+  notes?: string;                // Optional notes/restrictions
+  checked: boolean;              // Whether item is checked off
+  addedAt: number;               // Timestamp when added (Unix timestamp for storage)
+}
+
+export interface ShoppingListState {
+  items: ShoppingListItem[];
+  totalPrice: number;
+  itemCount: number;
+}

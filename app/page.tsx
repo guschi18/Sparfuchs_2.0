@@ -5,11 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MarketToggles } from './components/UI/MarketToggles';
 import { WelcomeMessages } from './components/UI/WelcomeMessages';
 import { CentralInput } from './components/UI/CentralInput';
+import { ShoppingListPanel } from './components/UI/ShoppingListPanel';
+import { ToastContainer } from './components/UI/Toast';
 
 import { ChatMessage } from './components/Chat/ChatMessage';
 import { ChatInput } from './components/Chat/ChatInput';
+import { ProductData } from './components/Chat/ProductCard';
 import { Header } from './components/Layout/Header';
 import { Footer } from './components/Layout/Footer';
+
+import { useShoppingList } from '@/lib/hooks/useShoppingList';
+import { useToast } from '@/lib/hooks/useToast';
 
 interface Message {
   id: string;
@@ -20,12 +26,29 @@ interface Message {
 
 export default function Home() {
   // Simplified state management without complex hooks
-  const [selectedMarkets, setSelectedMarkets] = useState(['Aldi', 'Lidl', 'Rewe', 'Edeka', 'Penny']);
+  const [selectedMarkets, setSelectedMarkets] = useState(['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe']);
   const [chatStarted, setChatStarted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [hideCompleted, setHideCompleted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Shopping List Hook
+  const {
+    items: shoppingListItems,
+    totalPrice,
+    itemCount,
+    addItem,
+    removeItem,
+    toggleCheck,
+    clearList,
+    isInList,
+  } = useShoppingList();
+
+  // Toast Hook
+  const { toasts, dismissToast, success, error } = useToast();
 
   // Animation configurations
   const springConfig = {
@@ -169,6 +192,33 @@ export default function Home() {
     setMessages([]);
   };
 
+  // Shopping List Handlers
+  const handleAddToList = (product: ProductData) => {
+    const success_added = addItem(product);
+    if (success_added) {
+      success(`${product.name} zur Liste hinzugefügt!`);
+    } else {
+      error('Produkt ist bereits in der Liste');
+    }
+  };
+
+  const handleOpenPanel = () => {
+    setIsPanelOpen(true);
+  };
+
+  const handleClosePanel = () => {
+    setIsPanelOpen(false);
+  };
+
+  const handleClearList = () => {
+    clearList();
+    success('Liste geleert');
+  };
+
+  const handleToggleHideCompleted = () => {
+    setHideCompleted(!hideCompleted);
+  };
+
   if (!isClient) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--sparfuchs-background)' }}>
@@ -187,7 +237,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--sparfuchs-background)' }}>
-      <Header />
+      <Header
+        shoppingListCount={itemCount}
+        onOpenShoppingList={handleOpenPanel}
+        isShoppingListOpen={isPanelOpen}
+      />
       
       <AnimatePresence mode="wait">
         {chatStarted ? (
@@ -208,7 +262,13 @@ export default function Home() {
               </div>
             ) : (
               messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
+                <ChatMessage
+                  key={message.id}
+                  message={message}
+                  selectedMarkets={selectedMarkets}
+                  onAddToList={handleAddToList}
+                  isInList={isInList}
+                />
               ))
             )}
             {isLoading && (
@@ -314,8 +374,24 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       <Footer />
+
+      {/* Shopping List Panel */}
+      <ShoppingListPanel
+        isOpen={isPanelOpen}
+        onClose={handleClosePanel}
+        items={shoppingListItems}
+        totalPrice={totalPrice}
+        onToggleCheck={toggleCheck}
+        onRemoveItem={removeItem}
+        onClearList={handleClearList}
+        hideCompleted={hideCompleted}
+        onToggleHideCompleted={handleToggleHideCompleted}
+      />
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }

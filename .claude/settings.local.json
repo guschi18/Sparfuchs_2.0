@@ -54,8 +54,13 @@
       "mcp__chrome-devtools__resize_page",
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__wait_for",
-      "mcp__chrome-devtools__list_pages"
+      "mcp__chrome-devtools__list_pages",
+      "Bash(lsof:*)"
     ],
     "deny": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ],
+  "enableAllProjectMcpServers": true
 }

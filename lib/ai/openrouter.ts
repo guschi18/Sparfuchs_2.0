@@ -48,7 +48,7 @@ export async function createChatCompletion(
       model: options.model || DEFAULT_MODEL,
       messages: options.messages,
       temperature: options.temperature ?? 0.7,
-      max_tokens: options.max_tokens ?? 2000,
+      max_tokens: options.max_tokens ?? 6000,
       stream: options.stream ?? false,
     }),
   });

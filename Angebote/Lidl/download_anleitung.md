@@ -4,9 +4,9 @@
 Dieses Dokument beschreibt, wie das PDF-Dokument des Lidl Aktionsprospekts aus dem DOM heruntergeladen wurde.
 
 ## Ausgangssituation
-- **URL**: https://www.lidl.de/l/prospekte/aktionsprospekt-13-10-2025-18-10-2025-e8f607/view/flyer/page/1?lf=HHZ
+- **URL**: https://www.lidl.de/l/prospekte/aktionsprospekt-10-11-2025-15-11-2025-40a5a1/view/flyer/page/1?lf=HHZ
 - **Ziel**: Download des vollständigen PDF-Prospekts
-- **Zeitraum**: 13.10.2025 – 18.10.2025
+- **Zeitraum**: 10.11.2025 – 15.11.2025
 
 ## Vorgehensweise
 
@@ -15,7 +15,7 @@ Die Lidl-Prospektseite wurde mit Chrome DevTools geöffnet, um die Netzwerk-Requ
 
 ```bash
 # Seite navigiert zu:
-https://www.lidl.de/l/prospekte/aktionsprospekt-13-10-2025-18-10-2025-e8f607/view/flyer/page/1?lf=HHZ
+https://www.lidl.de/l/prospekte/aktionsprospekt-10-11-2025-15-11-2025-40a5a1/view/flyer/page/1?lf=HHZ
 ```
 
 ### 2. Netzwerk-Traffic analysieren
@@ -23,7 +23,7 @@ Nach dem Laden der Seite wurden die Netzwerk-Requests untersucht. Dabei wurde ei
 
 **API-Endpoint**:
 ```
-https://endpoints.leaflets.schwarz/v4/flyer?flyer_identifier=aktionsprospekt-13-10-2025-18-10-2025-e8f607
+https://endpoints.leaflets.schwarz/v4/flyer?flyer_identifier=aktionsprospekt-10-11-2025-15-11-2025-40a5a1
 ```
 
 ### 3. API-Response auswerten
@@ -32,26 +32,25 @@ Die API liefert eine JSON-Response mit allen Informationen zum Prospekt, einschl
 **Relevante JSON-Felder**:
 - `flyer.pdfUrl`: Enthält die URL zum Standard-PDF
 - `flyer.hiResPdfUrl`: Enthält die URL zum hochauflösenden PDF
-- `flyer.fileSize`: 74097874 Bytes (~71 MB)
+- `flyer.fileSize`: 67898106 Bytes (~65 MB)
 
 **Gefundene PDF-URL**:
 ```
-https://object.storage.eu01.onstackit.cloud/leaflets/pdfs/0199a5b8-a3f4-783b-b33f-ca3230ef92a5/Aktionsprospekt-13-10-2025-18-10-2025-02.pdf
+https://object.storage.eu01.onstackit.cloud/leaflets/pdfs/019a39c9-8b33-7880-a396-c665abbcd4eb/Aktionsprospekt-10-11-2025-15-11-2025-02.pdf
 ```
 
 ### 4. PDF herunterladen
 Das PDF wurde direkt von der Storage-URL heruntergeladen:
 
 ```bash
-curl -o "/mnt/d/Lidl/Aktionsprospekt-13-10-2025-18-10-2025.pdf" \
-  "https://object.storage.eu01.onstackit.cloud/leaflets/pdfs/0199a5b8-a3f4-783b-b33f-ca3230ef92a5/Aktionsprospekt-13-10-2025-18-10-2025-02.pdf"
+Invoke-WebRequest -Uri "https://object.storage.eu01.onstackit.cloud/leaflets/pdfs/019a39c9-8b33-7880-a396-c665abbcd4eb/Aktionsprospekt-10-11-2025-15-11-2025-02.pdf" -OutFile "Angebote/Lidl/Aktionsprospekt-10-11-2025-15-11-2025.pdf"
 ```
 
 ## Ergebnis
 
 **Heruntergeladene Datei**:
-- Pfad: `/mnt/d/Lidl/Aktionsprospekt-13-10-2025-18-10-2025.pdf`
-- Größe: 71 MB
+- Pfad: `D:\Sparfuchs 2.0\sparfuchs-nextjs\Angebote\Lidl\Aktionsprospekt-10-11-2025-15-11-2025.pdf`
+- Größe: 64.75 MB
 - Format: PDF
 
 ## Zusammenfassung der Methode
@@ -72,9 +71,9 @@ Die Lidl-Webseite lädt die Prospekt-Informationen über eine API (`endpoints.le
 - Access-Control-Allow-Origin: *
 
 **Flyer-Informationen**:
-- ID: 0199a5b8-a3f4-783b-b33f-ca3230ef92a5
+- ID: 019a39c9-8b33-7880-a396-c665abbcd4eb
 - Name: Aktionsprospekt
-- Titel: 13.10.2025 – 18.10.2025
+- Titel: 10.11.2025 – 15.11.2025
 - Kategorie: Filial-Angebote
 - Locale: de-DE (lidl/de-DE)
 - Status: current (aktiv)
