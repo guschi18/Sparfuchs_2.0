@@ -57,14 +57,6 @@ if (offer.pack_size) {
   - Nur anzeigen wenn `notes` "app" enthält (case-insensitive)
   - Regex: `/app/i.test(product.notes)`
 
-### Phase 4: Visuelle Prüfung mit Chrome DevTools
-- [ ] Milch-Beispiel testen (aktuelle Anfrage)
-- [ ] Verschiedene Produkttypen prüfen:
-  - Produkte MIT variant/pack_size/unit
-  - Produkte OHNE diese Felder
-  - Produkte mit App-Preis-Notes vs. andere Notes
-- [ ] Mobile Responsiveness prüfen
-- [ ] Screenshot vor/nach Vergleich
 
 ## Betroffene Dateien
 

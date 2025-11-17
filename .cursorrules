@@ -1,5 +1,7 @@
 ## Cursor Rules
 
+# CLAUDE.md
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 **<PRIORITY NUMBER 1>** Change as little code as necessary!
@@ -18,6 +20,29 @@ Perform at least two internal rounds of Solve→Critique→Improve.
 If uncertainty exists or data is missing: state explicitly and name what is needed.
 Do not output extensive thought processes; only the artifacts.
 Keep as concise as necessary while explaining everything compactly.
+
+## 0. Docs-Preflight (Verpflichtend vor jeder Implementierung)
+
+**Offizielle Dokumentation hat IMMER Vorrang vor Modellwissen!**
+
+Vor jedem Coding-Task:
+1. **Betroffene Dependencies identifizieren**: Welche Technologien werden genutzt?
+2. **`docs/dependency-docs.md` öffnen**: Zentrale Übersicht mit Links zu offiziellen Docs
+3. **Offizielle Docs prüfen**: Verlinkte Dokumentationen konsultieren
+4. **Bei Versionssprüngen**: Migration-Guide lesen, relevante Notizen in `dependency-docs.md` ergänzen
+
+**Beispiele**:
+- React Component → React Docs + Next.js Docs prüfen
+- Styling → Tailwind Docs + HeroUI Docs konsultieren
+- Testing → Jest Docs + React Testing Library
+- API-Integration → OpenRouter Docs
+
+⚠️ **KRITISCH - Versions-Regel**:
+- Nutze Dokumentation zur **AKTUELL installierten Version** (siehe `package.json`)
+- **NIEMALS Dependencies upgraden** ohne explizite Anweisung des Entwicklers
+- Falls Docs die neueste Version zeigen: Version-Picker nutzen oder nach richtiger Version suchen
+
+**Referenz**: Siehe `docs/dependency-docs.md` für alle Kern-Dependencies mit aktuellen Versionen und Links.
 
 ## Standard Workflow
 1. First think through the problem, read the codebase for relevant files, and write a plan to projectplan.md.
@@ -90,8 +115,9 @@ All commands run from project root directory:
 **Chat Components** (`docs/app/components/Chat/`):
 - Main Container: `ChatContainer_documentation.md`
 - User Input: `ChatInput_documentation.md`
-- Message Display: `ChatMessage_documentation.md` (with market sorting)
-- Product Cards: `ProductCard_documentation.md` (no redundant market badge)
+- Message Display: `ChatMessage_documentation.md` (with market sorting, shopping list integration)
+- Product Cards: `ProductCard_documentation.md` (no redundant market badge, shopping list integration)
+- **Add To List Button**: `AddToListButton_documentation.md` (compact button, icon-based, disabled state)
 
 **Error Handling** (`docs/app/components/Error/`):
 - Chat Error Boundary: `ChatErrorBoundary_documentation.md`
@@ -99,7 +125,7 @@ All commands run from project root directory:
 - UI Error Boundary: `UIErrorBoundary_documentation.md`
 
 **Layout Components** (`docs/app/components/Layout/`):
-- Header: `Header_documentation.md`
+- Header: `Header_documentation.md` (with shopping list button integration)
 - Footer: `Footer_documentation.md`
 
 **UI Components** (`docs/app/components/UI/`):
@@ -109,6 +135,9 @@ All commands run from project root directory:
 - Welcome Messages: `WelcomeMessages_documentation.md`
 - Loading Spinner: `LoadingSpinner_documentation.md`
 - Console Component: `Konsole_documentation.md`
+- **Shopping List Button**: `ShoppingListButton_documentation.md` (header button with badge & pulse animation)
+- **Shopping List Panel**: `ShoppingListPanel_documentation.md` (slide-in panel, filter, ESC key support)
+- **Toast System**: `Toast_documentation.md` (custom toasts, bottom-right, auto-dismiss)
 
 **Special Components** (`docs/app/components/`):
 - Performance Reporter: `Performance/PerformanceReporter_documentation.md`
@@ -133,15 +162,25 @@ All commands run from project root directory:
 - Input Handling: `useInputHandling_documentation.md`
 - Real-time Updates: `useRealTimeUpdates_documentation.md`
 - Session State: `useSessionState_documentation.md`
+- **Shopping List Management**: `useShoppingList_documentation.md` (CRUD, LocalStorage, useMemo/useCallback optimized)
+- **Toast Notifications**: `useToast_documentation.md` (success/error/info toasts, no external deps)
 
 ### 🛠️ **Utilities & Services** - Details in `docs/lib/utils/`
 - Application Constants: `constants_documentation.md`
 - Environment Variables: `env_documentation.md`
 - Helper Functions: `helpers_documentation.md`
 - Performance Utilities: `performance_documentation.md`
+- **LocalStorage Service**: `localStorage_documentation.md` (SSR-safe, MemoryStorage fallback, shopping list API)
 
 ### 📝 **Type Definitions** - Details in `docs/types/`
 - Core App Types: `index_documentation.md`
+
+### 📚 **Dependency Documentation** - Details in `docs/`
+- **Dependency Docs Reference**: `dependency-docs.md`
+  - Zentrale Übersicht aller Kern-Dependencies (8 Libraries)
+  - Aktuelle Versionen: Next.js (^14.2.18), React (^18.3.1), Tailwind (^3.3.6), HeroUI (^2.6.14), Framer Motion (^12.23.12), OpenRouter, Jest (^29.7.0), ESLint (^8.57.1)
+  - Offizielle Docs-Links + Migration Guides
+  - Verpflichtender Docs-Preflight vor jeder Implementierung
 
 ### ⚙️ **Configuration Files** - Details in `docs/`
 - Next.js Config: `next.config_documentation.md`
@@ -151,7 +190,7 @@ All commands run from project root directory:
 - TypeScript: `next-env.d_documentation.md`
 
 ### 📚 **App Pages** - Details in `docs/app/`
-- Main Page: `page_documentation.md` (Chat interface, default market order: Lidl→Aldi→Edeka→Penny→Rewe)
+- Main Page: `page_documentation.md` (Chat interface, shopping list integration, default market order: Lidl→Aldi→Edeka→Penny→Rewe)
 - Root Layout: `layout_documentation.md`
 - Global Styles: `globals_documentation.md`
 
@@ -165,11 +204,6 @@ All commands run from project root directory:
   - Smart brand mapping (83 top brands)
   - Coverage analysis & CSV reports
 
-### 📖 **Prompts & Configuration** - Details in `docs/Prompts/` & `docs/.claude/`
-- Claude Optimization: `Prompts/Claude optimieren_documentation.md`
-- Documentation Adjustments: `Prompts/Docs anpassen_documentation.md`
-- New Documentation: `Prompts/Docs neu_documentation.md`
-
 ## Quick Reference
 
 ### Core Application Features
@@ -179,19 +213,25 @@ All commands run from project root directory:
 - Streaming responses for progressive UI updates
 - Market toggle filters (default order: Lidl→Aldi→Edeka→Penny→Rewe)
 - Product cards grouped by market (no redundant badges)
+- **Shopping List Feature**: Add products to persistent shopping list with LocalStorage
+  - Header button with badge & pulse animation
+  - Slide-in panel with checkboxes & "Hide completed" filter
+  - Toast notifications for user feedback
+  - SSR-safe with 300ms debounced writes
 - Semantic search with 121 categories & ~240 brand synonyms
 - Query-logging for search optimization
 - Welcome screen with suggestion chips
 
 ### Key Design Patterns
 - **State Management**: Simple useState (no complex libraries) - see `docs/app/page_documentation.md`
+- **LocalStorage Persistence**: SSR-safe with MemoryStorage fallback - see `docs/lib/utils/localStorage_documentation.md`
 - **Animation**: Framer Motion with spring configs - see `docs/app/globals_documentation.md`
 - **Responsive**: Mobile-first approach with Tailwind
 - **Client-Side**: Main components use `'use client'` directive
 - **SSR Safety**: Client check with `isClient` state before rendering
 - **Streaming**: Server-Sent Events for AI responses - see `docs/lib/ai/openrouter_documentation.md`
 - **Error Handling**: Multiple boundary layers - see `docs/app/components/Error/`
-- **Performance**: Loading states, smooth animations, optimized re-renders
+- **Performance**: Loading states, smooth animations, optimized re-renders, debounced writes
 
 ### API Integration
 **Chat Endpoint**: `/api/chat` (POST with streaming response)
@@ -221,13 +261,6 @@ Default market order (Lidl first): `['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe']`
 - **Coverage**: `npm run test:coverage`
 - **Types**: Component tests, hook tests, utility tests
 
-### Current Application State
-✅ **OpenRouter AI Integration**: Fully functional chat system with streaming responses
-- Model: google/gemini-2.5-flash-lite
-- Streaming: Server-Sent Events (SSE)
-- Semantic Search: 26.9% coverage (improving weekly)
-- Query-Logging: Active for search optimization
-
 ### Data Management
 - **Source**: `Angebote/latest/Angebote.txt` (JSONL format, ~1574 offers)
 - **Processing**: CSV-Parse for data loading
@@ -252,10 +285,12 @@ Required variables in `.env.local`:
 Details: `docs/lib/utils/env_documentation.md`
 
 ### Important File Paths
-- Main Page: `app/page.tsx:23` (selectedMarkets default order)
+- Main Page: `app/page.tsx:23` (selectedMarkets default order, shopping list integration)
 - Chat API: `app/api/chat/route.ts:1`
 - OpenRouter Client: `lib/ai/openrouter.ts:1`
 - Offers System: `lib/data/offers.ts:1`
+- Shopping List Hook: `lib/hooks/useShoppingList.ts:1`
+- LocalStorage Service: `lib/utils/localStorage.ts:1`
 - Constants: `lib/utils/constants.ts:1`
 - Global Styles: `app/globals.css:1`
 - Type Definitions: `types/index.ts:1`
@@ -282,20 +317,11 @@ Details: `docs/lib/utils/env_documentation.md`
 ### Documentation Standards
 All major components and utilities must have corresponding documentation in the `docs/` folder following the pattern: `[filename]_documentation.md`
 
-**Current Coverage**: 100% (41/41 files documented)
-
-**Generation Commands**:
-- `npm run generate:docs` - Generate documentation
-- `npm run analyze:docs` - Generate analyzed documentation
-
-### Weekly Maintenance Tasks
-1. **Synonym Updates**: Run weekly workflow in `scripts/Synonyms/` (5-10 min)
-2. **Query Analysis**: Analyze user queries every 1-2 weeks (see `scripts/Queries/README.md`)
-3. **Coverage Check**: Monitor synonym coverage improvements
-4. **Documentation**: Update docs when adding new features
-
-**Last Updated**: 2025-11-05
+**Last Updated**: 2025-11-06
 **Project Version**: 0.1.0
 **Next.js Version**: 14.2.18
 **AI Model**: google/gemini-2.5-flash-lite (OpenRouter)
-**Documentation Coverage**: 100% (41/41 files)
+**Documentation Coverage**: 100% (48/48 files)
+**Latest Feature**: Shopping List Integration with LocalStorage persistence
+
+

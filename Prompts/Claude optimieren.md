@@ -21,12 +21,14 @@ Verfügbare Dokumentationsdateien:
 3. **Meta-Information**: Behalten Sie nur kritische Projektmetadaten und Orientierungshilfen
 4. **Navigation-Optimierung**: Schaffen Sie eine logische Struktur für schnelle AI-Navigation
 5. **Kontext-Minimierung**: Reduzieren Sie auf essenzielle Informationen für Cross-File-Verständnis
+6. **Dependency-Management**: Verweis auf `docs/dependency-docs.md` für alle Versions- und Docs-Informationen
 </optimization_strategy>
 
 <guidelines>
 **Was in der optimierten CLAUDE.md bleiben soll:**
 - Projekt-Übersicht und Architektur-Prinzipien (high-level)
 - Tech Stack und wichtigste Dependencies
+- Verweis auf `docs/dependency-docs.md` für versionierte Dependency-Referenz
 - Coding Standards und Konventionen
 - Ordnerstruktur und Navigationslogik
 - Kritische Workflow-Informationen
@@ -43,3 +45,11 @@ Verfügbare Dokumentationsdateien:
 ```markdown
 ## [Bereich] - Details in `docs/path/specific_doc.md`
 Kurze Zusammenfassung (1-2 Sätze) + Verweis auf detaillierte Dokumentation.
+```
+
+**Beispiel - Dependency-Referenz:**
+```markdown
+## Dependencies & Versionen - Details in `docs/dependency-docs.md`
+Zentrale Referenz aller 8 Kern-Dependencies mit aktuellen Versionen (aus package.json), offiziellen Docs-Links und Migration Guides.
+⚠️ KRITISCH: Niemals Dependencies upgraden ohne explizite Anweisung!
+```

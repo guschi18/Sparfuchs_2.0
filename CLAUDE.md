@@ -19,6 +19,29 @@ If uncertainty exists or data is missing: state explicitly and name what is need
 Do not output extensive thought processes; only the artifacts.
 Keep as concise as necessary while explaining everything compactly.
 
+## 0. Docs-Preflight (Verpflichtend vor jeder Implementierung)
+
+**Offizielle Dokumentation hat IMMER Vorrang vor Modellwissen!**
+
+Vor jedem Coding-Task:
+1. **Betroffene Dependencies identifizieren**: Welche Technologien werden genutzt?
+2. **`docs/dependency-docs.md` öffnen**: Zentrale Übersicht mit Links zu offiziellen Docs
+3. **Offizielle Docs prüfen**: Verlinkte Dokumentationen konsultieren
+4. **Bei Versionssprüngen**: Migration-Guide lesen, relevante Notizen in `dependency-docs.md` ergänzen
+
+**Beispiele**:
+- React Component → React Docs + Next.js Docs prüfen
+- Styling → Tailwind Docs + HeroUI Docs konsultieren
+- Testing → Jest Docs + React Testing Library
+- API-Integration → OpenRouter Docs
+
+⚠️ **KRITISCH - Versions-Regel**:
+- Nutze Dokumentation zur **AKTUELL installierten Version** (siehe `package.json`)
+- **NIEMALS Dependencies upgraden** ohne explizite Anweisung des Entwicklers
+- Falls Docs die neueste Version zeigen: Version-Picker nutzen oder nach richtiger Version suchen
+
+**Referenz**: Siehe `docs/dependency-docs.md` für alle Kern-Dependencies mit aktuellen Versionen und Links.
+
 ## Standard Workflow
 1. First think through the problem, read the codebase for relevant files, and write a plan to projectplan.md.
 2. The plan should have a list of todo items that you can check off as you complete them
@@ -150,6 +173,13 @@ All commands run from project root directory:
 ### 📝 **Type Definitions** - Details in `docs/types/`
 - Core App Types: `index_documentation.md`
 
+### 📚 **Dependency Documentation** - Details in `docs/`
+- **Dependency Docs Reference**: `dependency-docs.md`
+  - Zentrale Übersicht aller Kern-Dependencies (8 Libraries)
+  - Aktuelle Versionen: Next.js (^14.2.18), React (^18.3.1), Tailwind (^3.3.6), HeroUI (^2.6.14), Framer Motion (^12.23.12), OpenRouter, Jest (^29.7.0), ESLint (^8.57.1)
+  - Offizielle Docs-Links + Migration Guides
+  - Verpflichtender Docs-Preflight vor jeder Implementierung
+
 ### ⚙️ **Configuration Files** - Details in `docs/`
 - Next.js Config: `next.config_documentation.md`
 - Tailwind Config: `tailwind.config_documentation.md`
@@ -171,11 +201,6 @@ All commands run from project root directory:
   - Weekly workflow for coverage improvement
   - Smart brand mapping (83 top brands)
   - Coverage analysis & CSV reports
-
-### 📖 **Prompts & Configuration** - Details in `docs/Prompts/` & `docs/.claude/`
-- Claude Optimization: `Prompts/Claude optimieren_documentation.md`
-- Documentation Adjustments: `Prompts/Docs anpassen_documentation.md`
-- New Documentation: `Prompts/Docs neu_documentation.md`
 
 ## Quick Reference
 
@@ -234,13 +259,6 @@ Default market order (Lidl first): `['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe']`
 - **Coverage**: `npm run test:coverage`
 - **Types**: Component tests, hook tests, utility tests
 
-### Current Application State
-✅ **OpenRouter AI Integration**: Fully functional chat system with streaming responses
-- Model: google/gemini-2.5-flash-lite
-- Streaming: Server-Sent Events (SSE)
-- Semantic Search: 26.9% coverage (improving weekly)
-- Query-Logging: Active for search optimization
-
 ### Data Management
 - **Source**: `Angebote/latest/Angebote.txt` (JSONL format, ~1574 offers)
 - **Processing**: CSV-Parse for data loading
@@ -296,22 +314,6 @@ Details: `docs/lib/utils/env_documentation.md`
 
 ### Documentation Standards
 All major components and utilities must have corresponding documentation in the `docs/` folder following the pattern: `[filename]_documentation.md`
-
-**Current Coverage**: 100% (48/48 files documented)
-
-**Generation Commands**:
-- `npm run generate:docs` - Generate documentation
-- `npm run analyze:docs` - Generate analyzed documentation
-
-**Shopping List Documentation** (7 new files):
-- `useShoppingList_documentation.md`, `useToast_documentation.md`, `localStorage_documentation.md`
-- `ShoppingListButton_documentation.md`, `ShoppingListPanel_documentation.md`, `AddToListButton_documentation.md`, `Toast_documentation.md`
-
-### Weekly Maintenance Tasks
-1. **Synonym Updates**: Run weekly workflow in `scripts/Synonyms/` (5-10 min)
-2. **Query Analysis**: Analyze user queries every 1-2 weeks (see `scripts/Queries/README.md`)
-3. **Coverage Check**: Monitor synonym coverage improvements
-4. **Documentation**: Update docs when adding new features
 
 **Last Updated**: 2025-11-06
 **Project Version**: 0.1.0
