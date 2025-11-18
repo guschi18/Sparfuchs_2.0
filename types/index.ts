@@ -11,6 +11,7 @@ export interface ChatMessage {
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
+  isStreaming?: boolean;
 }
 
 export interface AppState {

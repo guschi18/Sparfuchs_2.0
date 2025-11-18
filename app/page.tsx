@@ -22,6 +22,7 @@ interface Message {
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
+  isStreaming?: boolean;
 }
 
 export default function Home() {
@@ -33,6 +34,7 @@ export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [hideCompleted, setHideCompleted] = useState(false);
+  const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Shopping List Hook
@@ -57,14 +59,25 @@ export default function Home() {
     stiffness: 100
   };
 
-  const pageTransition = {
+  // Nur beim ersten Laden animieren
+  const pageTransition = hasInitiallyLoaded ? {
+    initial: { opacity: 1, scale: 1 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 1, scale: 1 },
+    transition: { duration: 0 }
+  } : {
     initial: { opacity: 0, scale: 0.95 },
     animate: { opacity: 1, scale: 1 },
     exit: { opacity: 0, scale: 0.95 },
     transition: springConfig
   };
 
-  const slideFromBottom = {
+  const slideFromBottom = hasInitiallyLoaded ? {
+    initial: { opacity: 1, y: 0 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 1, y: 0 },
+    transition: { duration: 0 }
+  } : {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 },
@@ -73,6 +86,10 @@ export default function Home() {
 
   useEffect(() => {
     setIsClient(true);
+    // Nach initialem Laden: keine Animationen mehr
+    setTimeout(() => {
+      setHasInitiallyLoaded(true);
+    }, 1000); // Nach 1 Sekunde (wenn initiale Animation fertig ist)
   }, []);
 
   const handleUpdateMarkets = (newMarkets: string[]) => {
@@ -84,8 +101,15 @@ export default function Home() {
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    // Nur nach User-Nachrichten scrollen (nicht nach Assistant-Antworten)
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      // Nur bei User-Messages oder wenn gerade geladen wird
+      if (lastMessage.role === 'user' || isLoading) {
+        scrollToBottom();
+      }
+    }
+  }, [messages, isLoading]);
 
   const handleStartChat = async (message: string) => {
     setChatStarted(true);
@@ -136,7 +160,8 @@ export default function Home() {
         id: `assistant-${Date.now()}`,
         content: '',
         role: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        isStreaming: true
       };
       
       setMessages(prev => [...prev, assistantMessage]);
@@ -163,6 +188,14 @@ export default function Home() {
                 );
               }
               if (data.done) {
+                // Streaming beendet - Produkte können jetzt alle angezeigt werden
+                setMessages(prev => 
+                  prev.map(msg => 
+                    msg.id === assistantMessage.id 
+                      ? { ...msg, isStreaming: false }
+                      : msg
+                  )
+                );
                 setIsLoading(false);
                 return;
               }
@@ -175,11 +208,16 @@ export default function Home() {
     } catch (error) {
       console.error('Chat error:', error);
       const errorText = error instanceof Error ? error.message : 'Ein unbekannter Fehler ist aufgetreten.';
+      
+      // Beende Streaming für alle Messages
+      setMessages(prev => prev.map(msg => ({ ...msg, isStreaming: false })));
+      
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         content: `Fehler: ${errorText}\n\nBitte versuche es erneut oder stelle deine Frage anders.`,
         role: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        isStreaming: false
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -194,12 +232,7 @@ export default function Home() {
 
   // Shopping List Handlers
   const handleAddToList = (product: ProductData) => {
-    const success_added = addItem(product);
-    if (success_added) {
-      success(`${product.name} zur Liste hinzugefügt!`);
-    } else {
-      error('Produkt ist bereits in der Liste');
-    }
+    addItem(product);
   };
 
   const handleOpenPanel = () => {
@@ -212,7 +245,6 @@ export default function Home() {
 
   const handleClearList = () => {
     clearList();
-    success('Liste geleert');
   };
 
   const handleToggleHideCompleted = () => {
@@ -246,7 +278,7 @@ export default function Home() {
       <AnimatePresence mode="wait">
         {chatStarted ? (
           <motion.div 
-            key="chat-interface"
+            key={hasInitiallyLoaded ? "static" : "chat-interface"}
             className="flex-1 flex flex-col max-w-4xl mx-auto w-full"
             {...pageTransition}
           >
@@ -271,14 +303,6 @@ export default function Home() {
                 />
               ))
             )}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="flex items-center space-x-2 p-3 rounded-lg" style={{ background: 'var(--sparfuchs-surface)' }}>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
-                  <span className="inter-font" style={{ color: 'var(--sparfuchs-text)' }}>Suchen nach Angeboten...</span>
-                </div>
-              </div>
-            )}
             <div ref={messagesEndRef} />
           </motion.div>
 
@@ -289,9 +313,9 @@ export default function Home() {
               borderColor: 'var(--sparfuchs-border)',
               background: 'var(--sparfuchs-background)'
             }}
-            initial={{ opacity: 0, y: 30 }}
+            initial={hasInitiallyLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
+            transition={hasInitiallyLoaded ? { duration: 0 } : { 
               type: "spring", 
               damping: 20, 
               stiffness: 100, 
@@ -315,9 +339,9 @@ export default function Home() {
             {/* Reset Button below input */}
             <motion.div 
               className="mt-3 text-center"
-              initial={{ opacity: 0, y: 10, scale: 0.9 }}
+              initial={hasInitiallyLoaded ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ 
+              transition={hasInitiallyLoaded ? { duration: 0 } : { 
                 type: "spring", 
                 damping: 25, 
                 stiffness: 100, 
@@ -346,7 +370,7 @@ export default function Home() {
           </motion.div>
         ) : (
           <motion.div 
-            key="welcome-screen"
+            key={hasInitiallyLoaded ? "static" : "welcome-screen"}
             className="flex-1 flex items-center justify-center"
             {...pageTransition}
           >
@@ -363,12 +387,16 @@ export default function Home() {
             <div className="mb-6">
               <CentralInput 
                 onSendMessage={handleStartChat}
+                disableAnimation={hasInitiallyLoaded}
               />
             </div>
             
             {/* Welcome Messages - below input */}
             <div>
-              <WelcomeMessages onSuggestionClick={handleStartChat} />
+              <WelcomeMessages 
+                onSuggestionClick={handleStartChat}
+                disableAnimation={hasInitiallyLoaded}
+              />
             </div>
           </div>
           </motion.div>
@@ -388,6 +416,7 @@ export default function Home() {
         onClearList={handleClearList}
         hideCompleted={hideCompleted}
         onToggleHideCompleted={handleToggleHideCompleted}
+        selectedMarkets={selectedMarkets}
       />
 
       {/* Toast Container */}

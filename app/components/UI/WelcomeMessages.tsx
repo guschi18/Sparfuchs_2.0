@@ -4,6 +4,7 @@ import { motion, Variants } from 'framer-motion';
 
 interface WelcomeMessagesProps {
   onSuggestionClick: (suggestion: string) => void;
+  disableAnimation?: boolean;
 }
 
 const WELCOME_SUGGESTIONS = [
@@ -16,9 +17,15 @@ const WELCOME_SUGGESTIONS = [
 ];
 
 
-export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
+export function WelcomeMessages({ onSuggestionClick, disableAnimation = false }: WelcomeMessagesProps) {
   // Animation configurations
-  const containerAnimation: Variants = {
+  const containerAnimation: Variants = disableAnimation ? {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0 }
+    }
+  } : {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -28,7 +35,15 @@ export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
     }
   };
 
-  const cardAnimation: Variants = {
+  const cardAnimation: Variants = disableAnimation ? {
+    hidden: { opacity: 1, y: 0, scale: 1 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0 }
+    }
+  } : {
     hidden: { opacity: 0, y: 20, scale: 0.95 },
     visible: {
       opacity: 1,
@@ -42,7 +57,14 @@ export function WelcomeMessages({ onSuggestionClick }: WelcomeMessagesProps) {
     }
   };
 
-  const titleAnimation: Variants = {
+  const titleAnimation: Variants = disableAnimation ? {
+    hidden: { opacity: 1, y: 0 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0 }
+    }
+  } : {
     hidden: { opacity: 0, y: -10 },
     visible: {
       opacity: 1,

@@ -1,10 +1,10 @@
 'use client';
 
-import { Message } from './ChatContainer';
+import { ChatMessage as Message } from '@/types';
 import { ProductCard, ProductData } from './ProductCard';
 
 interface ChatMessageProps {
-  message: Message;
+  message: Message & { isStreaming?: boolean };
   selectedMarkets: string[];
   onAddToList?: (product: ProductData) => void;
   isInList?: (productId: string) => boolean;
@@ -12,11 +12,34 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, selectedMarkets, onAddToList, isInList }: ChatMessageProps) {
   const isUser = message.role === 'user';
+  const isStreaming = message.isStreaming || false;
 
   // Parse message content for product cards with real-time JSON hiding
   const parseMessageContent = (content: string) => {
     const parts: (string | ProductData)[] = [];
     
+    // Während des Streamings: Nur Text anzeigen, keine Produkte parsen
+    if (isStreaming) {
+      // Entferne PRODUCT_CARD JSON aus dem Text während des Streamings
+      const textOnly = content
+        .split('\n')
+        .filter(line => !line.startsWith('PRODUCT_CARD: '))
+        .join('\n')
+        .trim();
+      
+      if (textOnly) {
+        parts.push(textOnly);
+      }
+      
+      // Zeige Loading-Indikator wenn Produkte kommen
+      if (content.includes('PRODUCT_CARD: ')) {
+        parts.push('\n\n🔄 Suche nach Angeboten...');
+      }
+      
+      return parts;
+    }
+    
+    // Nach dem Streaming: Normale Produkt-Parsing-Logik
     // Split content into lines for processing
     const lines = content.split('\n');
     let currentTextBuffer = '';
@@ -38,16 +61,8 @@ export function ChatMessage({ message, selectedMarkets, onAddToList, isInList }:
           const productData: ProductData = JSON.parse(jsonString);
           parts.push(productData);
         } catch (error) {
-          // If JSON parsing fails, it might be incomplete during streaming
-          // Check if it looks like an incomplete JSON
-          const jsonPart = line.substring('PRODUCT_CARD: '.length);
-          if (jsonPart.trim() && !jsonPart.includes('}')) {
-            // Incomplete JSON - don't show it, just skip for now
-            continue;
-          } else {
-            // Complete but invalid JSON - show as text
-            currentTextBuffer += line + '\n';
-          }
+          // Complete but invalid JSON - show as text
+          currentTextBuffer += line + '\n';
         }
       } else {
         // Regular text line
@@ -62,13 +77,7 @@ export function ChatMessage({ message, selectedMarkets, onAddToList, isInList }:
 
     // If no parts found, return original content
     if (parts.length === 0) {
-      // Hide incomplete PRODUCT_CARD JSON during streaming
-      if (content.includes('PRODUCT_CARD: ') && !content.includes('"}')) {
-        // Incomplete JSON being streamed - show loading placeholder
-        parts.push('🔄 Lade Produktinformationen...');
-      } else {
-        parts.push(content);
-      }
+      parts.push(content);
     }
 
     return parts;
@@ -82,7 +91,7 @@ export function ChatMessage({ message, selectedMarkets, onAddToList, isInList }:
         className={`${isUser ? 'max-w-[80%]' : 'max-w-[95%]'} rounded-xl px-5 py-3 shadow-sm chat-font`}
         style={{
           background: isUser
-            ? 'rgba(255, 107, 53, 0.9)'
+            ? 'rgba(110, 115, 120, 0.45)'
             : 'var(--sparfuchs-surface)',
           border: isUser
             ? 'none'

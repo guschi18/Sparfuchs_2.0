@@ -8,17 +8,27 @@ interface CentralInputProps {
   onSendMessage: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  disableAnimation?: boolean;
 }
 
 export function CentralInput({ 
   onSendMessage, 
   disabled = false, 
-  placeholder = "Wonach suchst du? (Obst, Gemüse, Preisvergleiche, etc...)"
+  placeholder = "Wonach suchst du? (Obst, Gemüse, Preisvergleiche, etc...)",
+  disableAnimation = false
 }: CentralInputProps) {
   const [input, setInput] = useState('');
 
   // Animation configurations
-  const containerAnimation: Variants = {
+  const containerAnimation: Variants = disableAnimation ? {
+    hidden: { opacity: 1, y: 0, scale: 1 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0 }
+    }
+  } : {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
     visible: {
       opacity: 1,
@@ -34,7 +44,14 @@ export function CentralInput({
     }
   };
 
-  const inputAnimation: Variants = {
+  const inputAnimation: Variants = disableAnimation ? {
+    hidden: { opacity: 1, y: 0 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0 }
+    }
+  } : {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -47,7 +64,15 @@ export function CentralInput({
     }
   };
 
-  const buttonAnimation: Variants = {
+  const buttonAnimation: Variants = disableAnimation ? {
+    hidden: { opacity: 1, y: 0, scale: 1 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0 }
+    }
+  } : {
     hidden: { opacity: 0, y: 20, scale: 0.9 },
     visible: {
       opacity: 1,

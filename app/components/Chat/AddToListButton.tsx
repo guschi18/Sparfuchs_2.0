@@ -41,10 +41,7 @@ export function AddToListButton({ onAdd, isInList, disabled = false }: AddToList
       whileHover={
         !isDisabled
           ? {
-              scale: 1.05,
-              borderColor: 'var(--sparfuchs-primary)',
-              backgroundColor: 'var(--sparfuchs-primary)',
-              color: 'white',
+              
             }
           : undefined
       }
