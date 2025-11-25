@@ -463,6 +463,8 @@ export default function Home() {
         onRemoveItem={removeWishlistItem}
         onClearList={clearWishlist}
         onSearchItem={handleSearchWishlistItem}
+        selectedMarkets={selectedMarkets}
+        onMarketChange={handleUpdateMarkets}
       />
 
       {/* Toast Container */}

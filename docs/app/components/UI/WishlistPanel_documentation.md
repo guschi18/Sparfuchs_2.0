@@ -8,6 +8,7 @@
 ## Dependencies & Integration
 - **Framer Motion**: Slide-in Animation, Item-Stagger
 - **Types**: `WishlistItem` aus `@/types`
+- **MarketToggles**: Imported aus `./MarketToggles`
 - **Parent**: `app/page.tsx`
 
 ## Props Interface
@@ -20,6 +21,8 @@ interface WishlistPanelProps {
   onRemoveItem: (itemId: string) => void;
   onClearList: () => void;
   onSearchItem: (name: string) => void;  // Triggert Chat-Suche
+  selectedMarkets: string[];             // Synchron mit Main Page
+  onMarketChange: (markets: string[]) => void;  // Shared Handler
 }
 ```
 
@@ -27,6 +30,7 @@ interface WishlistPanelProps {
 ```
 dialog (fixed left-0, slide from left)
 ├── Header: "📋 Merkzettel" + Close Button
+├── MarketToggles: Lidl, Aldi, Edeka, Penny, Rewe (synchron mit Main)
 ├── Input Form: Textbox + "+" Button
 ├── Content (scrollable):
 │   └── Items[] → Card mit Name + "Angebote suchen" + Delete

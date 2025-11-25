@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WishlistItem } from '@/types';
 import { useEffect } from 'react';
+import { MarketToggles } from './MarketToggles';
 
 interface WishlistPanelProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ interface WishlistPanelProps {
   onRemoveItem: (itemId: string) => void;
   onClearList: () => void;
   onSearchItem: (name: string) => void;
+  selectedMarkets: string[];
+  onMarketChange: (markets: string[]) => void;
 }
 
 /**
@@ -39,6 +42,8 @@ export function WishlistPanel({
   onRemoveItem,
   onClearList,
   onSearchItem,
+  selectedMarkets,
+  onMarketChange,
 }: WishlistPanelProps) {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
@@ -200,6 +205,17 @@ export function WishlistPanel({
                   />
                 </svg>
               </motion.button>
+            </div>
+
+            {/* Market Toggles */}
+            <div
+              className="p-4 sm:p-6 border-b"
+              style={{ borderColor: 'var(--sparfuchs-border)' }}
+            >
+              <MarketToggles
+                selectedMarkets={selectedMarkets}
+                onMarketChange={onMarketChange}
+              />
             </div>
 
             {/* Input Form */}

@@ -77,14 +77,16 @@ interface Message {
   - Slide-in Panel von links (WishlistPanel Component)
   - Eingabefeld für manuelle Produktbegriffe
   - "Angebote suchen" Button pro Eintrag triggert Chat-Suche
+  - **MarketToggles synchron mit Main Page** (shared selectedMarkets State)
 - **Flow**:
   1. User öffnet Merkzettel über Header-Button (links)
-  2. User gibt Produktbegriff ein (z.B. "Käse") und klickt "+"
-  3. Begriff wird als Karte gespeichert
-  4. User klickt "Angebote suchen" auf der Karte
-  5. handleSearchWishlistItem() schließt Panel und sendet Begriff an Chat
-  6. Chat zeigt Angebote für den Begriff an
-- **Component Hierarchy**: page → Header + WishlistPanel
+  2. User kann Märkte auswählen (synchronisiert mit Hauptseite)
+  3. User gibt Produktbegriff ein (z.B. "Käse") und klickt "+"
+  4. Begriff wird als Karte gespeichert
+  5. User klickt "Angebote suchen" auf der Karte
+  6. handleSearchWishlistItem() schließt Panel und sendet Begriff an Chat
+  7. Chat zeigt Angebote nur für ausgewählte Märkte an
+- **Component Hierarchy**: page → Header + WishlistPanel (mit MarketToggles)
 
 ## Error Handling
 - Try/Catch um Netzwerk-/Streaminglogik mit Nutzerfreundlicher Fallback-Message
