@@ -36,12 +36,14 @@ export function ProductCard({ product, onAddToList, isInList = false }: ProductC
       disableRipple={true}
       className="w-full border border-black shadow-md hover:shadow-lg transition-shadow"
     >
-      <div className="text-sm text-gray-600 flex items-center pt-1 pl-2 flex-nowrap">
-        <span className="mr-1 flex-shrink-0">📅</span>
-        <span className="flex-shrink-0 whitespace-nowrap">{product.dateRange}</span>
+      <div className="text-sm text-gray-600 flex items-center justify-between pt-1 pl-2 pr-2 w-full">
+        <div className="flex items-center flex-shrink-0">
+          <span className="mr-1">📅</span>
+          <span className="whitespace-nowrap">{product.dateRange}</span>
+        </div>
         {/* Add to List Button */}
         {onAddToList && (
-          <div className="flex-shrink-0 ml-auto">
+          <div className="flex-shrink-0">
             <AddToListButton
               onAdd={handleAddToList}
               isInList={isInList}
