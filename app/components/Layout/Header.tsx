@@ -31,7 +31,7 @@ export function Header({
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const hideThreshold = 50; // Mindest-Scroll bevor Header verschwindet
-      const showThreshold = 80; // Mindest-Scroll nach oben bevor Header erscheint
+      const showThreshold = 160; // Mindest-Scroll nach oben bevor Header erscheint
       
       // Nur auf Mobile (unter 640px = sm breakpoint)
       if (window.innerWidth >= 640) {
