@@ -24,11 +24,14 @@ export function Header({
 }: HeaderProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down' | null>(null);
+  const [scrollStartY, setScrollStartY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      const scrollThreshold = 50; // Mindest-Scroll bevor Header verschwindet
+      const hideThreshold = 50; // Mindest-Scroll bevor Header verschwindet
+      const showThreshold = 80; // Mindest-Scroll nach oben bevor Header erscheint
       
       // Nur auf Mobile (unter 640px = sm breakpoint)
       if (window.innerWidth >= 640) {
@@ -37,16 +40,27 @@ export function Header({
       }
 
       // Am Seitenanfang immer sichtbar
-      if (currentScrollY < scrollThreshold) {
+      if (currentScrollY < hideThreshold) {
         setIsVisible(true);
-      } 
-      // Nach oben scrollen = Header zeigen
-      else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      } 
-      // Nach unten scrollen = Header verstecken
-      else if (currentScrollY > lastScrollY) {
+        setScrollDirection(null);
+        return;
+      }
+
+      const newDirection = currentScrollY > lastScrollY ? 'down' : 'up';
+      
+      // Bei Richtungswechsel: Startpunkt merken
+      if (newDirection !== scrollDirection) {
+        setScrollDirection(newDirection);
+        setScrollStartY(currentScrollY);
+      }
+
+      // Nach unten scrollen = Header verstecken (sofort)
+      if (newDirection === 'down') {
         setIsVisible(false);
+      }
+      // Nach oben scrollen = Header zeigen (erst nach showThreshold px)
+      else if (newDirection === 'up' && scrollStartY - currentScrollY >= showThreshold) {
+        setIsVisible(true);
       }
 
       setLastScrollY(currentScrollY);
@@ -54,7 +68,7 @@ export function Header({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, [lastScrollY, scrollDirection, scrollStartY]);
 
   return (
     <>
