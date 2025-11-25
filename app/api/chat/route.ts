@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
-import { findOffers, toProductCard } from '@/lib/data/offers';
+import { semanticSearch } from '@/lib/search/semantic';
 import { createChatCompletion, parseStreamingResponse } from '@/lib/ai/openrouter';
-import { logQuery } from '@/scripts/Queries/query-logger';
+import { logSemanticSearch } from '@/lib/search/logger';
 import type { ChatRequest, ProductCard } from '@/types';
 
 // Wichtig: Node Runtime für Filesystem-Zugriff
@@ -24,9 +24,9 @@ function createSystemPrompt(selectedMarkets: string[], products: ProductCard[]):
 2. Nutze NUR Produkte aus folgenden Supermärkten: ${marketList}
 3. Ignoriere alle anderen Supermärkte komplett!
 4. Antworte in freundlichem, hilfreichem Deutsch.
-5. Nutze die Felder variant, pack_size, unit, discount_pct, uvp und notes für hilfreiche Zusatzinfos.
+5. Nutze die Felder variant, pack_size, notes für hilfreiche Zusatzinfos.
 6. Für jedes Produkt, das du empfiehlst, gib EINE Zeile aus:
-   PRODUCT_CARD: {"id":"...","name":"...","price":"...","market":"...","dateRange":"...","brand":"...","variant":"...","pack_size":"...","unit":"...","uvp":"...","discount_pct":...,"notes":"..."}
+   PRODUCT_CARD: {"id":"...","name":"...","price":"...","market":"...","dateRange":"...","brand":"...","notes":"..."}
    - Lass optionale Felder weg, wenn keine Daten vorhanden sind.
 
 SEMANTISCHE INTERPRETATION – SEHR WICHTIG:
@@ -56,10 +56,11 @@ Wenn KEINE passenden Produkte in den Daten vorhanden sind, sage freundlich, dass
  * POST /api/chat - Chat-Endpoint mit Streaming
  */
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
   try {
     // 1. Request validieren
     const body: ChatRequest = await request.json();
-    const { message, selectedMarkets, useSemanticSearch = true } = body;
+    const { message, selectedMarkets } = body;
 
     if (!message || !message.trim()) {
       return new Response(
@@ -88,13 +89,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Angebote suchen
+    // 3. Angebote suchen (Semantic Search)
     let matchingProducts: ProductCard[] = [];
     try {
-      matchingProducts = findOffers(validSelectedMarkets, message);
-      
+      matchingProducts = await semanticSearch(message, validSelectedMarkets);
+
       // 🔥 LOGGING: Suchanfrage protokollieren
-      logQuery(message, matchingProducts.length, validSelectedMarkets);
+      const duration = Date.now() - startTime;
+      logSemanticSearch({
+        query: message,
+        markets: validSelectedMarkets,
+        resultCount: matchingProducts.length,
+        latencyMs: duration,
+      });
+
     } catch (searchError) {
       console.error('Fehler beim Suchen der Angebote:', searchError);
       return new Response(

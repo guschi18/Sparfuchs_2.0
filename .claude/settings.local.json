@@ -55,12 +55,13 @@
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__wait_for",
       "mcp__chrome-devtools__list_pages",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "WebFetch(domain:openrouter.ai)"
     ],
     "deny": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "supabase"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

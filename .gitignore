@@ -46,9 +46,13 @@ next-env.d.ts
 
 # Prompts folder - internal documentation
 /Prompts/
+!/Prompts/Docs anpassen.md
+!/Prompts/Claude optimieren.md
 
 # Query logs - runtime data
 /logs/
 
 # Scripts folder - analysis and utility scripts
 /scripts/
+!/scripts/embedding/
+!/scripts/test-semantic-search.ts

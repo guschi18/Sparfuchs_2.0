@@ -22,9 +22,6 @@ interface ChatInputProps {
     placeholder?: string;
     value?: string;
     onChange?: (value: string) => void;
-    isValid?: boolean;
-    characterCount?: number;
-    maxLength?: number;
 }
 ```
 

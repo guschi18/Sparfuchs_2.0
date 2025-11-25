@@ -48,74 +48,38 @@ export interface ChatCompletionOptions {
 
 ## Geschäftslogik
 
-### 1. API-Aufruf: `createChatCompletion()` (Zeile 27-64)
+### 1. Chat Completion: `createChatCompletion()` (Zeile 27-64)
+... (existing content) ...
 
+### 2. SSE-Parsing: `parseStreamingResponse()` (Zeile 71-116)
+... (existing content) ...
+
+### 3. Embeddings: `createEmbedding()` (lib/ai/embeddings.ts)
 **Signatur:**
 ```typescript
-async function createChatCompletion(
-  options: ChatCompletionOptions,
-  onChunk?: (chunk: string) => void
-): Promise<Response>
+async function createEmbedding(text: string): Promise<Float32Array>
 ```
 
 **Workflow:**
-1. **Validierung**: Prüft ob `OPENROUTER_API_KEY` gesetzt ist (Zeile 31-34)
-2. **Environment**: Lädt `NEXT_PUBLIC_APP_URL` und `NEXT_PUBLIC_APP_TITLE` (Zeile 36-37)
-3. **API-Request**: POST zu OpenRouter mit Headers (Zeile 39-54)
-   - `Authorization: Bearer ${apiKey}`
-   - `HTTP-Referer: ${appUrl}` (für OpenRouter-Analytics)
-   - `X-Title: ${appTitle}` (für OpenRouter-Dashboard)
-4. **Error-Handling**: Wirft Error bei HTTP-Fehler (Zeile 56-61)
-5. **Return**: Gibt `Response` zurück (für Streaming oder direktes Parsen)
+1. **Cache Check**: Prüft lokalen LRU-Cache (`lib/search/embedding-cache.ts`)
+2. **API Request**: POST zu `https://openrouter.ai/api/v1/embeddings`
+   - Model: `text-embedding-3-large` (via ENV)
+3. **Transform**: Konvertiert Response zu `Float32Array`
+4. **Cache Update**: Speichert Ergebnis im Cache
 
-**Parameter-Defaults:**
-- `model`: `"google/gemini-2.5-flash-lite"` (Zeile 48)
-- `temperature`: `0.7` (Zeile 50)
-- `max_tokens`: `6000` (Zeile 51)
-- `stream`: `false` (Zeile 52)
-
-**Error Cases:**
-- **Missing API Key**: `"OPENROUTER_API_KEY ist nicht gesetzt"` (Zeile 33)
-- **HTTP Error**: `"OpenRouter API Fehler: {status} - {errorData}"` (Zeile 58-60)
+**Error Handling**:
+- Wirft Error bei fehlendem API Key oder API-Fehlern
+- Loggt Fehler in Console
 
 ---
 
-### 2. SSE-Parsing: `parseStreamingResponse()` (Zeile 71-116)
+## Error Handling
+... (existing content) ...
 
-**Signatur:**
-```typescript
-async function parseStreamingResponse(
-  response: Response,
-  onChunk: (content: string) => void
-): Promise<void>
-```
-
-**Zweck**: Parst Server-Sent Events (SSE) Stream von OpenRouter in Echtzeit
-
-**Workflow:**
-1. **Reader Setup**: Erstellt `ReadableStreamReader` vom Response Body (Zeile 75-78)
-2. **Buffer Management**: Verwaltet Buffer für unvollständige Zeilen (Zeile 80-81)
-3. **Stream Loop**: Liest Chunks bis `done === true` (Zeile 84-112)
-4. **Line Splitting**: Split per `\n`, behalte letzte unvollständige Zeile (Zeile 88-92)
-5. **SSE Parsing**: Verarbeitet Zeilen mit `data: ` Prefix (Zeile 94-111)
-   - Überspringt leere Zeilen und `[DONE]` Marker (Zeile 95)
-   - Entfernt `"data: "` Prefix (Zeile 99)
-   - Parst JSON (Zeile 100)
-   - Extrahiert `choices[0].delta.content` (Zeile 103)
-   - Ruft `onChunk(content)` Callback auf (Zeile 105)
-6. **Cleanup**: Released Reader-Lock im `finally` Block (Zeile 113-115)
-
-**Robustheit:**
-- **Try-Catch**: Parse-Errors werden geloggt, crashen aber nicht den Stream (Zeile 98-109)
-- **Finally**: Reader wird immer released (Zeile 113-115)
-- **Buffer**: Verhindert Verlust von unvollständigen Zeilen (Zeile 92)
-
-**OpenRouter SSE Format:**
-```json
-data: {"id":"gen-123","choices":[{"delta":{"content":"Hallo"}}]}
-data: {"id":"gen-123","choices":[{"delta":{"content":" Welt"}}]}
-data: [DONE]
-```
+## Change History
+- **2025-11**: Initial creation (Ersetzte frühere KI-Integration)
+- **2025-11**: Dokumentation erstellt
+- **2025-11**: Embeddings-Support hinzugefügt
 
 
 ## Error Handling

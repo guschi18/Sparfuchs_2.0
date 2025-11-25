@@ -249,7 +249,7 @@ export function ShoppingListPanel({
                       <h3 className="text-lg font-semibold mb-3 pb-2 border-b-2 border-gray-300" style={{ color: 'var(--sparfuchs-text)' }}>
                         {market}
                       </h3>
-                      
+
                       {/* Items for this market */}
                       <div className="space-y-3">
                         {marketItems.map((item, index) => (
@@ -301,38 +301,55 @@ export function ShoppingListPanel({
                               </button>
 
                               {/* Item details */}
-                              <div className="flex-1 min-w-0">
-                              <p className="text-sm mt-1 pb-2" style={{ color: 'var(--sparfuchs-text-light)' }}>
+                              <div className="flex-1 min-w-0 flex flex-col">
+                                <p className="text-sm mt-1 pb-2 self-start" style={{ color: 'var(--sparfuchs-text-light)' }}>
                                   📅 {item.dateRange}
                                 </p>
-                                {item.brand && (
-                                  <p
-                                    className="text-sm font-medium uppercase tracking-wide mb-1"
+                                <div className="flex flex-col items-center text-center w-full">
+                                  {item.brand && (
+                                    <p
+                                      className="text-sm font-medium uppercase tracking-wide mb-1"
+                                      style={{
+                                        color: 'var(--sparfuchs-text)',
+                                        textDecoration: item.checked ? 'line-through' : 'none',
+                                      }}
+                                    >
+                                      {item.brand}
+                                    </p>
+                                  )}
+                                  <h3
+                                    className="font-semibold text-sm sm:text-base mb-1"
                                     style={{
-                                      color: 'var(--sparfuchs-text-light)',
+                                      color: 'var(--sparfuchs-text)',
                                       textDecoration: item.checked ? 'line-through' : 'none',
                                     }}
                                   >
-                                    {item.brand}
-                                  </p>
-                                )}
-                                <h3
-                                  className="font-semibold text-sm sm:text-base mb-1"
-                                  style={{
-                                    color: 'var(--sparfuchs-text)',
-                                    textDecoration: item.checked ? 'line-through' : 'none',
-                                  }}
-                                >
-                                  {item.name}
-                                </h3>
-                                <div className="flex items-center gap-2 flex-wrap">
+                                    {item.name}
+                                  </h3>
+                                </div>
+
+                                {/* Size and Variant Display - Size first, then Variant */}
+                                <div className="flex flex-wrap gap-2 mb-2 justify-center">
+                                  {item.pack_size && (
+                                    <span className="text-sm text-gray-600 bg-gray-100 px-2 py-0.5 rounded">
+                                      {item.pack_size}
+                                    </span>
+                                  )}
+                                  {item.variant && (
+                                    <span className="text-sm text-gray-600 bg-gray-100 px-2 py-0.5 rounded">
+                                      {item.variant}
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="flex items-center gap-2 flex-wrap justify-center">
                                   <span
                                     className="text-lg font-bold"
                                     style={{ color: '#16a34a' }}
                                   >
                                     {item.price} €
-                                  </span>                                                      
-                                </div>                          
+                                  </span>
+                                </div>
                               </div>
 
                               {/* Remove button */}

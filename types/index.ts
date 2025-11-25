@@ -27,7 +27,7 @@ export interface Offer {
   brand: string | null;
   product_name: string;
   variant: string | null;
-  pack_size: string | null;
+  size: string | null;
   unit: string | null;
   pack_count: number | null;
   price: number | null;
@@ -50,8 +50,8 @@ export interface ProductCard {
   market: string;
   dateRange: string;
   brand?: string;
-  uvp?: string;
-  discount_pct?: number;
+  variant?: string;
+  pack_size?: string;
   notes?: string;
 }
 
@@ -78,6 +78,8 @@ export interface ShoppingListItem {
   market: string;                // Market name (Lidl, Aldi, etc.)
   dateRange: string;             // Validity period
   brand?: string;                // Optional brand
+  variant?: string;              // Optional variant
+  pack_size?: string;            // Optional pack size
   uvp?: string;                  // Optional UVP (Unverbindliche Preisempfehlung)
   discount_pct?: number;         // Optional discount percentage
   notes?: string;                // Optional notes/restrictions
@@ -89,4 +91,11 @@ export interface ShoppingListState {
   items: ShoppingListItem[];
   totalPrice: number;
   itemCount: number;
+}
+
+export interface OfferEmbedding {
+  id: string;
+  market: string;
+  vector: number[];
+  metadata: Offer;
 }

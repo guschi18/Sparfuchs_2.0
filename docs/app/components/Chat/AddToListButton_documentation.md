@@ -23,21 +23,20 @@ interface AddToListButtonProps {
 ```typescript
 // State 1: Not in List (actionable)
 Icon: Plus (+)
-Text: "Liste"
-Colors: Border + Text
-Hover: Primary color + scale 1.05
+Colors: Border + Text (Surface/Gray)
+Hover: Filter brightness 1.1
+Scale: 1.0 (Hover 1.05, Tap 0.95)
 
-// State 2: In List (disabled)
+// State 2: In List (toggled)
 Icon: Checkmark (✓)
-Text: "In Liste"
-Colors: Success green
-Cursor: not-allowed
-No Hover: undefined
+Colors: Success green background + White text
+Border: Success green
+Hover: Filter brightness 1.1
+Scale: 1.0 (Hover 1.05, Tap 0.95)
 ```
 
 ## Responsive Design
-- **Mobile**: Icon only (4x4)
-- **Desktop**: Icon + Text
+- **Always**: Icon only (4x4)
 - **Padding**: px-3 py-1.5
 - **Font Size**: text-xs (mobile), text-sm (desktop)
 
@@ -48,20 +47,16 @@ initial: { opacity: 0, scale: 0.9 }
 animate: { opacity: 1, scale: 1 }
 
 // Hover (wenn !disabled)
-whileHover: {
-  scale: 1.05,
-  borderColor: 'primary',
-  backgroundColor: 'primary',
-  color: 'white'
-}
+whileHover: { filter: 'brightness(1.1)' }
 whileTap: { scale: 0.95 }
 ```
 
 ## Accessibility
 - **aria-label**:
   - "Zur Einkaufsliste hinzufügen" (not in list)
-  - "Bereits in der Einkaufsliste" (in list)
-- **disabled**: Native disabled attribute bei isInList || disabled
+  - "Von der Einkaufsliste entfernen" (in list)
+- **disabled**: Native disabled attribute nur wenn explizit `disabled` Prop gesetzt
+
 
 ## Integration Points
 - **ProductCard**: Rendered im CardHeader (flex-shrink-0)

@@ -25,7 +25,7 @@ export function ShoppingListButton({ itemCount, onClick, isOpen = false }: Shopp
   return (
     <motion.button
       onClick={onClick}
-      className="relative flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-lg transition-all duration-200 inter-font-medium text-sm sm:text-base"
+      className="relative flex items-center justify-center gap-2 w-14 h-14 p-0 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.15)] sm:w-auto sm:h-auto sm:px-4 sm:py-2 sm:rounded-lg sm:shadow-none transition-all duration-200 inter-font-medium text-sm sm:text-base"
       style={{
         backgroundColor: isOpen ? 'var(--sparfuchs-primary)' : 'var(--sparfuchs-surface)',
         color: isOpen ? 'white' : 'var(--sparfuchs-text)',
@@ -46,7 +46,7 @@ export function ShoppingListButton({ itemCount, onClick, isOpen = false }: Shopp
       aria-label={`Einkaufsliste öffnen (${itemCount} ${itemCount === 1 ? 'Artikel' : 'Artikel'})`}
     >
       {/* Icon */}
-      <span className="text-lg sm:text-xl" aria-hidden="true">
+      <span className="text-2xl sm:text-xl" aria-hidden="true">
         📝
       </span>
 

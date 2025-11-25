@@ -9,20 +9,14 @@ interface ChatInputProps {
   placeholder?: string;
   value?: string;
   onChange?: (value: string) => void;
-  isValid?: boolean;
-  characterCount?: number;
-  maxLength?: number;
 }
 
-export function ChatInput({ 
-  onSendMessage, 
-  disabled = false, 
+export function ChatInput({
+  onSendMessage,
+  disabled = false,
   placeholder = "Nachricht eingeben...",
   value,
-  onChange,
-  isValid = true,
-  characterCount = 0,
-  maxLength = 500
+  onChange
 }: ChatInputProps) {
   const [localInput, setLocalInput] = useState('');
   

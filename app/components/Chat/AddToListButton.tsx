@@ -22,11 +22,16 @@ interface AddToListButtonProps {
  * - Accessibility support
  */
 export function AddToListButton({ onAdd, isInList, disabled = false }: AddToListButtonProps) {
-  const isDisabled = disabled || isInList;
+  const isDisabled = disabled;
 
   return (
     <motion.button
-      onClick={onAdd}
+      onClick={(e) => {
+        e.stopPropagation();
+        onAdd();
+      }}
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
       disabled={isDisabled}
       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all"
       style={{
@@ -36,15 +41,9 @@ export function AddToListButton({ onAdd, isInList, disabled = false }: AddToList
         color: isInList ? 'white' : 'var(--sparfuchs-text)',
         border: `1.5px solid ${isInList ? 'var(--sparfuchs-success)' : 'var(--sparfuchs-border)'}`,
         cursor: isDisabled ? 'not-allowed' : 'pointer',
-        opacity: isDisabled && !isInList ? 0.5 : 1,
+        opacity: isDisabled ? 0.5 : 1,
       }}
-      whileHover={
-        !isDisabled
-          ? {
-              
-            }
-          : undefined
-      }
+      whileHover={!isDisabled ? { filter: 'brightness(1.1)' } : undefined}
       whileTap={!isDisabled ? { scale: 0.95 } : undefined}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -53,7 +52,7 @@ export function AddToListButton({ onAdd, isInList, disabled = false }: AddToList
         damping: 20,
         stiffness: 150
       }}
-      aria-label={isInList ? 'Bereits in der Einkaufsliste' : 'Zur Einkaufsliste hinzufügen'}
+      aria-label={isInList ? 'Von der Einkaufsliste entfernen' : 'Zur Einkaufsliste hinzufügen'}
     >
       {/* Icon */}
       {isInList ? (
@@ -87,11 +86,6 @@ export function AddToListButton({ onAdd, isInList, disabled = false }: AddToList
           />
         </svg>
       )}
-
-      {/* Text */}
-      <span className="hidden sm:inline">
-        {isInList ? 'In Liste' : 'Liste'}
-      </span>
     </motion.button>
   );
 }

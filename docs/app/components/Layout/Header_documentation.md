@@ -26,8 +26,8 @@ header (relative positioning)
     ├── ShoppingListButton (absolute top-right, conditional)
     └── centered content
         ├── Animated 🛒 emoji
-        ├── Title: "SparFuchs.de"
-        └── Subtitle: "Dein AI-Assistent für Supermarkt-Angebote"
+        ├── Title: "SparFuchs" (Text: var(--sparfuchs-text)) + ".de" (Text: var(--sparfuchs-primary))
+        └── Subtitle: "Dein AI-Assistent für Supermarkt-Angebote" (Text: var(--sparfuchs-primary))
 ```
 
 ## Animations
@@ -44,6 +44,11 @@ transition: { duration: 2, repeat: Infinity }
 - **Padding**: py-6 (mobile), py-8 (desktop)
 - **Title Font**: text-3xl (mobile) → text-4xl (sm) → text-5xl (lg)
 - **Subtitle Font**: text-base (mobile) → text-lg (sm) → text-xl (lg)
+
+## Color Scheme
+- **Title**: `var(--sparfuchs-text)` (#2A2A2A) mit orange ".de" in `var(--sparfuchs-primary)` (#ff6b35)
+- **Subtitle**: `var(--sparfuchs-text)` (#2A2A2A)
+- **Background**: `var(--sparfuchs-background)` (#E8E0D0)
 
 ## Backwards Compatibility
 - **Alle Props optional**: Header funktioniert ohne Shopping List Props

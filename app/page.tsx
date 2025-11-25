@@ -60,13 +60,8 @@ export default function Home() {
   };
 
   // Nur beim ersten Laden animieren
-  const pageTransition = hasInitiallyLoaded ? {
-    initial: { opacity: 1, scale: 1 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 1, scale: 1 },
-    transition: { duration: 0 }
-  } : {
-    initial: { opacity: 0, scale: 0.95 },
+  const pageTransition = {
+    initial: hasInitiallyLoaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 },
     animate: { opacity: 1, scale: 1 },
     exit: { opacity: 0, scale: 0.95 },
     transition: springConfig
@@ -75,7 +70,7 @@ export default function Home() {
   const slideFromBottom = hasInitiallyLoaded ? {
     initial: { opacity: 1, y: 0 },
     animate: { opacity: 1, y: 0 },
-    exit: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
     transition: { duration: 0 }
   } : {
     initial: { opacity: 0, y: 20 },
@@ -126,7 +121,7 @@ export default function Home() {
       role: 'user',
       timestamp: new Date()
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
@@ -163,7 +158,7 @@ export default function Home() {
         timestamp: new Date(),
         isStreaming: true
       };
-      
+
       setMessages(prev => [...prev, assistantMessage]);
 
       // Read streaming data
@@ -179,9 +174,9 @@ export default function Home() {
             try {
               const data = JSON.parse(line.slice(6));
               if (data.content) {
-                setMessages(prev => 
-                  prev.map(msg => 
-                    msg.id === assistantMessage.id 
+                setMessages(prev =>
+                  prev.map(msg =>
+                    msg.id === assistantMessage.id
                       ? { ...msg, content: msg.content + data.content }
                       : msg
                   )
@@ -189,9 +184,9 @@ export default function Home() {
               }
               if (data.done) {
                 // Streaming beendet - Produkte können jetzt alle angezeigt werden
-                setMessages(prev => 
-                  prev.map(msg => 
-                    msg.id === assistantMessage.id 
+                setMessages(prev =>
+                  prev.map(msg =>
+                    msg.id === assistantMessage.id
                       ? { ...msg, isStreaming: false }
                       : msg
                   )
@@ -208,10 +203,10 @@ export default function Home() {
     } catch (error) {
       console.error('Chat error:', error);
       const errorText = error instanceof Error ? error.message : 'Ein unbekannter Fehler ist aufgetreten.';
-      
+
       // Beende Streaming für alle Messages
       setMessages(prev => prev.map(msg => ({ ...msg, isStreaming: false })));
-      
+
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         content: `Fehler: ${errorText}\n\nBitte versuche es erneut oder stelle deine Frage anders.`,
@@ -232,7 +227,14 @@ export default function Home() {
 
   // Shopping List Handlers
   const handleAddToList = (product: ProductData) => {
-    addItem(product);
+    if (isInList(product.id)) {
+      const itemToRemove = shoppingListItems.find(item => item.productId === product.id);
+      if (itemToRemove) {
+        removeItem(itemToRemove.id);
+      }
+    } else {
+      addItem(product);
+    }
   };
 
   const handleOpenPanel = () => {
@@ -255,7 +257,7 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--sparfuchs-background)' }}>
         <div className="text-center">
-          <div 
+          <div
             className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
             style={{ borderColor: 'var(--sparfuchs-primary)' }}
             role="status">
@@ -274,131 +276,131 @@ export default function Home() {
         onOpenShoppingList={handleOpenPanel}
         isShoppingListOpen={isPanelOpen}
       />
-      
+
       <AnimatePresence mode="wait">
         {chatStarted ? (
-          <motion.div 
-            key={hasInitiallyLoaded ? "static" : "chat-interface"}
+          <motion.div
+            key="chat-interface"
             className="flex-1 flex flex-col max-w-4xl mx-auto w-full"
             {...pageTransition}
           >
 
-          {/* Messages Area */}
-          <motion.div 
-            className="flex-1 overflow-y-auto p-4 space-y-4"
-            {...slideFromBottom}
-          >
-            {messages.length === 0 ? (
-              <div className="text-center py-8" style={{ color: 'var(--sparfuchs-text-light)' }}>
-                Stellen Sie eine Frage über Supermarkt-Angebote...
-              </div>
-            ) : (
-              messages.map((message) => (
-                <ChatMessage
-                  key={message.id}
-                  message={message}
-                  selectedMarkets={selectedMarkets}
-                  onAddToList={handleAddToList}
-                  isInList={isInList}
-                />
-              ))
-            )}
-            <div ref={messagesEndRef} />
-          </motion.div>
+            {/* Messages Area */}
+            <motion.div
+              className="flex-1 overflow-y-auto p-4 space-y-4"
+              {...slideFromBottom}
+            >
+              {messages.length === 0 ? (
+                <div className="text-center py-8" style={{ color: 'var(--sparfuchs-text-light)' }}>
+                  Stellen Sie eine Frage über Supermarkt-Angebote...
+                </div>
+              ) : (
+                messages.map((message) => (
+                  <ChatMessage
+                    key={message.id}
+                    message={message}
+                    selectedMarkets={selectedMarkets}
+                    onAddToList={handleAddToList}
+                    isInList={isInList}
+                  />
+                ))
+              )}
+              <div ref={messagesEndRef} />
+            </motion.div>
 
-          {/* Input Area */}
-          <motion.div 
-            className="border-t p-4"
-            style={{ 
-              borderColor: 'var(--sparfuchs-border)',
-              background: 'var(--sparfuchs-background)'
-            }}
-            initial={hasInitiallyLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={hasInitiallyLoaded ? { duration: 0 } : { 
-              type: "spring", 
-              damping: 20, 
-              stiffness: 100, 
-              delay: 0.2 
-            }}
-          >
-            {/* Market Toggles - über der Chateingabe */}
-            <div className="mb-4">
-              <MarketToggles 
-                selectedMarkets={selectedMarkets}
-                onMarketChange={handleUpdateMarkets}
-              />
-            </div>
-            
-            <ChatInput
-              onSendMessage={handleSendMessage}
-              disabled={isLoading}
-              placeholder="Wonach suchst du? (Obst, Gemüse, Preisvergleiche, etc...)"
-            />
-            
-            {/* Reset Button below input */}
-            <motion.div 
-              className="mt-3 text-center"
-              initial={hasInitiallyLoaded ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={hasInitiallyLoaded ? { duration: 0 } : { 
-                type: "spring", 
-                damping: 25, 
-                stiffness: 100, 
-                delay: 0.4 
+            {/* Input Area */}
+            <motion.div
+              className="border-t p-4"
+              style={{
+                borderColor: 'var(--sparfuchs-border)',
+                background: 'var(--sparfuchs-background)'
+              }}
+              initial={hasInitiallyLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={hasInitiallyLoaded ? { duration: 0 } : {
+                type: "spring",
+                damping: 20,
+                stiffness: 100,
+                delay: 0.2
               }}
             >
-              <motion.button
-                onClick={handleResetChat}
-                className="px-4 py-2 text-sm rounded-md border inter-font-medium"
-                style={{
-                  borderColor: 'var(--sparfuchs-border)',
-                  color: 'var(--sparfuchs-text)',
-                  backgroundColor: 'var(--sparfuchs-surface)'
+              {/* Market Toggles - über der Chateingabe */}
+              <div className="mb-4">
+                <MarketToggles
+                  selectedMarkets={selectedMarkets}
+                  onMarketChange={handleUpdateMarkets}
+                />
+              </div>
+
+              <ChatInput
+                onSendMessage={handleSendMessage}
+                disabled={isLoading}
+                placeholder="Wonach suchst du? (Obst, Gemüse, Preisvergleiche, etc...)"
+              />
+
+              {/* Reset Button below input */}
+              <motion.div
+                className="mt-3 text-center"
+                initial={hasInitiallyLoaded ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={hasInitiallyLoaded ? { duration: 0 } : {
+                  type: "spring",
+                  damping: 25,
+                  stiffness: 100,
+                  delay: 0.4
                 }}
-                whileHover={{ 
-                  scale: 1.05,
-                  borderColor: 'var(--sparfuchs-primary)',
-                  color: 'var(--sparfuchs-primary)'
-                }}
-                whileTap={{ scale: 0.95 }}
               >
-                Chat zurücksetzen
-              </motion.button>
+                <motion.button
+                  onClick={handleResetChat}
+                  className="px-4 py-2 text-sm rounded-md border inter-font-medium"
+                  style={{
+                    borderColor: 'var(--sparfuchs-border)',
+                    color: 'var(--sparfuchs-text)',
+                    backgroundColor: 'var(--sparfuchs-surface)'
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    borderColor: 'var(--sparfuchs-primary)',
+                    color: 'var(--sparfuchs-primary)'
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Chat zurücksetzen
+                </motion.button>
+              </motion.div>
             </motion.div>
           </motion.div>
-          </motion.div>
         ) : (
-          <motion.div 
-            key={hasInitiallyLoaded ? "static" : "welcome-screen"}
+          <motion.div
+            key="welcome-screen"
             className="flex-1 flex items-center justify-center"
             {...pageTransition}
           >
-          <div className="max-w-2xl w-full px-6 mt-4 sm:mt-6">
-            {/* Market Toggles - above input */}
-            <div className="mb-6">
-              <MarketToggles 
-                selectedMarkets={selectedMarkets}
-                onMarketChange={handleUpdateMarkets}
-              />
+            <div className="max-w-2xl w-full px-6 mt-4 sm:mt-6">
+              {/* Market Toggles - above input */}
+              <div className="mb-6">
+                <MarketToggles
+                  selectedMarkets={selectedMarkets}
+                  onMarketChange={handleUpdateMarkets}
+                />
+              </div>
+
+              {/* Central Input */}
+              <div className="mb-6">
+                <CentralInput
+                  onSendMessage={handleStartChat}
+                  disableAnimation={hasInitiallyLoaded}
+                />
+              </div>
+
+              {/* Welcome Messages - below input */}
+              <div>
+                <WelcomeMessages
+                  onSuggestionClick={handleStartChat}
+                  disableAnimation={hasInitiallyLoaded}
+                />
+              </div>
             </div>
-            
-            {/* Central Input */}
-            <div className="mb-6">
-              <CentralInput 
-                onSendMessage={handleStartChat}
-                disableAnimation={hasInitiallyLoaded}
-              />
-            </div>
-            
-            {/* Welcome Messages - below input */}
-            <div>
-              <WelcomeMessages 
-                onSuggestionClick={handleStartChat}
-                disableAnimation={hasInitiallyLoaded}
-              />
-            </div>
-          </div>
           </motion.div>
         )}
       </AnimatePresence>

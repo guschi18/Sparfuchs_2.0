@@ -27,8 +27,8 @@ export interface ProductData {
     dateRange: string;
     id: string;
     brand?: string;        // Optional: Markenname
-    uvp?: string;          // Optional: Unverbindliche Preisempfehlung
-    discount_pct?: number; // Optional: Rabattprozentsatz
+    variant?: string;      // Optional: Variante (z.B. "Scharf")
+    pack_size?: string;    // Optional: Packungsgröße (z.B. "500g")
     notes?: string;        // Optional: Zusätzliche Hinweise
 }
 ```
@@ -45,15 +45,17 @@ interface ProductCardProps {
 
 
 ## Geschäftslogik
-- **Layout**: CardHeader mit flex justify-between für Brand/Title + AddToListButton
+- **Layout**:
+  - Top Row: Date Range + AddToListButton (rechtsbündig)
+  - CardHeader: Brand (falls vorhanden) + Title (zentriert)
 - **Shopping List Integration**:
-  - AddToListButton im CardHeader (rechts oben)
+  - AddToListButton in der oberen Datums-Zeile
   - Conditional Rendering: Nur wenn onAddToList übergeben
   - handleAddToList Wrapper für product-Weitergabe
 - **Anzeige-Elemente**:
   - Produktname & Brand (falls vorhanden)
-  - Preis (prominent in orange)
-  - UVP & Rabatt-Badge (falls vorhanden)
+  - Preis (prominent in grün)
+  - Größe & Variante (als Badges)
   - Gültigkeitsdatum mit Kalender-Emoji
   - Hinweise (falls vorhanden)
 

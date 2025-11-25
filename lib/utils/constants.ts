@@ -81,3 +81,9 @@ export const LOADING_MESSAGES = [
   'Analysiere Angebote...',
   'Suche beste Deals...',
 ] as const;
+
+export const SEMANTIC_SEARCH_CONFIG = {
+  TOP_N: 100,
+  MIN_SCORE: 0.38,
+  CACHE_SIZE: 1000,
+} as const;
