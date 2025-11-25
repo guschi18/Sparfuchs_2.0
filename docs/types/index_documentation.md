@@ -45,9 +45,18 @@ export interface AppState {
 
 
 
+- Interface: WishlistItem (Merkzettel)
+
+```typescript
+export interface WishlistItem {
+  id: string;          // Unique identifier
+  name: string;        // Produktbegriff (z.B. "Käse")
+  addedAt: number;     // Timestamp when added
+}
+```
+
 ## Error Handling
 - Keine explizite Fehlerbehandlung erkennbar.
-
 
 ## Performance Considerations
 - Keine auffälligen Performance-Muster.

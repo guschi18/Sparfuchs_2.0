@@ -75,7 +75,7 @@ All commands run from project root directory:
 ### 🏠 App Components - Details in `docs/app/components/`
 - **Chat**: `Chat/` (Input, Message, ProductCard)
 - **Layout**: `Layout/` (Header, Footer)
-- **UI**: `UI/` (ShoppingList, Toasts, MarketToggles)
+- **UI**: `UI/` (ShoppingList, Wishlist/Merkzettel, Toasts, MarketToggles)
 - **Error**: `Error/` (Boundaries)
 
 ### 🤖 AI Integration - Details in `docs/lib/ai/`
@@ -88,6 +88,7 @@ All commands run from project root directory:
 
 ### 🎣 Custom Hooks - Details in `docs/lib/hooks/`
 - **Shopping List**: `useShoppingList_documentation.md`
+- **Wishlist (Merkzettel)**: `useWishlist_documentation.md`
 - **Chat History**: `useChatHistory_documentation.md`
 - **Toasts**: `useToast_documentation.md`
 

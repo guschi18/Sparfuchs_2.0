@@ -1,13 +1,14 @@
 # Header Component Documentation
 
 ## Architektur & Zweck
-**Zweck**: App-Header mit Logo, Subtitle und Shopping List Button
-**Pattern**: Stateless Presentational Component mit conditional Shopping List Integration
-**Kritische Entscheidung**: Absolute Positioning für ShoppingListButton (top-right, no layout shift)
+**Zweck**: App-Header mit Logo, Subtitle, Wishlist Button und Shopping List Button
+**Pattern**: Stateless Presentational Component mit conditional List Integration
+**Kritische Entscheidung**: Absolute Positioning für Buttons (Wishlist links, ShoppingList rechts)
 
 ## Dependencies & Integration
 - **Framer Motion**: Animated Shopping Cart Emoji
 - **ShoppingListButton**: Imported aus `@/app/components/UI/ShoppingListButton`
+- **WishlistButton**: Imported aus `@/app/components/UI/WishlistButton`
 - **Parent**: page.tsx (App Root)
 
 ## Props Interface
@@ -16,6 +17,9 @@ interface HeaderProps {
   shoppingListCount?: number;           // Item Count für Badge
   onOpenShoppingList?: () => void;      // Handler zum Öffnen des Panels
   isShoppingListOpen?: boolean;         // Active State für Button
+  wishlistCount?: number;               // Merkzettel Item Count
+  onOpenWishlist?: () => void;          // Handler zum Öffnen des Merkzettels
+  isWishlistOpen?: boolean;             // Active State für Wishlist Button
 }
 ```
 
@@ -23,7 +27,8 @@ interface HeaderProps {
 ```
 header (relative positioning)
 └── container (max-w-4xl, centered)
-    ├── ShoppingListButton (absolute top-right, conditional)
+    ├── WishlistButton (absolute top-left / FAB bottom-left, conditional)
+    ├── ShoppingListButton (absolute top-right / FAB bottom-right, conditional)
     └── centered content
         ├── Animated 🛒 emoji
         ├── Title: "SparFuchs" (Text: var(--sparfuchs-text)) + ".de" (Text: var(--sparfuchs-primary))
@@ -51,9 +56,10 @@ transition: { duration: 2, repeat: Infinity }
 - **Background**: `var(--sparfuchs-background)` (#E8E0D0)
 
 ## Backwards Compatibility
-- **Alle Props optional**: Header funktioniert ohne Shopping List Props
-- **Conditional Rendering**: ShoppingListButton nur wenn onOpenShoppingList übergeben
+- **Alle Props optional**: Header funktioniert ohne List Props
+- **Conditional Rendering**: Buttons nur wenn entsprechende Handler übergeben
 
 ## Integration Points
-- **page.tsx**: Übergibt Shopping List State und Handlers
+- **page.tsx**: Übergibt Shopping List und Wishlist State und Handlers
 - **ShoppingListButton**: Details siehe `docs/app/components/UI/ShoppingListButton_documentation.md`
+- **WishlistButton**: Details siehe `docs/app/components/UI/WishlistButton_documentation.md`

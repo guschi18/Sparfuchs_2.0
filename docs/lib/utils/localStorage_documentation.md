@@ -6,7 +6,7 @@
 **Kritische Entscheidung**: Graceful Degradation bei unavailable Storage (Private Mode, SSR)
 
 ## Dependencies & Integration
-- **Types**: ShoppingListItem aus `@/types`
+- **Types**: ShoppingListItem, WishlistItem aus `@/types`
 - **Browser API**: window.localStorage (mit SSR-Check)
 - **Fallback**: Custom MemoryStorage class für Storage-unavailable Szenarien
 
@@ -32,6 +32,14 @@ export const shoppingListStorage = {
   removeItem(itemId: string): boolean;
   updateItem(itemId: string, updates: Partial<ShoppingListItem>): boolean;
 }
+
+// Wishlist specific API (Merkzettel)
+export const wishlistStorage = {
+  get(): WishlistItem[];
+  set(items: WishlistItem[]): boolean;
+  clear(): void;
+  isUsingFallback(): boolean;
+}
 ```
 
 ## Geschäftslogik
@@ -49,6 +57,7 @@ export const shoppingListStorage = {
 ```typescript
 export const STORAGE_KEYS = {
   SHOPPING_LIST: 'sparfuchs_shopping_list',
+  WISHLIST: 'sparfuchs_wishlist',
 } as const;
 ```
 
@@ -59,5 +68,6 @@ export const STORAGE_KEYS = {
 
 ## Integration Points
 - **useShoppingList**: Hauptnutzer des shoppingListStorage
+- **useWishlist**: Hauptnutzer des wishlistStorage
 - **Next.js**: SSR-compatible durch window-Check
 - **Private Browsing**: Funktioniert dank MemoryStorage Fallback

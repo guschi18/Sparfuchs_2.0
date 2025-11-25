@@ -2,17 +2,24 @@
 
 import { motion } from 'framer-motion';
 import { ShoppingListButton } from '@/app/components/UI/ShoppingListButton';
+import { WishlistButton } from '@/app/components/UI/WishlistButton';
 
 interface HeaderProps {
   shoppingListCount?: number;
   onOpenShoppingList?: () => void;
   isShoppingListOpen?: boolean;
+  wishlistCount?: number;
+  onOpenWishlist?: () => void;
+  isWishlistOpen?: boolean;
 }
 
 export function Header({
   shoppingListCount = 0,
   onOpenShoppingList,
-  isShoppingListOpen = false
+  isShoppingListOpen = false,
+  wishlistCount = 0,
+  onOpenWishlist,
+  isWishlistOpen = false
 }: HeaderProps) {
   return (
     <header
@@ -20,7 +27,18 @@ export function Header({
       style={{ background: 'var(--sparfuchs-background)' }}
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        {/* Shopping List Button - Responsive Positioning: FAB on mobile, Header-integrated on desktop */}
+        {/* Wishlist Button - Left side: FAB on mobile, Header-integrated on desktop */}
+        {onOpenWishlist && (
+          <div className="fixed bottom-6 left-6 z-50 sm:absolute sm:top-4 sm:left-6 sm:bottom-auto sm:z-10">
+            <WishlistButton
+              itemCount={wishlistCount}
+              onClick={onOpenWishlist}
+              isOpen={isWishlistOpen}
+            />
+          </div>
+        )}
+
+        {/* Shopping List Button - Right side: FAB on mobile, Header-integrated on desktop */}
         {onOpenShoppingList && (
           <div className="fixed bottom-6 right-6 z-50 sm:absolute sm:top-4 sm:right-6 sm:bottom-auto sm:z-10">
             <ShoppingListButton

@@ -99,3 +99,10 @@ export interface OfferEmbedding {
   vector: number[];
   metadata: Offer;
 }
+
+// Wishlist types (Merkzettel)
+export interface WishlistItem {
+  id: string;          // Unique identifier
+  name: string;        // Product name/search term (e.g., "Käse")
+  addedAt: number;     // Timestamp when added
+}

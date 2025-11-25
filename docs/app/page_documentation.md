@@ -13,8 +13,8 @@
 - Interne Module:
   - Chat: ./components/Chat/ChatInput, ./components/Chat/ChatMessage, ./components/Chat/ProductCard
   - Layout: ./components/Layout/Footer, ./components/Layout/Header
-  - UI: ./components/UI/CentralInput, ./components/UI/MarketToggles, ./components/UI/WelcomeMessages, ./components/UI/ShoppingListPanel, ./components/UI/Toast
-  - Hooks: @/lib/hooks/useShoppingList, @/lib/hooks/useToast
+  - UI: ./components/UI/CentralInput, ./components/UI/MarketToggles, ./components/UI/WelcomeMessages, ./components/UI/ShoppingListPanel, ./components/UI/WishlistPanel, ./components/UI/Toast
+  - Hooks: @/lib/hooks/useShoppingList, @/lib/hooks/useWishlist, @/lib/hooks/useToast
 - API-Aufrufe: /api/chat
 
 
@@ -38,17 +38,21 @@ interface Message {
   - `selectedMarkets`: Default-Reihenfolge `['Lidl', 'Aldi', 'Edeka', 'Penny', 'Rewe']`
   - `chatStarted`, `isLoading`, `isClient`: UI-Zustandsverwaltung
   - `isPanelOpen`, `hideCompleted`: Shopping List Panel State
+  - `isWishlistOpen`: Wishlist Panel State
 - **Custom Hooks**:
   - `useShoppingList`: items, totalPrice, itemCount, addItem, removeItem, toggleCheck, clearList, isInList
+  - `useWishlist`: items, itemCount, addItem, removeItem, clearList (Merkzettel)
   - `useToast`: toasts, dismissToast, success, error (Toast-Benachrichtigungen)
 - **Props-Weitergabe**:
   - `selectedMarkets` → ChatMessage für Markt-Sortierung
   - Shopping List Props → Header (count, onOpen, isOpen)
+  - Wishlist Props → Header (count, onOpen, isOpen)
   - Shopping List Props → ChatMessage → ProductCard (onAddToList, isInList)
 - **Handler**:
   - Chat: handleUpdateMarkets, handleStartChat, handleSendMessage, handleResetChat
   - Shopping List: handleAddToList, handleOpenPanel, handleClosePanel, handleClearList, handleToggleHideCompleted
-- **Hooks**: useState(6), useEffect(2), useShoppingList(1), useToast(1)
+  - Wishlist: handleOpenWishlist, handleCloseWishlist, handleSearchWishlistItem
+- **Hooks**: useState(7), useEffect(2), useShoppingList(1), useWishlist(1), useToast(1)
 
 
 ## Shopping List Integration
@@ -66,6 +70,21 @@ interface Message {
   5. User kann Panel über Header-Button öffnen
   6. Items können gecheckt, entfernt oder versteckt werden
 - **Component Hierarchy**: page → Header + ShoppingListPanel + ChatMessage → ProductCard → AddToListButton
+
+## Wishlist Integration (Merkzettel)
+- **Features**:
+  - Merkzettel mit LocalStorage-Persistenz (useWishlist Hook)
+  - Slide-in Panel von links (WishlistPanel Component)
+  - Eingabefeld für manuelle Produktbegriffe
+  - "Angebote suchen" Button pro Eintrag triggert Chat-Suche
+- **Flow**:
+  1. User öffnet Merkzettel über Header-Button (links)
+  2. User gibt Produktbegriff ein (z.B. "Käse") und klickt "+"
+  3. Begriff wird als Karte gespeichert
+  4. User klickt "Angebote suchen" auf der Karte
+  5. handleSearchWishlistItem() schließt Panel und sendet Begriff an Chat
+  6. Chat zeigt Angebote für den Begriff an
+- **Component Hierarchy**: page → Header + WishlistPanel
 
 ## Error Handling
 - Try/Catch um Netzwerk-/Streaminglogik mit Nutzerfreundlicher Fallback-Message

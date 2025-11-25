@@ -9,11 +9,12 @@
  * - JSON serialization/deserialization
  */
 
-import { ShoppingListItem } from '@/types';
+import { ShoppingListItem, WishlistItem } from '@/types';
 
 // Storage keys
 export const STORAGE_KEYS = {
   SHOPPING_LIST: 'sparfuchs_shopping_list',
+  WISHLIST: 'sparfuchs_wishlist',
 } as const;
 
 // In-memory fallback when localStorage is unavailable
@@ -205,6 +206,43 @@ export const shoppingListStorage = {
       item.id === itemId ? { ...item, ...updates } : item
     );
     return this.set(updated);
+  },
+
+  /**
+   * Check if storage is using fallback
+   */
+  isUsingFallback(): boolean {
+    const service = getStorageService();
+    return service.isUsingFallback();
+  }
+};
+
+/**
+ * Wishlist specific storage operations
+ */
+export const wishlistStorage = {
+  /**
+   * Get wishlist from storage
+   */
+  get(): WishlistItem[] {
+    const service = getStorageService();
+    return service.getItem<WishlistItem[]>(STORAGE_KEYS.WISHLIST) || [];
+  },
+
+  /**
+   * Save wishlist to storage
+   */
+  set(items: WishlistItem[]): boolean {
+    const service = getStorageService();
+    return service.setItem(STORAGE_KEYS.WISHLIST, items);
+  },
+
+  /**
+   * Clear wishlist from storage
+   */
+  clear(): void {
+    const service = getStorageService();
+    service.removeItem(STORAGE_KEYS.WISHLIST);
   },
 
   /**

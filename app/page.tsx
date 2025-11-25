@@ -6,6 +6,7 @@ import { MarketToggles } from './components/UI/MarketToggles';
 import { WelcomeMessages } from './components/UI/WelcomeMessages';
 import { CentralInput } from './components/UI/CentralInput';
 import { ShoppingListPanel } from './components/UI/ShoppingListPanel';
+import { WishlistPanel } from './components/UI/WishlistPanel';
 import { ToastContainer } from './components/UI/Toast';
 
 import { ChatMessage } from './components/Chat/ChatMessage';
@@ -15,6 +16,7 @@ import { Header } from './components/Layout/Header';
 import { Footer } from './components/Layout/Footer';
 
 import { useShoppingList } from '@/lib/hooks/useShoppingList';
+import { useWishlist } from '@/lib/hooks/useWishlist';
 import { useToast } from '@/lib/hooks/useToast';
 
 interface Message {
@@ -33,6 +35,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [hideCompleted, setHideCompleted] = useState(false);
   const [hasInitiallyLoaded, setHasInitiallyLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -48,6 +51,15 @@ export default function Home() {
     clearList,
     isInList,
   } = useShoppingList();
+
+  // Wishlist Hook (Merkzettel)
+  const {
+    items: wishlistItems,
+    itemCount: wishlistCount,
+    addItem: addWishlistItem,
+    removeItem: removeWishlistItem,
+    clearList: clearWishlist,
+  } = useWishlist();
 
   // Toast Hook
   const { toasts, dismissToast, success, error } = useToast();
@@ -253,6 +265,24 @@ export default function Home() {
     setHideCompleted(!hideCompleted);
   };
 
+  // Wishlist Handlers
+  const handleOpenWishlist = () => {
+    setIsWishlistOpen(true);
+  };
+
+  const handleCloseWishlist = () => {
+    setIsWishlistOpen(false);
+  };
+
+  const handleSearchWishlistItem = async (name: string) => {
+    // Close wishlist panel
+    setIsWishlistOpen(false);
+    
+    // Start chat and send search query
+    setChatStarted(true);
+    await handleSendMessage(name);
+  };
+
   if (!isClient) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--sparfuchs-background)' }}>
@@ -275,6 +305,9 @@ export default function Home() {
         shoppingListCount={itemCount}
         onOpenShoppingList={handleOpenPanel}
         isShoppingListOpen={isPanelOpen}
+        wishlistCount={wishlistCount}
+        onOpenWishlist={handleOpenWishlist}
+        isWishlistOpen={isWishlistOpen}
       />
 
       <AnimatePresence mode="wait">
@@ -419,6 +452,17 @@ export default function Home() {
         hideCompleted={hideCompleted}
         onToggleHideCompleted={handleToggleHideCompleted}
         selectedMarkets={selectedMarkets}
+      />
+
+      {/* Wishlist Panel (Merkzettel) */}
+      <WishlistPanel
+        isOpen={isWishlistOpen}
+        onClose={handleCloseWishlist}
+        items={wishlistItems}
+        onAddItem={addWishlistItem}
+        onRemoveItem={removeWishlistItem}
+        onClearList={clearWishlist}
+        onSearchItem={handleSearchWishlistItem}
       />
 
       {/* Toast Container */}
