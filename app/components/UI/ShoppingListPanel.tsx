@@ -319,7 +319,7 @@ export function ShoppingListPanel({
                                     </p>
                                   )}
                                   <h3
-                                    className="font-semibold text-sm sm:text-base mb-1"
+                                    className="font-semibold text-lg mb-1"
                                     style={{
                                       color: 'var(--sparfuchs-text)',
                                       textDecoration: item.checked ? 'line-through' : 'none',
@@ -342,6 +342,9 @@ export function ShoppingListPanel({
                                     </span>
                                   )}
                                 </div>
+
+                                {/* Divider */}
+                                <hr className="w-full border-t border-gray-200 my-2" />
 
                                 <div className="flex flex-col items-center gap-1">
                                   <span
