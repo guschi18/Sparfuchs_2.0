@@ -12,6 +12,7 @@
 ## Dependencies & Integration
 - Externe Pakete: @heroui/react
 - **AddToListButton**: Imported aus `./AddToListButton` (siehe docs)
+- **isAppPrice**: Imported aus `@/lib/utils/helpers` für App-Preis-Erkennung
 - **Verwendung**: Ausschließlich in ChatMessage.tsx innerhalb markt-gruppierter Sektionen
 - **Shopping List**: Props werden von page.tsx über ChatMessage weitergegeben
 
@@ -55,6 +56,7 @@ interface ProductCardProps {
 - **Anzeige-Elemente**:
   - Produktname & Brand (falls vorhanden)
   - Preis (prominent in grün)
+  - App-Preis-Kennzeichnung (📱 *App-Preis) unterhalb des Preises, falls notes "App-Preis" enthält
   - Größe & Variante (als Badges)
   - Gültigkeitsdatum mit Kalender-Emoji
   - Hinweise (falls vorhanden)

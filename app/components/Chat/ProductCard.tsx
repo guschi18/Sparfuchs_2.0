@@ -2,6 +2,7 @@
 
 import { Card, CardHeader, CardBody, Divider } from "@heroui/react";
 import { AddToListButton } from './AddToListButton';
+import { isAppPrice } from '@/lib/utils/helpers';
 
 export interface ProductData {
   name: string;
@@ -85,6 +86,11 @@ export function ProductCard({ product, onAddToList, isInList = false }: ProductC
           <span className="text-2xl font-bold text-green-600">
             {product.price} €
           </span>
+          {isAppPrice(product.notes) && (
+            <div className="mt-1 text-sm text-gray-600" title="Nur mit Supermarkt-App">
+              📱 *App-Preis
+            </div>
+          )}
         </div>
       </CardBody>
     </Card>

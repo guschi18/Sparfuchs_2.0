@@ -166,3 +166,10 @@ export function isValidGermanPostalCode(postalCode: string): boolean {
 export function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+/**
+ * Checks if a product has an App-Price based on notes field
+ */
+export function isAppPrice(notes: string | null | undefined): boolean {
+  return notes?.toLowerCase().includes('app-preis') ?? false;
+}

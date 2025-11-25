@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingListItem } from '@/types';
 import { useEffect } from 'react';
+import { isAppPrice } from '@/lib/utils/helpers';
 
 interface ShoppingListPanelProps {
   isOpen: boolean;
@@ -342,13 +343,16 @@ export function ShoppingListPanel({
                                   )}
                                 </div>
 
-                                <div className="flex items-center gap-2 flex-wrap justify-center">
+                                <div className="flex flex-col items-center gap-1">
                                   <span
                                     className="text-lg font-bold"
                                     style={{ color: '#16a34a' }}
                                   >
                                     {item.price} €
                                   </span>
+                                  {isAppPrice(item.notes) && (
+                                    <span className="text-sm text-gray-600" title="Nur mit Supermarkt-App">📱 *App-Preis</span>
+                                  )}
                                 </div>
                               </div>
 

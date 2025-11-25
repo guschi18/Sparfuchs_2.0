@@ -9,6 +9,7 @@
 - **Framer Motion**: motion, AnimatePresence für Slide-in/out
 - **React**: useEffect für ESC-Key und Body-Scroll Management
 - **Types**: ShoppingListItem aus `@/types`
+- **isAppPrice**: Imported aus `@/lib/utils/helpers` für App-Preis-Erkennung
 - **Parent**: page.tsx (App-Level Integration)
 
 ## Props Interface
@@ -33,12 +34,17 @@ Backdrop (blur) → Panel (slide-in from right)
 ├── Content (scrollable)
 │   ├── Empty State ("Deine Liste ist leer" / "Alle erledigt!")
 │   └── Item List (filtered by hideCompleted)
-│       └── Item (Checkbox + Details + Remove Button)
+│       └── Item (Checkbox + Details + Price + App-Preis-Badge + Remove Button)
 └── Footer (only if items.length > 0)
     ├── Total Price
     ├── "Erledigte ausblenden" Toggle (if checked items exist)
     └── "Liste leeren" Button
 ```
+
+## App-Preis-Kennzeichnung
+- **Anzeige**: 📱 *App-Preis unterhalb des Preises
+- **Bedingung**: Nur wenn `isAppPrice(item.notes)` true zurückgibt
+- **Tooltip**: "Nur mit Supermarkt-App" beim Hover
 
 ## Geschäftslogik
 - **Item Filtering**: visibleItems = hideCompleted ? unchecked only : all
