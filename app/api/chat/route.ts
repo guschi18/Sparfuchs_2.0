@@ -10,6 +10,23 @@ export const runtime = 'nodejs';
 // Maximalanzahl der Produkte, die dem Modell im System-Prompt übergeben werden
 const MAX_PRODUCTS_FOR_PROMPT = 150;
 
+// CORS Headers für Mobile App Zugriff
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+/**
+ * OPTIONS /api/chat - CORS Preflight
+ */
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 /**
  * Erstellt den System-Prompt für die KI
  */
@@ -65,14 +82,14 @@ export async function POST(request: NextRequest) {
     if (!message || !message.trim()) {
       return new Response(
         JSON.stringify({ error: 'Nachricht darf nicht leer sein' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
 
     if (!selectedMarkets || selectedMarkets.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Bitte wähle mindestens einen Supermarkt aus' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
 
@@ -85,7 +102,7 @@ export async function POST(request: NextRequest) {
     if (validSelectedMarkets.length === 0) {
       return new Response(
         JSON.stringify({ error: 'Keine gültigen Supermärkte ausgewählt' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
 
@@ -107,7 +124,7 @@ export async function POST(request: NextRequest) {
       console.error('Fehler beim Suchen der Angebote:', searchError);
       return new Response(
         JSON.stringify({ error: 'Fehler beim Laden der Angebotsdaten. Bitte versuche es erneut.' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
 
@@ -133,6 +150,7 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
           'Connection': 'keep-alive',
+          ...corsHeaders,
         },
       });
     }
@@ -183,6 +201,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
+        ...corsHeaders,
       },
     });
   } catch (error) {
@@ -191,7 +210,7 @@ export async function POST(request: NextRequest) {
 
     return new Response(
       JSON.stringify({ error: `Fehler beim Verarbeiten der Anfrage: ${errorMessage}` }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   }
 }
