@@ -8,10 +8,3 @@ Schwellenwert-Alerts ("Benachrichtige mich, wenn unter 2€")
 Wöchentliche Zusammenfassung der besten Deals
 Technisch: Web Push API + Cron-Job für Preisprüfung
 
-2. Preishistorie & Trend-Analyse
-Nutzen: Datengetriebene Kaufentscheidungen treffen
-
-Graphische Darstellung von Preisentwicklungen (letzte 4-12 Wochen)
-"Bester Preis in X Wochen"-Badge
-Saisonale Muster erkennen ("Erdbeeren im Juni am günstigsten")
-Technisch: Historische Daten in JSONL speichern + Chart.js
